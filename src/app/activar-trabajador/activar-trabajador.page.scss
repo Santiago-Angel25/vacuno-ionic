@@ -1,10 +1,53 @@
 .activate-content {
-  --background: #f5f7f3;
+  --background: #eaf2e6;
 }
+.activate-landscape {
+  position: fixed;
+  inset: 0;
+  background: url('/assets/vacuno-login-landscape.jpg') center / cover no-repeat;
+}
+.activate-landscape::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(248 249 244 / 96%) 0%,
+    rgb(248 249 244 / 78%) 13%,
+    rgb(248 249 244 / 36%) 24%,
+    transparent 42%,
+    rgb(34 92 35 / 16%) 100%
+  );
+  content: '';
+}
+
+.activar {
+  margin: 0 0 10px;
+  color: #51fb9b;
+  font-size: 25px;
+  font-weight: 850;
+}
+
 .activate-page {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 100%;
+  align-content: center;
+  justify-items: center;
   width: min(100%, 520px);
   margin: auto;
-  padding: 30px 18px;
+  padding: 24px 18px;
+}
+.activate-brand {
+  display: block;
+  margin: 0 0 18px;
+  text-decoration: none;
+}
+.activate-brand img {
+  display: block;
+  width: 144px;
+  height: auto;
+  filter: drop-shadow(0 3px 8px rgb(16 57 25 / 10%));
 }
 .eyebrow {
   color: #68866c;
@@ -17,6 +60,7 @@ h1 {
   color: #20372a;
   font-size: 25px;
   font-weight: 850;
+  text-align: center;
 }
 .help {
   margin: 0 0 20px;
@@ -26,6 +70,7 @@ h1 {
 .activate-page form {
   display: grid;
   gap: 9px;
+  width: 100%;
   padding: 17px;
   border: 1px solid #e5eae3;
   border-radius: 16px;
@@ -49,6 +94,17 @@ h1 {
   --background: #26743b;
   --border-radius: 10px;
   text-transform: none;
+}
+.back-login {
+  margin: 14px 0 0;
+  color: #4f6152;
+  font-size: 13px;
+  text-align: center;
+}
+.back-login a {
+  color: #26743b;
+  font-weight: 800;
+  text-decoration: none;
 }
 .form-error {
   color: #a23e35;

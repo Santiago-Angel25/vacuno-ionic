@@ -4,186 +4,139 @@
 }
 
 .splash-content {
-  --background: #e9f1e2;
+  --background: #f8f9f4;
 }
 
 .splash-screen {
   position: relative;
-  display: grid;
   min-height: 100%;
   overflow: hidden;
-  place-content: center;
-  background: linear-gradient(180deg, #e9f2e7 0%, #f8f7ed 62%, #bfd6a6 100%);
-  text-align: center;
-}
-
-.sky-glow,
-.sun,
-.hill,
-.barn {
-  position: absolute;
-  pointer-events: none;
-}
-
-.sky-glow {
-  inset: 0 0 auto;
-  height: 65%;
-  background: radial-gradient(ellipse at 50% 68%, #fff9d9 0, #fff9d900 58%);
-}
-
-.sun {
-  top: 17%;
-  right: 17%;
-  width: 54px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: #f4d47a;
-  box-shadow: 0 0 50px #f4d47a99;
-}
-
-.hill {
-  right: -12%;
-  bottom: -8%;
-  left: -12%;
-  height: 36%;
-  border-radius: 50% 50% 0 0 / 20% 20% 0 0;
-}
-
-.hill-back {
-  bottom: 5%;
-  background: #aac58b;
-  transform: rotate(-5deg);
-}
-
-.hill-front {
-  bottom: -12%;
-  left: -24%;
-  width: 145%;
-  height: 33%;
-  background: linear-gradient(135deg, #6c9d54, #357747);
-  transform: rotate(7deg);
-}
-
-.barn {
-  z-index: 1;
-  right: 13%;
-  bottom: 16%;
-  width: 68px;
-  height: 50px;
-  background: #f3efe0;
-  box-shadow: inset 0 -5px #d7d0ba;
-}
-
-.barn::before {
-  position: absolute;
-  top: -27px;
-  left: -7px;
-  width: 82px;
-  height: 34px;
-  background: #a8573b;
-  clip-path: polygon(50% 0, 100% 100%, 0 100%);
-  content: '';
-}
-
-.barn span {
-  position: absolute;
-  right: 22px;
-  bottom: 0;
-  width: 24px;
-  height: 34px;
-  border-radius: 12px 12px 0 0;
-  background: #997859;
+  background: #f8f9f4;
 }
 
 .brand-block {
-  position: relative;
-  z-index: 2;
+  position: absolute;
+  z-index: 3;
+  top: max(3%, env(safe-area-inset-top));
+  right: 0;
+  left: 0;
   display: grid;
-  justify-items: center;
-  margin-top: -24px;
-  animation: appear 700ms ease-out both;
-}
-
-.cow-mark {
-  display: grid;
-  width: 116px;
-  height: 116px;
   place-items: center;
-  filter: drop-shadow(0 8px 10px #163f2c24);
+  padding: 0 15%;
+  animation: brand-enter 650ms ease-out both;
 }
 
-.cow-mark svg {
-  width: 100%;
-  fill: #2d7041;
-  stroke: #2d7041;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 3;
-}
-
-.cow-mark .horn,
-.cow-mark .smile {
-  fill: none;
-  stroke: #2d7041;
-  stroke-width: 5;
-}
-
-.cow-mark .spot {
-  fill: #e9f1e2;
-  stroke: none;
-}
-
-.cow-mark .muzzle {
-  fill: #edcda9;
-  stroke: none;
-}
-
-.cow-mark .nostril {
-  fill: #785c48;
-  stroke: none;
-}
-
-.brand-name {
-  margin: 8px 0 0;
-  color: #174e31;
-  font-size: 34px;
-  font-weight: 900;
-  letter-spacing: 0.16em;
+.brand-logo {
+  display: block;
+  width: min(100%, 198px);
+  height: auto;
+  filter: drop-shadow(0 4px 11px rgb(20 59 27 / 8%));
 }
 
 .brand-tagline {
-  margin: 8px 0 0;
-  color: #456b4e;
-  font-size: 14px;
-  letter-spacing: 0.02em;
+  margin: 12px 0 0;
+  color: #0e2219;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-size: clamp(13px, 4.1vw, 17px);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  text-shadow: 0 1px 5px rgb(255 255 255 / 72%);
+}
+
+.pasture-photo {
+  position: absolute;
+  z-index: 1;
+  top: 48px;
+  right: 0;
+  bottom: -48px;
+  left: 0;
+  background-image: url('/assets/vacuno-welcome-cow.jpg');
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+  -webkit-mask-image: linear-gradient(to top, #000 0 56%, #000d 66%, #0007 74%, transparent 88%);
+  mask-image: linear-gradient(to top, #000 0 56%, #000d 66%, #0007 74%, transparent 88%);
+  animation: photo-enter 900ms 100ms ease-out both;
+}
+
+.pasture-photo::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgb(17 55 20 / 15%), transparent 44%);
+  content: '';
 }
 
 .loading {
   position: absolute;
-  z-index: 2;
-  bottom: 10%;
+  z-index: 4;
+  bottom: max(5.8%, env(safe-area-inset-bottom));
   left: 50%;
   display: flex;
-  gap: 7px;
+  gap: 5px;
   transform: translateX(-50%);
 }
 
 .loading span {
-  width: 7px;
-  height: 7px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #eff6e8;
-  animation: pulse 900ms ease-in-out infinite alternate;
+  background: #f7ffe9;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 12%);
+  animation: pulse 850ms ease-in-out infinite alternate;
+}
+.loading span:nth-child(2) {
+  animation-delay: 160ms;
+}
+.loading span:nth-child(3) {
+  animation-delay: 320ms;
 }
 
-.loading span:nth-child(2) { animation-delay: 180ms; }
-.loading span:nth-child(3) { animation-delay: 360ms; }
-
+@keyframes brand-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes photo-enter {
+  from {
+    opacity: 0;
+    transform: scale(1.025);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 @keyframes pulse {
-  to { opacity: 0.3; transform: translateY(-4px); }
+  to {
+    opacity: 0.35;
+    transform: translateY(-3px);
+  }
 }
 
-@keyframes appear {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+@media (min-width: 540px) {
+  .brand-block {
+    top: max(3%, env(safe-area-inset-top));
+  }
+  .brand-logo {
+    width: min(100%, 224px);
+  }
+  .pasture-photo {
+    top: 62px;
+    bottom: -62px;
+    background-position: center 64%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-block,
+  .pasture-photo,
+  .loading span {
+    animation: none;
+  }
 }

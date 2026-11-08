@@ -1,12 +1,12 @@
-<ion-header
-  ><ion-toolbar><ion-title>Activar cuenta</ion-title></ion-toolbar></ion-header
->
-<ion-content [fullscreen]="true" class="activate-content"
-  ><main class="activate-page">
-    <p class="eyebrow">ACCESO DE TRABAJADOR</p>
-    <h1>Activa tu cuenta</h1>
-    <p class="help">Pega el código que te entregó el propietario y crea tu contraseña.</p>
+<ion-content [fullscreen]="true" class="activate-content">
+  <div class="activate-landscape" aria-hidden="true"></div>
+  <main class="activate-page">
+    <a class="activate-brand" routerLink="/login" aria-label="VACUNO inicio">
+      <img src="/assets/vacuno-logo-mark.png" alt="VACUNO" />
+    </a>
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <h1>Activa tu cuenta</h1>
+      <p class="help">Pega el código que te entregó el propietario y crea tu contraseña.</p>
       <label for="invite-code">Código de invitación *</label
       ><ion-item lines="none"
         ><ion-input
@@ -40,6 +40,7 @@
       <ion-button expand="block" type="submit" [disabled]="saving"
         >{{ saving ? 'Activando…' : 'Activar y entrar' }}</ion-button
       >
+      <p class="back-login">Volver al <a routerLink="/login">inicio</a></p>
     </form>
-  </main></ion-content
->
+  </main>
+</ion-content>
