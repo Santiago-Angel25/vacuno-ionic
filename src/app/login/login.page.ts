@@ -3,14 +3,7 @@ import type { OnInit } from '@angular/core';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import {
-  IonButton,
-  IonContent,
-  IonIcon,
-  IonInput,
-  IonItem,
-  IonSpinner,
-} from '@ionic/angular';
+import { IonButton, IonContent, IonIcon, IonInput, IonItem, IonSpinner, ToastController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { eyeOffOutline, eyeOutline, lockClosedOutline, mailOutline } from 'ionicons/icons';
 import { finalize } from 'rxjs';
@@ -28,6 +21,7 @@ export class LoginPage implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly changeDetector = inject(ChangeDetectorRef);
+  private readonly toastController = inject(ToastController);
 
   readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -58,12 +52,14 @@ export class LoginPage implements OnInit {
 
     this.auth
       .login(email, password)
-      .pipe(finalize(() => {
-        this.loading = false;
-        this.changeDetector.markForCheck();
-      }))
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.changeDetector.markForCheck();
+        }),
+      )
       .subscribe({
-        next: () => void this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true }),
+        next: () => void this.finishLogin(),
         error: (error: HttpErrorResponse) => {
           if (error.status === 0 || error.status >= 500) {
             this.errorMessage = 'No se pudo conectar con el servidor. Intenta de nuevo en unos minutos.';
@@ -73,5 +69,16 @@ export class LoginPage implements OnInit {
           this.changeDetector.markForCheck();
         },
       });
+  }
+
+  private async finishLogin(): Promise<void> {
+    const toast = await this.toastController.create({
+      message: 'Ingreso exitoso',
+      duration: 1800,
+      position: 'top',
+      color: 'success',
+    });
+    await toast.present();
+    await this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true });
   }
 }

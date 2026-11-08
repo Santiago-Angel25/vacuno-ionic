@@ -1,33 +1,100 @@
 <ion-content [fullscreen]="true" class="login-content">
+  <div class="login-landscape" aria-hidden="true">
+    <div class="login-sun"></div>
+    <div class="login-hill hill-one"></div>
+    <div class="login-hill hill-two"></div>
+    <div class="login-barn"></div>
+  </div>
+
   <main class="login-shell register-shell">
-    <a class="brand" routerLink="/login" aria-label="Volver a VACUNO"><span class="brand-cow" aria-hidden="true">🐮</span><span>VACUNO</span></a>
+    <a class="brand" routerLink="/login" aria-label="VACUNO inicio">
+      <img src="/assets/vacuno-logo-mark.png" alt="VACUNO" />
+    </a>
     <section class="login-card">
-      <p class="eyebrow">COMIENZA A ORGANIZAR TU FINCA</p>
       <h1>Crear cuenta</h1>
       <p class="intro">Registra tu usuario y tu primera finca.</p>
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <label class="field-label" for="nombres">Nombre</label>
-        <ion-item class="input-item" lines="none"><ion-input id="nombres" formControlName="nombres" placeholder="Tus nombres" autocomplete="given-name"></ion-input></ion-item>
-        @if (form.controls.nombres.touched && form.controls.nombres.invalid) { <p class="field-error">Escribe tu nombre.</p> }
+        <ion-item class="input-item" lines="none"
+          ><ion-input
+            id="nombres"
+            formControlName="nombres"
+            placeholder="Tus nombres"
+            autocomplete="given-name"
+          ></ion-input
+        ></ion-item>
+        @if (form.controls.nombres.touched && form.controls.nombres.invalid) {
+        <p class="field-error">Escribe tu nombre.</p>
+        }
         <label class="field-label" for="apellidos">Apellido</label>
-        <ion-item class="input-item" lines="none"><ion-input id="apellidos" formControlName="apellidos" placeholder="Tus apellidos" autocomplete="family-name"></ion-input></ion-item>
-        @if (form.controls.apellidos.touched && form.controls.apellidos.invalid) { <p class="field-error">Escribe tu apellido.</p> }
+        <ion-item class="input-item" lines="none"
+          ><ion-input
+            id="apellidos"
+            formControlName="apellidos"
+            placeholder="Tus apellidos"
+            autocomplete="family-name"
+          ></ion-input
+        ></ion-item>
+        @if (form.controls.apellidos.touched && form.controls.apellidos.invalid) {
+        <p class="field-error">Escribe tu apellido.</p>
+        }
         <label class="field-label" for="register-email">Correo electrónico</label>
-        <ion-item class="input-item" lines="none"><ion-input id="register-email" formControlName="email" type="email" placeholder="nombre@correo.com" autocomplete="email"></ion-input></ion-item>
-        @if (form.controls.email.touched && form.controls.email.invalid) { <p class="field-error">Ingresa un correo válido.</p> }
+        <ion-item class="input-item" lines="none"
+          ><ion-input
+            id="register-email"
+            formControlName="email"
+            type="email"
+            placeholder="nombre@correo.com"
+            autocomplete="email"
+          ></ion-input
+        ></ion-item>
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+        <p class="field-error">Ingresa un correo válido.</p>
+        }
         <label class="field-label" for="telefono">Teléfono (opcional)</label>
-        <ion-item class="input-item" lines="none"><ion-input id="telefono" formControlName="telefono" type="tel" placeholder="Tu teléfono" autocomplete="tel"></ion-input></ion-item>
+        <ion-item class="input-item" lines="none"
+          ><ion-input
+            id="telefono"
+            formControlName="telefono"
+            type="tel"
+            placeholder="Tu teléfono"
+            autocomplete="tel"
+          ></ion-input
+        ></ion-item>
         <label class="field-label" for="register-password">Contraseña</label>
-        <ion-item class="input-item" lines="none"><ion-input id="register-password" formControlName="password" type="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password"></ion-input></ion-item>
-        @if (form.controls.password.touched && form.controls.password.invalid) { <p class="field-error">Usa entre 8 y 72 caracteres.</p> }
+        <ion-item class="input-item" lines="none"
+          ><ion-input
+            id="register-password"
+            formControlName="password"
+            type="password"
+            placeholder="Mínimo 8 caracteres"
+            autocomplete="new-password"
+          ></ion-input
+        ></ion-item>
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+        <p class="field-error">Usa entre 8 y 72 caracteres.</p>
+        }
         <label class="field-label" for="finca">Nombre de la finca</label>
-        <ion-item class="input-item" lines="none"><ion-input id="finca" formControlName="finca" placeholder="Ej. Finca El Paraíso"></ion-input></ion-item>
-        @if (form.controls.finca.touched && form.controls.finca.invalid) { <p class="field-error">El nombre de la finca es obligatorio.</p> }
+        <ion-item class="input-item" lines="none"
+          ><ion-input id="finca" formControlName="finca" placeholder="Ej. Finca El Paraíso"></ion-input
+        ></ion-item>
+        @if (form.controls.finca.touched && form.controls.finca.invalid) {
+        <p class="field-error">El nombre de la finca es obligatorio.</p>
+        }
         <label class="field-label" for="direccion">Dirección (opcional)</label>
-        <ion-item class="input-item" lines="none"><ion-input id="direccion" formControlName="direccion" placeholder="Vereda, municipio"></ion-input></ion-item>
-        <div class="terms-row"><ion-checkbox formControlName="aceptaTerminos" labelPlacement="end">Acepto los términos y condiciones</ion-checkbox></div>
-        @if (form.controls.aceptaTerminos.touched && form.controls.aceptaTerminos.invalid) { <p class="field-error">Debes aceptar los términos para registrarte.</p> }
-        @if (errorMessage) { <p class="request-error" role="alert">{{ errorMessage }}</p> }
+        <ion-item class="input-item" lines="none"
+          ><ion-input id="direccion" formControlName="direccion" placeholder="Vereda, municipio"></ion-input
+        ></ion-item>
+        <div class="terms-row">
+          <ion-checkbox formControlName="aceptaTerminos" labelPlacement="end"
+            >Acepto los términos y condiciones</ion-checkbox
+          >
+        </div>
+        @if (form.controls.aceptaTerminos.touched && form.controls.aceptaTerminos.invalid) {
+        <p class="field-error">Debes aceptar los términos para registrarte.</p>
+        } @if (errorMessage) {
+        <p class="request-error" role="alert">{{ errorMessage }}</p>
+        }
         <ion-button class="login-button" expand="block" type="submit" [disabled]="loading">
           @if (loading) { <ion-spinner name="crescent"></ion-spinner> } @else { Crear cuenta }
         </ion-button>

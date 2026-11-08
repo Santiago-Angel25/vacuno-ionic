@@ -1,5 +1,6 @@
 <ion-content [fullscreen]="true" class="login-content">
   <div class="login-landscape" aria-hidden="true">
+    <div class="login-sun"></div>
     <div class="login-hill hill-one"></div>
     <div class="login-hill hill-two"></div>
     <div class="login-barn"></div>
@@ -7,22 +8,14 @@
 
   <main class="login-shell">
     <a class="brand" routerLink="/login" aria-label="VACUNO inicio">
-      <svg viewBox="0 0 120 120" aria-hidden="true">
-        <path
-          d="M28 34 12 18l3 28c-6 8-9 18-9 29 0 24 23 39 54 39s54-15 54-39c0-11-3-21-9-29l3-28-16 16c-9-5-20-8-32-8s-23 3-32 8Z"
-        />
-        <path class="eyes" d="M42 61v1m36-1v1" />
-        <ellipse class="muzzle" cx="60" cy="87" rx="22" ry="14" />
-        <circle class="nostril" cx="52" cy="86" r="2" />
-        <circle class="nostril" cx="68" cy="86" r="2" />
-      </svg>
-      <span>VACUNO</span>
+      <img src="/assets/vacuno-logo-mark.png" alt="VACUNO" />
     </a>
+    <p class="brand-tagline">Gestión ganadera inteligente</p>
 
     <section class="login-card">
-      <p class="eyebrow">TU FINCA, BAJO CONTROL</p>
+      <br />
       <h1>Inicia sesión</h1>
-      <p class="intro">Ingresa para continuar con la gestión de tu finca.</p>
+      <br />
 
       <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
         <label class="field-label" for="email">Correo electrónico</label>
@@ -73,7 +66,6 @@
         </ion-button>
       </form>
 
-      <p class="login-footnote">Gestión ganadera inteligente</p>
       <p class="login-footnote">
         ¿Eres trabajador? <a routerLink="/activar-trabajador">Activa tu cuenta con un código</a>
       </p>
