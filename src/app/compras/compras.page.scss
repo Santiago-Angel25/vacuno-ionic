@@ -1,0 +1,19 @@
+.purchases-content { --background: #f5f7f3; }
+.purchases-page { width: min(100%, 680px); margin: auto; padding: 22px 17px 90px; }
+.eyebrow { margin: 0 0 5px; color: #68866c; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+h1 { margin: 0 0 6px; color: #20372a; font-size: 25px; font-weight: 850; }
+.intro { margin: 0 0 18px; color: #758078; font-size: 13px; }
+.purchase-list { display: grid; gap: 13px; }
+.purchase-card,.state-card { padding: 16px; border: 1px solid #e5eae3; border-radius: 17px; background: white; box-shadow: 0 5px 16px #20372a0a; }
+.card-heading { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+.card-heading h2 { margin: 3px 0 0; color: #24382b; font-size: 16px; }
+.status { padding: 6px 9px; border-radius: 20px; background: #fff0ed; color: #a8493d; font-size: 10px; font-weight: 800; }
+.status.pending { background: #fff4d8; color: #966812; }.status.approved { background: #e8f3e8; color: #26743b; }
+.purchase-lines { margin: 12px 0 5px; border-top: 1px solid #eef0ec; }
+.purchase-lines p,.total { display: flex; justify-content: space-between; gap: 12px; color: #657067; font-size: 12px; }
+.purchase-lines p span { text-align: right; }.total { padding-top: 9px; border-top: 1px solid #eef0ec; }.total strong { color: #26743b; font-size: 15px; }
+.notes { color: #727d74; font-size: 12px; }
+.evidence-row { display: flex; gap: 12px; margin-top: 12px; }.evidence-row a { display: grid; gap: 4px; color: #526456; font-size: 10px; text-decoration: none; }.evidence-row img { width: 74px; height: 74px; object-fit: cover; border-radius: 9px; border: 1px solid #e5eae3; }
+.review-actions { display: flex; gap: 8px; margin-top: 13px; }.review-actions ion-button { flex: 1; --border-radius: 10px; font-size: 12px; text-transform: none; }
+.state-card { display: grid; justify-items: center; gap: 10px; padding: 28px; color: #7a867c; text-align: center; }.state-card h2 { margin: 0; color: #263b2d; font-size: 17px; }.state-card p { margin: 0; font-size: 12px; }.state-card > ion-icon { font-size: 30px; color: #34834b; }
+.request-error { padding: 10px; color: #a23e35; background: #fff1ef; border-radius: 9px; font-size: 12px; }

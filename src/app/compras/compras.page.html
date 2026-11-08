@@ -1,0 +1,95 @@
+<ion-header
+  ><ion-toolbar>
+    <ion-buttons slot="start"
+      ><ion-button routerLink="/tabs/inventario" aria-label="Volver al inventario">‹</ion-button></ion-buttons
+    >
+    <ion-title>Compras</ion-title>
+    <ion-buttons slot="end"
+      ><ion-button routerLink="/tabs/compras/nueva"
+        ><ion-icon slot="start" name="add"></ion-icon>Nueva</ion-button
+      ></ion-buttons
+    >
+  </ion-toolbar></ion-header
+>
+<ion-content [fullscreen]="true" class="purchases-content">
+  <main class="purchases-page">
+    <p class="eyebrow">TRAZABILIDAD DE INSUMOS</p>
+    <h1>Compras de la finca</h1>
+    <p class="intro">Cada compra aprobada suma existencias al inventario y registra el gasto.</p>
+    @if (errorMessage) {
+    <p class="request-error" role="alert">{{ errorMessage }}</p>
+    } @if (loading) {
+    <div class="state-card"><ion-spinner name="crescent"></ion-spinner><span>Cargando compras…</span></div>
+    } @else if (!purchases.length) {
+    <div class="state-card empty">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <h2>Aún no hay compras</h2>
+      <p>Registra una compra y adjunta la factura y el producto.</p>
+      <ion-button routerLink="/tabs/compras/nueva">Registrar compra</ion-button>
+    </div>
+    } @else {
+    <section aria-label="Compras registradas" class="purchase-list">
+      @for (purchase of purchases; track purchase.id) {
+      <article class="purchase-card">
+        <div class="card-heading">
+          <div>
+            <span class="eyebrow">{{ purchase.fecha }}</span>
+            <h2>{{ purchase.proveedor || 'Compra sin proveedor' }}</h2>
+          </div>
+          <span
+            class="status"
+            [class.pending]="purchase.estado === 'PENDIENTE'"
+            [class.approved]="purchase.estado === 'RECIBIDA'"
+            >{{ purchase.estado === 'RECIBIDA' ? 'Aprobada' : purchase.estado === 'PENDIENTE' ? 'Pendiente' :
+            'Rechazada' }}</span
+          >
+        </div>
+        <div class="purchase-lines">
+          @for (line of purchase.productos; track line.productoId) {
+          <p>
+            <strong>{{ line.nombre }}</strong
+            ><span>{{ line.cantidad }} {{ line.unidad }} · {{ money(line.cantidad * line.precioUnitario) }}</span>
+          </p>
+          }
+        </div>
+        <p class="total">Total de compra <strong>{{ money(purchase.total) }}</strong></p>
+        @if (purchase.observaciones) {
+        <p class="notes">{{ purchase.observaciones }}</p>
+        }
+        <ion-button fill="clear" size="small" (click)="viewEvidence(purchase)"
+          >{{ evidenceLoadingId === purchase.id ? 'Cargando soportes…' : evidenceId === purchase.id ? 'Ocultar soportes'
+          : 'Ver fotos de soporte' }}</ion-button
+        >
+        @if (evidenceErrorId === purchase.id) {
+        <p class="request-error" role="alert">{{ evidenceError }}</p>
+        } @if (evidenceId === purchase.id) {
+        <div class="evidence-row">
+          @if (purchase.facturaFotoUrl) {
+          <a [href]="purchase.facturaFotoUrl" target="_blank" rel="noopener"
+            ><img [src]="purchase.facturaFotoUrl" alt="Factura de la compra" /><span>Factura</span></a
+          >
+          } @if (purchase.productoFotoUrl) {
+          <a [href]="purchase.productoFotoUrl" target="_blank" rel="noopener"
+            ><img [src]="purchase.productoFotoUrl" alt="Producto comprado" /><span>Producto</span></a
+          >
+          }
+        </div>
+        } @if (auth.currentUser?.rol === 'PROPIETARIO' && purchase.estado === 'PENDIENTE') {
+        <div class="review-actions">
+          <ion-button [disabled]="busyId === purchase.id" (click)="review(purchase, true)"
+            ><ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>Aprobar</ion-button
+          ><ion-button
+            fill="outline"
+            color="medium"
+            [disabled]="busyId === purchase.id"
+            (click)="review(purchase, false)"
+            >Rechazar</ion-button
+          >
+        </div>
+        }
+      </article>
+      }
+    </section>
+    }
+  </main>
+</ion-content>

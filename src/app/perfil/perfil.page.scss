@@ -1,0 +1,14 @@
+@use '../module-page';
+
+.profile-card { text-align: center; }
+.profile-avatar { display: grid; width: 82px; height: 82px; margin: 0 auto 14px; place-items: center; background: #e7f1e6; color: #26743b; font-size: 25px; font-weight: 800; }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-card h2 { margin: 0; color: #25372a; font-size: 18px; }
+.profile-details { margin: 20px 0 0; text-align: left; }
+.profile-details div { padding: 11px 0; border-top: 1px solid #edf0eb; }
+.profile-details dt { color: #849087; font-size: 10px; }
+.profile-details dd { margin: 4px 0 0; color: #35443a; font-size: 12px; font-weight: 600; }
+.role-badge { display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 20px; background: #edf4e8; color: #347647; font-size: 11px; font-weight: 700; }
+.logout-button { margin-top: 16px; --border-color: #dce5d9; --color: #3c6545; }
+.profile-loading,.profile-error { font-size: 12px; text-align: center; }
+.profile-error { color: #a23e35; }

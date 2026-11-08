@@ -1,1 +1,33 @@
 
+:host {
+  --ion-safe-area-bottom: 0;
+}
+
+.vacuno-tab-bar {
+  --background: #fff;
+  --border: 1px solid #e9eee8;
+  padding: 5px 4px calc(5px + env(safe-area-inset-bottom));
+  box-shadow: 0 -5px 20px rgb(24 57 31 / 7%);
+}
+
+.vacuno-tab-bar ion-tab-button {
+  --color: #8b948d;
+  --color-selected: #26743b;
+  font-size: 10px;
+}
+
+.vacuno-tab-bar ion-icon {
+  font-size: 21px;
+}
+
+.tab-avatar {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 2px;
+  display: grid;
+  place-items: center;
+  background: #e7f1e6;
+  color: #26743b;
+  font-size: 10px;
+  font-weight: 800;
+}

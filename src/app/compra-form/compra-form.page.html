@@ -1,0 +1,109 @@
+<ion-header
+  ><ion-toolbar
+    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/compras" text=""></ion-back-button></ion-buttons
+    ><ion-title>Nueva compra</ion-title></ion-toolbar
+  ></ion-header
+>
+<ion-content [fullscreen]="true" class="purchase-form-content">
+  <main class="purchase-form-page">
+    <p class="eyebrow">REGISTRO CON SOPORTES</p>
+    <h1>Registrar compra</h1>
+    <p class="help">La compra quedará pendiente hasta que el propietario revise los soportes.</p>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <p class="form-label">Proveedor</p>
+      <ion-item class="form-input" lines="none"
+        ><ion-input formControlName="proveedor" placeholder="Nombre del proveedor"></ion-input
+      ></ion-item>
+      <p class="form-label">Fecha de compra *</p>
+      <ion-item class="form-input" lines="none"><ion-input type="date" formControlName="fecha"></ion-input></ion-item>
+      <p class="form-label">Producto comprado *</p>
+      <ion-item class="form-input" lines="none"
+        ><ion-select formControlName="productoId" interface="popover"
+          ><ion-select-option value="nuevo">Crear producto nuevo</ion-select-option>@for (product of products; track
+          product.id) {
+          <ion-select-option [value]="'' + product.id">{{ product.nombre }} ({{ product.unidad }})</ion-select-option>
+          }</ion-select
+        ></ion-item
+      >
+      @if (form.controls.productoId.value === 'nuevo') {
+      <p class="form-label">Nombre del producto *</p>
+      <ion-item class="form-input" lines="none"
+        ><ion-input formControlName="nombre" placeholder="Ej. Concentrado bovino"></ion-input
+      ></ion-item>
+      <p class="form-label">Categoría *</p>
+      <ion-item class="form-input" lines="none"
+        ><ion-select formControlName="categoria" interface="popover"
+          ><ion-select-option value="MEDICAMENTOS">Medicamentos</ion-select-option
+          ><ion-select-option value="ALIMENTOS">Alimentos</ion-select-option
+          ><ion-select-option value="INSUMOS">Insumos</ion-select-option
+          ><ion-select-option value="OTROS">Otros</ion-select-option></ion-select
+        ></ion-item
+      >
+      <p class="form-label">Unidad *</p>
+      <ion-item class="form-input" lines="none"
+        ><ion-select formControlName="unidad" interface="popover"
+          ><ion-select-option value="UNIDAD">Unidad</ion-select-option
+          ><ion-select-option value="KG">Kilogramo</ion-select-option
+          ><ion-select-option value="LITRO">Litro</ion-select-option
+          ><ion-select-option value="DOSIS">Dosis</ion-select-option
+          ><ion-select-option value="BOLSA">Bolsa</ion-select-option></ion-select
+        ></ion-item
+      >
+      }
+      <div class="two-fields">
+        <div>
+          <p class="form-label">Cantidad *</p>
+          <ion-item class="form-input" lines="none"
+            ><ion-input
+              type="number"
+              min="0.001"
+              formControlName="cantidad"
+              inputmode="decimal"
+              placeholder="Ej. 5"
+            ></ion-input
+          ></ion-item>
+        </div>
+        <div>
+          <p class="form-label">Precio por unidad *</p>
+          <ion-item class="form-input" lines="none"
+            ><ion-input
+              type="number"
+              min="0"
+              formControlName="precioUnitario"
+              inputmode="decimal"
+              placeholder="COP"
+            ></ion-input
+          ></ion-item>
+        </div>
+      </div>
+      <p class="form-label">Foto de la factura *</p>
+      <label class="photo-pick" for="invoice-photo"
+        ><input id="invoice-photo" type="file" accept="image/*" (change)="onPhoto($event, 'invoice')" />{{ invoicePhoto
+        ? 'Cambiar foto de factura' : 'Tomar o elegir foto de factura' }}</label
+      >@if (invoicePhoto) { <img class="photo-preview" [src]="invoicePhoto" alt="Vista previa de la factura" /> }
+      <p class="form-label">Foto de lo comprado *</p>
+      <label class="photo-pick" for="product-photo"
+        ><input
+          id="product-photo"
+          type="file"
+          accept="image/*"
+          capture="environment"
+          (change)="onPhoto($event, 'product')"
+        />{{ productPhoto ? 'Cambiar foto del producto' : 'Tomar o elegir foto del producto' }}</label
+      >@if (productPhoto) {
+      <img class="photo-preview" [src]="productPhoto" alt="Vista previa del producto comprado" /> }
+      <p class="form-label">Observaciones</p>
+      <ion-item class="form-input" lines="none"
+        ><ion-input formControlName="observaciones" placeholder="Detalle opcional"></ion-input
+      ></ion-item>
+      @if (photoError) {
+      <p class="field-error" role="alert">{{ photoError }}</p>
+      }@if (errorMessage) {
+      <p class="request-error" role="alert">{{ errorMessage }}</p>
+      }
+      <ion-button class="submit-purchase" expand="block" type="submit" [disabled]="saving || !farmId"
+        >{{ saving ? 'Enviando…' : 'Enviar compra a revisión' }}</ion-button
+      >
+    </form>
+  </main>
+</ion-content>

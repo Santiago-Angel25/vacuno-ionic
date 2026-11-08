@@ -1,34 +1,52 @@
 import type { Routes } from '@angular/router';
 
+import { authGuard } from '../service/auth.guard';
+
 import { TabsPage } from './tabs.page';
 
 export const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
+    canActivate: [authGuard],
     children: [
       {
-        path: 'tab1',
+        path: 'inicio',
         loadComponent: () => import('../tab1/tab1.page').then((m) => m.Tab1Page),
       },
       {
-        path: 'tab2',
+        path: 'ganado',
         loadComponent: () => import('../tab2/tab2.page').then((m) => m.Tab2Page),
       },
       {
-        path: 'tab3',
+        path: 'inventario',
         loadComponent: () => import('../tab3/tab3.page').then((m) => m.Tab3Page),
       },
       {
+        path: 'actividad',
+        loadComponent: () => import('../actividad/actividad.page').then((m) => m.ActividadPage),
+      },
+      {
+        path: 'perfil',
+        loadComponent: () => import('../perfil/perfil.page').then((m) => m.PerfilPage),
+      },
+      {
+        path: 'compras/nueva',
+        loadComponent: () => import('../compra-form/compra-form.page').then((m) => m.CompraFormPage),
+      },
+      {
+        path: 'compras',
+        loadComponent: () => import('../compras/compras.page').then((m) => m.ComprasPage),
+      },
+      {
+        path: 'gastos',
+        loadComponent: () => import('../gastos/gastos.page').then((m) => m.GastosPage),
+      },
+      {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: 'inicio',
         pathMatch: 'full',
       },
     ],
-  },
-  {
-    path: '',
-    redirectTo: '/tabs/tab1',
-    pathMatch: 'full',
   },
 ];

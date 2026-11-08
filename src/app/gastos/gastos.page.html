@@ -1,0 +1,62 @@
+<ion-header
+  ><ion-toolbar
+    ><ion-buttons slot="start"
+      ><ion-button routerLink="/tabs/inicio" aria-label="Volver al inicio">‹</ion-button></ion-buttons
+    ><ion-title>Gastos de la finca</ion-title></ion-toolbar
+  ></ion-header
+>
+<ion-content [fullscreen]="true" class="expenses-content"
+  ><main class="expenses-page">
+    <p class="eyebrow">CONTROL FINANCIERO</p>
+    <h1>Gastos de la finca</h1>
+    @if (auth.currentUser?.rol !== 'PROPIETARIO') {
+    <section class="state-card">
+      <h2>Disponible para el propietario</h2>
+      <p>El resumen financiero de la finca es visible para el propietario.</p>
+    </section>
+    } @else if (loading) {
+    <section class="state-card">Cargando gastos…</section>
+    } @else if (errorMessage) {
+    <section class="state-card error">{{ errorMessage }}</section>
+    } @else {
+    <label class="month-select">Periodo <input type="month" [value]="month" (change)="monthChanged($event)" /></label>
+    <section class="total-card"><span>Total gastado</span><strong>{{ money(total) }}</strong></section>
+    <section class="distribution-card">
+      <h2>Distribución</h2>
+      @if (categories.length) {
+      <div class="chart-row">
+        <div class="donut" [style.background]="donut"><div class="donut-hole"></div></div>
+        <ul>
+          @for (category of categories; track category.name) {
+          <li>
+            <span class="legend-dot" [style.background]="category.color"></span><span>{{ category.name }}</span
+            ><strong>{{ category.percent | number:'1.0-0' }}%</strong>
+          </li>
+          }
+        </ul>
+      </div>
+      } @else {
+      <p class="muted">No hay gastos registrados en este periodo.</p>
+      }
+    </section>
+    <section class="latest-card">
+      <div class="section-heading">
+        <h2>Últimos gastos</h2>
+        <span>{{ monthExpenses.length }} registros</span>
+      </div>
+      @for (expense of monthExpenses; track expense.id) {
+      <article class="expense-row">
+        <div>
+          <strong>{{ expense.categoria }}</strong>
+          <p>{{ expense.descripcion }}</p>
+          <time>{{ expense.fecha }}</time>
+        </div>
+        <strong>{{ money(expense.monto) }}</strong>
+      </article>
+      } @if (!monthExpenses.length) {
+      <p class="muted">Todavía no hay gastos para este mes.</p>
+      }
+    </section>
+    }
+  </main></ion-content
+>

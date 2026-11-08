@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/inventario" text=""></ion-back-button></ion-buttons>
+    <ion-title>Agregar producto</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" class="product-form-content">
+  <main class="product-form-page">
+    <p class="eyebrow">NUEVO INSUMO</p>
+    <h1>Agregar al inventario</h1>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="form-label" for="product-name">Nombre del producto *</label>
+      <ion-item class="form-input" lines="none"><ion-input id="product-name" formControlName="nombre" placeholder="Ej. Vacuna bovina"></ion-input></ion-item>
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <p class="field-error">Escribe el nombre del producto.</p> }
+
+      <label class="form-label" for="category">Categoría *</label>
+      <ion-item class="form-input" lines="none">
+        <ion-select id="category" formControlName="categoria" placeholder="Seleccionar categoría" interface="popover">
+          <ion-select-option value="MEDICAMENTOS">Medicamentos</ion-select-option>
+          <ion-select-option value="ALIMENTOS">Alimentos</ion-select-option>
+          <ion-select-option value="INSUMOS">Insumos</ion-select-option>
+          <ion-select-option value="OTROS">Otros</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (form.controls.categoria.touched && form.controls.categoria.invalid) { <p class="field-error">Selecciona una categoría.</p> }
+
+      <label class="form-label" for="unit">Unidad de medida *</label>
+      <ion-item class="form-input" lines="none">
+        <ion-select id="unit" formControlName="unidad" placeholder="Seleccionar unidad" interface="popover">
+          <ion-select-option value="UNIDAD">Unidad</ion-select-option>
+          <ion-select-option value="KG">Kilogramo (kg)</ion-select-option>
+          <ion-select-option value="LITRO">Litro</ion-select-option>
+          <ion-select-option value="DOSIS">Dosis</ion-select-option>
+          <ion-select-option value="BOLSA">Bolsa</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (form.controls.unidad.touched && form.controls.unidad.invalid) { <p class="field-error">Selecciona una unidad.</p> }
+
+      <label class="form-label" for="minimum-stock">Stock mínimo para alerta</label>
+      <ion-item class="form-input" lines="none"><ion-input id="minimum-stock" formControlName="stockMinimo" type="number" min="0" inputmode="decimal" placeholder="0"></ion-input></ion-item>
+      @if (errorMessage) { <p class="request-error" role="alert">{{ errorMessage }}</p> }
+      <ion-button class="submit-product" expand="block" type="submit" [disabled]="saving || !farmId">
+        {{ saving ? 'Guardando...' : 'Guardar producto' }}
+      </ion-button>
+    </form>
+  </main>
+</ion-content>

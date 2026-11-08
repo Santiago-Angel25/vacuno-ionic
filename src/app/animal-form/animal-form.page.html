@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/ganado" text=""></ion-back-button></ion-buttons>
+    <ion-title>Agregar animal</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content [fullscreen]="true" class="animal-form-content">
+  <main class="animal-form-page">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="photo-picker" for="animal-photo">
+        @if (photoUrl) { <img [src]="photoUrl" alt="Vista previa de la fotografía del animal" /> }
+        @else { <span class="camera-icon" aria-hidden="true">📷</span><strong>Agregar fotografía</strong> }
+        <input id="animal-photo" type="file" accept="image/*" capture="environment" (change)="selectPhoto($event)" />
+      </label>
+
+      <label class="form-label" for="nombre">Nombre *</label>
+      <ion-item class="form-input" lines="none"><ion-input id="nombre" formControlName="nombre" placeholder="Ej. Luna"></ion-input></ion-item>
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) { <p class="field-error">El nombre es obligatorio.</p> }
+
+      <label class="form-label" for="sexo">Sexo *</label>
+      <ion-item class="form-input" lines="none">
+        <ion-select id="sexo" formControlName="sexo" placeholder="Seleccionar" interface="popover">
+          <ion-select-option value="HEMBRA">Hembra</ion-select-option>
+          <ion-select-option value="MACHO">Macho</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (form.controls.sexo.touched && form.controls.sexo.invalid) { <p class="field-error">Selecciona el sexo.</p> }
+
+      <label class="form-label" for="raza">Raza *</label>
+      <ion-item class="form-input" lines="none"><ion-input id="raza" formControlName="raza" placeholder="Ej. Brahman"></ion-input></ion-item>
+      @if (form.controls.raza.touched && form.controls.raza.invalid) { <p class="field-error">Escribe la raza.</p> }
+
+      <label class="form-label" for="fechaNacimiento">Fecha de nacimiento *</label>
+      <ion-item class="form-input" lines="none"><ion-input id="fechaNacimiento" formControlName="fechaNacimiento" type="date"></ion-input></ion-item>
+      @if (form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.invalid) { <p class="field-error">Selecciona la fecha de nacimiento.</p> }
+
+      <label class="form-label" for="pesoInicial">Peso inicial (kg) *</label>
+      <ion-item class="form-input" lines="none"><ion-input id="pesoInicial" formControlName="pesoInicial" type="number" inputmode="decimal" min="0.01" placeholder="Ej. 420"></ion-input></ion-item>
+      @if (form.controls.pesoInicial.touched && form.controls.pesoInicial.invalid) { <p class="field-error">Ingresa un peso mayor que cero.</p> }
+
+      <label class="form-label" for="estado">Estado de salud *</label>
+      <ion-item class="form-input" lines="none">
+        <ion-select id="estado" formControlName="estado" placeholder="Seleccionar estado" interface="popover">
+          <ion-select-option value="SALUDABLE">Saludable</ion-select-option>
+          <ion-select-option value="EN_ATENCION">En atención</ion-select-option>
+        </ion-select>
+      </ion-item>
+      @if (form.controls.estado.touched && form.controls.estado.invalid) { <p class="field-error">Selecciona el estado del animal.</p> }
+
+      <label class="form-label" for="observaciones">Observaciones</label>
+      <ion-item class="form-input" lines="none"><ion-input id="observaciones" formControlName="observaciones" placeholder="Escribe aquí..."></ion-input></ion-item>
+
+      @if (errorMessage) { <p class="request-error" role="alert">{{ errorMessage }}</p> }
+      <ion-button class="submit-animal" expand="block" type="submit" [disabled]="saving || !farmId">
+        {{ saving ? 'Guardando...' : 'Registrar animal' }}
+      </ion-button>
+    </form>
+  </main>
+</ion-content>

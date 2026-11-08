@@ -1,18 +1,29 @@
-import { Component, EnvironmentInjector, inject } from '@angular/core';
-import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular';
+import { Component, inject } from '@angular/core';
+import { IonAvatar, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { triangle, ellipse, square } from 'ionicons/icons';
+import {
+  calendarOutline,
+  homeOutline,
+  leafOutline,
+  pawOutline,
+  personOutline,
+} from 'ionicons/icons';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss'],
-  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel],
+  imports: [IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonAvatar],
 })
 export class TabsPage {
-  public environmentInjector = inject(EnvironmentInjector);
+  readonly auth = inject(AuthService);
 
   constructor() {
-    addIcons({ triangle, ellipse, square });
+    addIcons({ homeOutline, pawOutline, leafOutline, calendarOutline, personOutline });
+  }
+
+  get avatarInitial(): string {
+    return this.auth.currentUser?.nombres.charAt(0).toUpperCase() ?? 'V';
   }
 }

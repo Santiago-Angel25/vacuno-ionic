@@ -1,15 +1,104 @@
-<ion-header [translucent]="true">
+<ion-header class="home-header">
   <ion-toolbar>
-    <ion-title> Tab 1 </ion-title>
+    <div class="brand-mini" slot="start">
+      <span class="brand-symbol" aria-hidden="true">V</span>
+      <span>VACUNO</span>
+    </div>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" aria-label="Notificaciones">
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      <ion-button class="header-profile" fill="clear" routerLink="/tabs/perfil" aria-label="Abrir perfil">
+        <ion-avatar><span>{{ avatarInitial }}</span></ion-avatar>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 1</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <main class="dashboard-page">
+    <section class="welcome-block">
+      <p class="welcome-kicker">{{ farmName || 'TU FINCA' }}</p>
+      <h1>Buenos días, {{ firstName }} <span aria-hidden="true">👋</span></h1>
+      <p>Aquí tienes el resumen de tu finca.</p>
+    </section>
 
-  <app-explore-container name="Tab 1 page"></app-explore-container>
+    @if (loading) {
+    <div class="loading-card" role="status">Cargando el resumen de tu finca…</div>
+    } @else if (errorMessage) {
+    <div class="message-card error-card" role="alert">
+      <p>{{ errorMessage }}</p>
+      <ion-button size="small" fill="outline" (click)="loadDashboard()">Reintentar</ion-button>
+    </div>
+    } @else if (!hasFarm) {
+    <div class="message-card">
+      <div class="message-icon"><ion-icon name="paw-outline"></ion-icon></div>
+      <h2>Registra tu primera finca</h2>
+      <p>Cuando tengas una finca asociada a tu cuenta, aquí aparecerá su resumen.</p>
+    </div>
+    } @else if (dashboard) {
+    <section class="metric-grid" aria-label="Resumen de la finca">
+      <article class="metric-card animals-card">
+        <span class="metric-icon"><ion-icon name="paw-outline"></ion-icon></span>
+        <span class="metric-value">{{ dashboard.ganado.total }}</span>
+        <span class="metric-label">Animales</span>
+      </article>
+      <article class="metric-card health-card">
+        <span class="metric-icon"><ion-icon name="alert-circle-outline"></ion-icon></span>
+        <span class="metric-value">{{ dashboard.ganado.enAtencion }}</span>
+        <span class="metric-label">En atención</span>
+      </article>
+      <article class="metric-card control-card">
+        <span class="metric-icon"><ion-icon name="time-outline"></ion-icon></span>
+        <span class="metric-value">{{ dashboard.proximosControles.length }}</span>
+        <span class="metric-label">Próximos controles</span>
+      </article>
+      <article class="metric-card stock-card">
+        <span class="metric-icon"><ion-icon name="leaf-outline"></ion-icon></span>
+        <span class="metric-value">{{ dashboard.inventario.stockBajo }}</span>
+        <span class="metric-label">Insumos por reponer</span>
+      </article>
+    </section>
+
+    <section class="alerts-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">A TENER EN CUENTA</p>
+          <h2>Alertas importantes</h2>
+        </div>
+        <span class="alert-count">{{ dashboard.necesidades.abiertas }} abiertas</span>
+      </div>
+
+      @if (dashboard.proximosControles.length) {
+      <div class="alert-list">
+        @for (control of dashboard.proximosControles.slice(0, 3); track $index) {
+        <article class="alert-item">
+          <span class="alert-symbol"><ion-icon name="time-outline"></ion-icon></span>
+          <div>
+            <strong>{{ control.tipo }}</strong>
+            <p>{{ control.descripcion }}</p>
+          </div>
+          <time>{{ control.proximoControl }}</time>
+        </article>
+        }
+      </div>
+      } @else {
+      <div class="empty-alerts">
+        <span>✓</span>
+        <p>Todo al día. No tienes controles próximos.</p>
+      </div>
+      }
+    </section>
+
+    <section class="summary-card">
+      <div class="summary-copy">
+        <p class="section-kicker">ESTE MES</p>
+        <h2>Gastos de la finca</h2>
+        <strong>{{ formatMoney(dashboard.finanzas.totalMes) }}</strong>
+        <a class="summary-link" routerLink="/tabs/gastos">Ver detalle de gastos</a>
+      </div>
+      <div class="summary-mark" aria-hidden="true">$</div>
+    </section>
+    }
+  </main>
 </ion-content>

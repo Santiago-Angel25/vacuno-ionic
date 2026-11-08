@@ -1,0 +1,10 @@
+.product-form-content { --background: #f7f8f5; }
+.product-form-page { width: min(100%, 620px); margin: 0 auto; padding: 24px 18px 35px; }
+.product-form-page h1 { margin: 0 0 22px; color: #20372a; font-size: 24px; font-weight: 850; }
+.eyebrow { margin: 0 0 6px; color: #6b8a6e; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.form-label { display: block; margin: 15px 0 6px; color: #303e33; font-size: 12px; font-weight: 700; }
+.form-input { min-height: 46px; --background: #fff; --border-radius: 11px; --padding-start: 12px; border: 1px solid #e1e6df; border-radius: 11px; }
+.form-input ion-select { width: 100%; min-height: 44px; --placeholder-color: #89928b; font-size: 13px; }
+.field-error { margin: 5px 2px 0; color: #b42318; font-size: 11px; }
+.request-error { margin: 12px 0; padding: 10px 12px; border-radius: 10px; background: #fff1ef; color: #a23e35; font-size: 12px; }
+.submit-product { height: 48px; margin-top: 24px; --background: #26743b; --border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: none; }

@@ -1,15 +1,62 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title> Tab 3 </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+<ion-header
+  ><ion-toolbar><ion-title>Inventario</ion-title></ion-toolbar></ion-header
+>
+<ion-content [fullscreen]="true" class="module-content">
+  <main class="inventory-page">
+    <p class="eyebrow">INSUMOS Y EXISTENCIAS</p>
+    <h1>Inventario</h1>
+    <ion-item class="search-field" lines="none">
+      <ion-icon name="search-outline" slot="start" aria-hidden="true"></ion-icon>
+      <ion-input
+        aria-label="Buscar producto"
+        placeholder="Buscar producto..."
+        [value]="search"
+        (ionInput)="onSearch($event)"
+      ></ion-input>
+    </ion-item>
+    <div class="filter-row" role="group" aria-label="Filtrar inventario">
+      <button [class.active]="filter === 'TODOS'" (click)="setFilter('TODOS')">Todos</button>
+      <button [class.active]="filter === 'MEDICAMENTOS'" (click)="setFilter('MEDICAMENTOS')">Medicamentos</button>
+      <button [class.active]="filter === 'ALIMENTOS'" (click)="setFilter('ALIMENTOS')">Alimentos</button>
+      <button [class.active]="filter === 'INSUMOS'" (click)="setFilter('INSUMOS')">Insumos</button>
+    </div>
+    @if (loading) {
+    <div class="state-card"><ion-spinner name="crescent"></ion-spinner><span>Cargando inventario...</span></div>
+    } @else if (errorMessage) {
+    <div class="state-card error-state" role="alert">{{ errorMessage }}</div>
+    } @else if (!visibleProducts.length) {
+    <div class="state-card">
+      <div class="product-mark"><ion-icon name="leaf-outline"></ion-icon></div>
+      <h2>{{ search ? 'No encontramos productos' : 'Inventario vacío' }}</h2>
+      <p>{{ search ? 'Prueba con otro nombre o categoría.' : 'Los productos de tu finca aparecerán aquí.' }}</p>
+    </div>
+    } @else {
+    <section class="product-list" aria-label="Productos del inventario">
+      @for (product of visibleProducts; track product.id) {
+      <article class="product-card">
+        @if (product.fotoUrl) {
+        <img class="product-mark product-photo" [src]="product.fotoUrl" [alt]="'Foto de ' + product.nombre" />
+        } @else {
+        <div class="product-mark"><ion-icon name="leaf-outline"></ion-icon></div>
+        }
+        <div class="product-info">
+          <span class="category-label">{{ product.categoria }}</span>
+          <h2>{{ product.nombre }}</h2>
+          <p>Stock: {{ product.stockActual }} {{ product.unidad }}</p>
+        </div>
+        <span class="stock-badge" [class.low-stock]="product.stockActual <= product.stockMinimo"
+          >{{ product.stockActual <= product.stockMinimo ? 'Stock bajo' : 'Disponible' }}</span
+        >
+      </article>
+      }
+    </section>
+    }
+  </main>
+  @if (farmId) {
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="add-product-fab">
+    <ion-fab-button routerLink="/tabs/compras" aria-label="Registrar o revisar compras"
+      ><ion-icon name="add"></ion-icon
+    ></ion-fab-button>
+  </ion-fab>
+  }
 </ion-content>

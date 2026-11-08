@@ -1,0 +1,8 @@
+@use '../login/login.page';
+
+.register-shell { justify-content: flex-start; padding-top: max(22px, env(safe-area-inset-top)); padding-bottom: 30px; }
+.register-shell .login-card { max-height: none; overflow: visible; }
+.register-shell .field-label { display: block; margin-top: 12px; }
+.register-shell .login-button { margin-top: 16px; }
+.terms-row { margin-top: 16px; color: #506452; font-size: 12px; }
+.terms-row ion-checkbox { --checkbox-background-checked: #26743b; --border-color-checked: #26743b; }
