@@ -21,6 +21,10 @@ export const routes: Routes = [
     loadComponent: () => import('./registro/registro.page').then((m) => m.RegistroPage),
   },
   {
+    path: 'activar-trabajador',
+    loadComponent: () => import('./activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
+  },
+  {
     path: 'animal/nuevo',
     canActivate: [authGuard],
     loadComponent: () => import('./animal-form/animal-form.page').then((m) => m.AnimalFormPage),

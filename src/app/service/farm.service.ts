@@ -29,6 +29,7 @@ export interface Animal {
   raza: string;
   fechaNacimiento: string;
   pesoInicial: number;
+  pesoActual: number | null;
   fotoUrl: string;
   observaciones: string;
   estado: string;
@@ -104,6 +105,80 @@ export interface FarmExpense {
   fecha: string;
 }
 
+export interface FarmActivity {
+  id: number;
+  tipo: string;
+  descripcion: string;
+  realizadaEn: string;
+  animalId: number | null;
+  realizadaPorId: number;
+  realizadaPorNombre?: string;
+  productoId?: number | null;
+  productoNombre?: string | null;
+  cantidadPorDosis?: number | null;
+  numeroDosis?: number | null;
+  fotoUrl?: string | null;
+}
+
+export interface ActivityRequest {
+  fincaId: number;
+  animalId?: number;
+  productoId?: number;
+  cantidadPorDosis?: number;
+  numeroDosis?: number;
+  tipo: string;
+  descripcion: string;
+  fotoUrl?: string | null;
+}
+
+export interface FarmTask {
+  id: number;
+  titulo: string;
+  descripcion: string | null;
+  fechaLimite: string | null;
+  prioridad: string;
+  estado: string;
+}
+
+export interface WorkerRequest {
+  fincaId: number;
+  nombres: string;
+  apellidos: string;
+  email: string;
+  telefono: string;
+  fechaNacimiento?: string;
+  fotoUrl?: string;
+}
+
+export interface WorkerInvite {
+  trabajadorId: number;
+  email: string;
+  codigo: string;
+  venceEn: string;
+}
+
+export interface WorkerSummary {
+  id: number;
+  nombres: string;
+  apellidos: string;
+  email: string;
+  telefono: string | null;
+  activo: boolean;
+  actividadesMes: number;
+  ultimaActividad: string | null;
+  fechaUltimaActividad: string | null;
+  fechaNacimiento: string | null;
+  fotoUrl: string | null;
+}
+
+export interface AnimalHistoryItem {
+  id: number;
+  tipoRegistro: string;
+  tipo: string;
+  descripcion: string;
+  fecha: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FarmService {
   private readonly http = inject(HttpClient);
@@ -127,6 +202,50 @@ export class FarmService {
 
   createAnimal(animal: AnimalRequest): Observable<Animal> {
     return this.http.post<Animal>(`${this.apiUrl}/animales`, animal);
+  }
+
+  animal(farmId: number, animalId: number): Observable<Animal> {
+    return this.http.get<Animal>(`${this.apiUrl}/animales/${animalId}`, { params: { fincaId: farmId } });
+  }
+
+  animalHistory(farmId: number, animalId: number): Observable<AnimalHistoryItem[]> {
+    return this.http.get<AnimalHistoryItem[]>(`${this.apiUrl}/animales/${animalId}/historial`, {
+      params: { fincaId: farmId },
+    });
+  }
+
+  updateAnimalFollowUp(farmId: number, animalId: number, pesoActual: number, estado: string): Observable<Animal> {
+    return this.http.put<Animal>(
+      `${this.apiUrl}/animales/${animalId}/seguimiento`,
+      { pesoActual, estado },
+      { params: { fincaId: farmId } },
+    );
+  }
+
+  activities(farmId: number): Observable<FarmActivity[]> {
+    return this.http.get<FarmActivity[]>(`${this.apiUrl}/actividades`, { params: { fincaId: farmId } });
+  }
+
+  createActivity(activity: ActivityRequest): Observable<FarmActivity> {
+    return this.http.post<FarmActivity>(`${this.apiUrl}/actividades`, activity);
+  }
+
+  myTasks(farmId: number): Observable<FarmTask[]> {
+    return this.http.get<FarmTask[]>(`${this.apiUrl}/tareas/mias`, { params: { fincaId: farmId } });
+  }
+
+  workers(farmId: number): Observable<WorkerSummary[]> {
+    return this.http.get<WorkerSummary[]>(`${this.apiUrl}/trabajadores`, { params: { fincaId: farmId } });
+  }
+
+  inviteWorker(worker: WorkerRequest): Observable<WorkerInvite> {
+    return this.http.post<WorkerInvite>(`${this.apiUrl}/trabajadores`, worker);
+  }
+
+  workerActivities(farmId: number, workerId: number): Observable<FarmActivity[]> {
+    return this.http.get<FarmActivity[]>(`${this.apiUrl}/trabajadores/${workerId}/actividades`, {
+      params: { fincaId: farmId },
+    });
   }
 
   inventory(farmId: number): Observable<InventoryProduct[]> {

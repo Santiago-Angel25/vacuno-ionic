@@ -25,6 +25,9 @@
       @if (form.controls.categoria.touched && form.controls.categoria.invalid) { <p class="field-error">Selecciona una categoría.</p> }
 
       <label class="form-label" for="unit">Unidad de medida *</label>
+      @if (form.controls.categoria.value === 'ALIMENTOS') {
+      <ion-item class="form-input" lines="none"><ion-input value="BULTO" readonly></ion-input></ion-item>
+      } @else {
       <ion-item class="form-input" lines="none">
         <ion-select id="unit" formControlName="unidad" placeholder="Seleccionar unidad" interface="popover">
           <ion-select-option value="UNIDAD">Unidad</ion-select-option>
@@ -34,6 +37,7 @@
           <ion-select-option value="BOLSA">Bolsa</ion-select-option>
         </ion-select>
       </ion-item>
+      }
       @if (form.controls.unidad.touched && form.controls.unidad.invalid) { <p class="field-error">Selecciona una unidad.</p> }
 
       <label class="form-label" for="minimum-stock">Stock mínimo para alerta</label>

@@ -1,16 +1,67 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Actividad</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-header
+  ><ion-toolbar><ion-title>Actividad</ion-title></ion-toolbar></ion-header
+>
 <ion-content [fullscreen]="true" class="module-content">
-  <main class="module-page">
+  <main class="activities-page">
     <p class="eyebrow">TRABAJO DIARIO</p>
-    <h1>Actividad</h1>
-    <section class="module-card">
-      <div class="cow-mark" aria-hidden="true">📋</div>
-      <h2>Organiza el día en tu finca</h2>
-      <p>Pronto podrás ver tareas, registrar actividades y reportar necesidades desde aquí.</p>
+    <h1>{{ auth.currentUser?.rol === 'PROPIETARIO' ? 'Actividad de la finca' : 'Mis actividades' }}</h1>
+    <p class="intro">
+      {{ auth.currentUser?.rol === 'PROPIETARIO' ? 'Consulta el trabajo registrado por el equipo.' : 'Aquí puedes
+      consultar las actividades que has registrado.' }}
+    </p>
+    @if (loading) {
+    <div class="state-card"><ion-spinner name="crescent"></ion-spinner><span>Cargando actividades…</span></div>
+    } @else if (errorMessage) {
+    <div class="state-card error-state" role="alert">{{ errorMessage }}</div>
+    } @else if (!activities.length) {
+    <div class="state-card">
+      <div class="activity-mark">✓</div>
+      <h2>Aún no hay actividades</h2>
+      <p>Registra la primera actividad de tu jornada.</p>
+    </div>
+    } @else {
+    <section class="activity-list" aria-label="Actividades registradas">
+      @for (activity of activities; track activity.id) {
+      <article class="activity-card">
+        <div class="activity-mark">{{ activity.tipo.charAt(0) }}</div>
+        <div class="activity-info">
+          <span class="activity-type">{{ activity.tipo.replace('_', ' ') }}</span>
+          <h2>{{ activityDescription(activity) }}</h2>
+          <p>{{ date(activity.realizadaEn) }}</p>
+          @if (auth.currentUser?.rol === 'PROPIETARIO') {
+          <small>Registrada por {{ activity.realizadaPorNombre || 'usuario #' + activity.realizadaPorId }}</small> }
+          @if (activity.productoNombre) {
+          @if (activity.tipo === 'ALIMENTACION') {
+          <small>{{ activity.productoNombre }} · {{ activityQuantity(activity) }} bultos</small>
+          } @else {
+          <small>Inventario: {{ activity.productoNombre }} · {{ activity.cantidadPorDosis }} × {{ activity.numeroDosis }} dosis</small>
+          }
+          }
+        </div>
+        @if (activity.fotoUrl) { <img class="activity-photo" [src]="activity.fotoUrl" alt="Foto de la actividad" /> }
+      </article>
+      }
     </section>
+    }
   </main>
+  @if (farmId) {
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="activity-fab">
+    <ion-fab-button aria-label="Acciones"><ion-icon name="add"></ion-icon></ion-fab-button>
+    @if (auth.currentUser?.rol === 'PROPIETARIO') {
+    <ion-fab-list side="top">
+      <ion-fab-button routerLink="/tabs/trabajadores" aria-label="Crear trabajador" title="Crear trabajador"
+        ><ion-icon name="person-add-outline"></ion-icon
+      ></ion-fab-button>
+      <ion-fab-button routerLink="/tabs/actividad/nueva" aria-label="Registrar actividad" title="Registrar actividad"
+        ><ion-icon name="create-outline"></ion-icon
+      ></ion-fab-button>
+    </ion-fab-list>
+    } @else {
+    <ion-fab-list side="top"
+      ><ion-fab-button routerLink="/tabs/actividad/nueva" aria-label="Registrar actividad" title="Registrar actividad"
+        ><ion-icon name="create-outline"></ion-icon></ion-fab-button
+    ></ion-fab-list>
+    }
+  </ion-fab>
+  }
 </ion-content>

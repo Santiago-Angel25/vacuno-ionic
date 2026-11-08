@@ -1,0 +1,38 @@
+<ion-header
+  ><ion-toolbar
+    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/trabajadores" text=""></ion-back-button></ion-buttons
+    ><ion-title>Actividad del trabajador</ion-title></ion-toolbar
+  ></ion-header
+>
+<ion-content [fullscreen]="true" class="worker-detail-content"
+  ><main class="worker-detail-page">
+    @if (loading) {
+    <div class="state-card">Cargando…</div>
+    } @else if (errorMessage) {
+    <div class="state-card error-state" role="alert">{{ errorMessage }}</div>
+    } @else if (worker) {
+    <section class="worker-summary">
+      @if (worker.fotoUrl) { <img class="worker-avatar worker-avatar-photo" [src]="worker.fotoUrl" alt="" /> } @else {
+      <span class="worker-avatar">{{ worker.nombres.charAt(0) }}{{ worker.apellidos.charAt(0) }}</span> }
+      <div>
+        <h1>{{ worker.nombres }} {{ worker.apellidos }}</h1>
+        <p>{{ worker.email }}</p>
+        <span class="active-badge">{{ worker.activo ? 'Activo' : 'Inactivo' }}</span>
+      </div>
+    </section>
+    <p class="eyebrow">{{ worker.actividadesMes }} ACTIVIDADES ESTE MES</p>
+    <h2 class="section-title">Actividad reciente</h2>
+    @if (!activities.length) {
+    <div class="state-card">Este trabajador aún no registra actividades.</div>
+    } @for (activity of activities; track activity.id) {
+    <article class="activity-card">
+      <span class="activity-icon">{{ activity.tipo.charAt(0) }}</span>
+      <div>
+        <strong>{{ activity.tipo.replace('_', ' ') }}</strong>
+        <p>{{ activity.descripcion }}</p>
+        <time>{{ date(activity.realizadaEn) }}</time>
+      </div>
+    </article>
+    } }
+  </main></ion-content
+>

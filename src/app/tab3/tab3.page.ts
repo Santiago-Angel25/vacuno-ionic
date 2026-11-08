@@ -88,5 +88,10 @@ export class Tab3Page {
   }
 
   setFilter(filter: InventoryFilter): void { this.filter = filter; }
+  displayStock(product: InventoryProduct): number {
+    return product.categoria.toUpperCase() === 'ALIMENTOS'
+      ? Math.floor(product.stockActual)
+      : product.stockActual;
+  }
   onSearch(event: CustomEvent<{ value?: string | null }>): void { this.search = event.detail.value ?? ''; }
 }

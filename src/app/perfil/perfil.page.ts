@@ -3,9 +3,11 @@ import { Router } from '@angular/router';
 import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonToolbar } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { logOutOutline, personOutline } from 'ionicons/icons';
-import { finalize } from 'rxjs';
+import { finalize, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
+import { FarmService } from '../service/farm.service';
+import type { FarmActivity } from '../service/farm.service';
 
 @Component({
   selector: 'app-perfil',
@@ -16,9 +18,11 @@ import { AuthService } from '../service/auth.service';
 export class PerfilPage {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly farms = inject(FarmService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   loading = false;
   errorMessage = '';
+  activities: FarmActivity[] = [];
 
   constructor() {
     addIcons({ logOutOutline, personOutline });
@@ -27,15 +31,26 @@ export class PerfilPage {
   ionViewWillEnter(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.auth.getProfile().pipe(finalize(() => {
-      this.loading = false;
-      this.changeDetector.markForCheck();
-    })).subscribe({
-      error: () => {
-        this.errorMessage = 'No fue posible actualizar los datos del perfil.';
-        this.changeDetector.markForCheck();
-      },
-    });
+    this.auth
+      .getProfile()
+      .pipe(
+        switchMap((profile) => {
+          if (profile.rol !== 'TRABAJADOR') return of([] as FarmActivity[]);
+          return this.farms
+            .myFarms()
+            .pipe(switchMap((farms) => (farms[0] ? this.farms.activities(farms[0].id) : of([] as FarmActivity[]))));
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.changeDetector.markForCheck();
+        }),
+      )
+      .subscribe({
+        error: () => {
+          this.errorMessage = 'No fue posible actualizar los datos del perfil.';
+          this.changeDetector.markForCheck();
+        },
+      });
   }
 
   get initials(): string {
@@ -46,5 +61,9 @@ export class PerfilPage {
   logout(): void {
     this.auth.logout();
     void this.router.navigateByUrl('/login', { replaceUrl: true });
+  }
+
+  activityDate(value: string): string {
+    return new Date(value).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
   }
 }

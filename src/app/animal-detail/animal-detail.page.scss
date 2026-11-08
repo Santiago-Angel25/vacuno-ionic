@@ -1,0 +1,164 @@
+.animal-detail-content {
+  --background: #f5f7f3;
+}
+.animal-detail-page {
+  width: min(100%, 700px);
+  margin: auto;
+  padding: 16px 17px 100px;
+}
+.hero-photo,
+.hero-placeholder {
+  display: grid;
+  width: 100%;
+  height: 190px;
+  place-items: center;
+  border-radius: 17px;
+  background: #e9f0e5;
+  object-fit: cover;
+  font-size: 50px;
+}
+.animal-title-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 13px 2px;
+}
+.animal-id {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 14px;
+  background: #26743b;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+}
+.animal-title-row h1 {
+  margin: 6px 0 3px;
+  color: #26392d;
+  font-size: 23px;
+  font-weight: 850;
+}
+.animal-title-row p {
+  margin: 0;
+  color: #788279;
+  font-size: 11px;
+}
+.health-badge {
+  padding: 6px 9px;
+  border-radius: 15px;
+  background: #e7f3e2;
+  color: #347647;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.health-badge.attention {
+  background: #fff0dc;
+  color: #9d6512;
+}
+.info-card,
+.follow-up-card,
+.history-section,
+.state-card {
+  margin-top: 10px;
+  padding: 15px;
+  border: 1px solid #e4eae2;
+  border-radius: 15px;
+  background: white;
+}
+.info-card h2,
+.follow-up-card h2,
+.history-section h2 {
+  margin: 0 0 10px;
+  color: #2c3e31;
+  font-size: 15px;
+}
+.info-card p {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  margin: 0;
+  border-bottom: 1px solid #f0f2ee;
+  color: #778178;
+  font-size: 11px;
+}
+.info-card p:last-child {
+  border: 0;
+}
+.info-card strong {
+  max-width: 55%;
+  color: #344639;
+  text-align: right;
+}
+.follow-up-card > p,
+.muted {
+  margin: -5px 0 10px;
+  color: #7c867e;
+  font-size: 11px;
+}
+.follow-up-card form {
+  display: grid;
+  gap: 7px;
+}
+.follow-up-card label {
+  margin-top: 5px;
+  color: #425146;
+  font-size: 11px;
+  font-weight: 700;
+}
+.follow-up-card ion-item {
+  min-height: 43px;
+  --background: #f8faf7;
+  --border-radius: 10px;
+  border: 1px solid #e4e9e2;
+  border-radius: 10px;
+}
+.follow-up-card ion-button {
+  margin-top: 10px;
+  --background: #26743b;
+  --border-radius: 10px;
+  text-transform: none;
+}
+.history-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid #eef1ec;
+}
+.history-mark {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  border-radius: 50%;
+  background: #edf5e9;
+  color: #357547;
+}
+.history-item strong {
+  color: #334437;
+  font-size: 11px;
+}
+.history-item p {
+  margin: 3px 0;
+  color: #69756c;
+  font-size: 11px;
+}
+.history-item time {
+  color: #909990;
+  font-size: 9px;
+}
+.state-card {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 25px;
+  color: #778279;
+  text-align: center;
+}
+.error-state,
+.form-error {
+  color: #a23e35;
+}

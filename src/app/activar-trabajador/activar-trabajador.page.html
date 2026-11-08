@@ -1,0 +1,45 @@
+<ion-header
+  ><ion-toolbar><ion-title>Activar cuenta</ion-title></ion-toolbar></ion-header
+>
+<ion-content [fullscreen]="true" class="activate-content"
+  ><main class="activate-page">
+    <p class="eyebrow">ACCESO DE TRABAJADOR</p>
+    <h1>Activa tu cuenta</h1>
+    <p class="help">Pega el código que te entregó el propietario y crea tu contraseña.</p>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="invite-code">Código de invitación *</label
+      ><ion-item lines="none"
+        ><ion-input
+          id="invite-code"
+          formControlName="codigo"
+          autocapitalize="characters"
+          placeholder="Pega aquí tu código"
+        ></ion-input
+      ></ion-item>
+      <label for="worker-password">Nueva contraseña *</label
+      ><ion-item lines="none"
+        ><ion-input
+          id="worker-password"
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo 8 caracteres"
+        ></ion-input
+      ></ion-item>
+      <label for="worker-password-confirm">Confirmar contraseña *</label
+      ><ion-item lines="none"
+        ><ion-input
+          id="worker-password-confirm"
+          type="password"
+          formControlName="confirmar"
+          placeholder="Repite la contraseña"
+        ></ion-input
+      ></ion-item>
+      @if (errorMessage) {
+      <p class="form-error" role="alert">{{ errorMessage }}</p>
+      }
+      <ion-button expand="block" type="submit" [disabled]="saving"
+        >{{ saving ? 'Activando…' : 'Activar y entrar' }}</ion-button
+      >
+    </form>
+  </main></ion-content
+>

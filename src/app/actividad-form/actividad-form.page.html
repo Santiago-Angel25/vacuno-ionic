@@ -1,0 +1,92 @@
+<ion-header
+  ><ion-toolbar
+    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/actividad" text=""></ion-back-button></ion-buttons
+    ><ion-title>Registrar actividad</ion-title></ion-toolbar
+  ></ion-header
+>
+<ion-content [fullscreen]="true" class="activity-form-content"
+  ><main class="activity-form-page">
+    <p class="eyebrow">JORNADA DE LA FINCA</p>
+    <h1>¿Qué actividad realizaste?</h1>
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="form-label" for="activity-type">Tipo de actividad *</label
+      ><ion-item class="form-input" lines="none"
+        ><ion-select id="activity-type" formControlName="tipo" interface="popover"
+          ><ion-select-option value="VACUNACION">Vacunación</ion-select-option
+          ><ion-select-option value="ALIMENTACION">Alimentación</ion-select-option
+          ><ion-select-option value="MEDICAMENTO">Medicamento</ion-select-option
+          ><ion-select-option value="PESAJE">Pesaje</ion-select-option
+          ><ion-select-option value="REVISION">Revisión</ion-select-option
+          ><ion-select-option value="REPRODUCCION">Reproducción</ion-select-option
+          ><ion-select-option value="INSUMO">Insumo</ion-select-option
+          ><ion-select-option value="OTRO">Otro</ion-select-option></ion-select
+        ></ion-item
+      >
+      <label class="form-label" for="animal">Animal relacionado {{ requiresAnimal ? '*' : '(opcional)' }}</label
+      ><ion-item class="form-input" lines="none"
+        ><ion-select id="animal" formControlName="animalId" placeholder="Sin animal específico" interface="popover"
+          >@if (!requiresAnimal) { <ion-select-option value="">Ninguno</ion-select-option> }@for (animal of animals; track animal.id) {
+          <ion-select-option [value]="'' + animal.id"
+            >{{ animal.identificador }} · {{ animal.nombre || 'Sin nombre' }}</ion-select-option
+          >
+          }</ion-select
+        ></ion-item
+      >
+      @if (requiresAnimal && !form.controls.animalId.value) { <p class="field-error">Selecciona el animal vacunado.</p> }
+      @if (consumesInventory) {
+      <section class="inventory-use">
+        <p class="form-label">Consumo de inventario</p>
+        <label class="form-label" for="activity-product">Producto · {{ productCategory.toLowerCase() }} *</label>
+        <ion-item class="form-input" lines="none">
+          <ion-select id="activity-product" formControlName="productoId" placeholder="Seleccionar producto" interface="popover">
+            @for (product of filteredProducts; track product.id) {
+            <ion-select-option [value]="'' + product.id">{{ product.nombre }} · {{ displayStock(product) }} {{ product.unidad }}</ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+        @if (!filteredProducts.length) { <p class="field-error">No hay productos de esta categoría en inventario. Registra una compra antes de esta actividad.</p> }
+        <div class="dose-fields">
+          <div>
+            <label class="form-label" for="dose-quantity">{{ quantityLabel }} *</label>
+            <ion-item class="form-input" lines="none"><ion-input id="dose-quantity" formControlName="cantidadPorDosis" type="number" min="1" [max]="form.controls.tipo.value === 'ALIMENTACION' ? wholeUnitsAvailable : selectedProduct?.stockActual" step="1" inputmode="numeric" (ionInput)="onIntegerInput($event)" placeholder="Ej. 1"></ion-input></ion-item>
+          </div>
+          @if (showDoseCount) {
+          <div>
+            <label class="form-label" for="dose-count">Número de dosis / animales *</label>
+            <ion-item class="form-input" lines="none"><ion-input id="dose-count" formControlName="numeroDosis" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 5"></ion-input></ion-item>
+          </div>
+          }
+        </div>
+        @if (selectedProduct) {
+        <p class="field-hint">Disponibles: {{ displayStock(selectedProduct) }} {{ selectedProduct.unidad }}. Se descontará la cantidad registrada.</p>
+        } @else {
+        <p class="field-hint">Selecciona un producto para consultar las existencias.</p>
+        }
+      </section>
+      }
+      <label class="form-label" for="activity-description">Descripción *</label
+      ><ion-item class="form-input description-input" lines="none"
+        ><ion-input
+          id="activity-description"
+          formControlName="descripcion"
+          placeholder="Describe el trabajo realizado"
+        ></ion-input
+      ></ion-item>
+      @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
+      <p class="field-error">Escribe una descripción.</p>
+      } @if (errorMessage) {
+      <p class="request-error" role="alert">{{ errorMessage }}</p>
+      }
+      <label class="form-label" for="activity-photo">Foto de la actividad *</label>
+      <label class="photo-picker" for="activity-photo">
+        @if (photoUrl) { <img [src]="photoUrl" alt="Foto de la actividad" /> }
+        <span>{{ photoUrl ? 'Cambiar foto' : 'Tomar o seleccionar foto' }}</span>
+        <input id="activity-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" (change)="onPhoto($event)" />
+      </label>
+      @if (photoError) { <p class="field-error" role="alert">{{ photoError }}</p> }
+      <ion-button class="submit-activity" expand="block" type="submit" [disabled]="saving || !farmId"
+        >{{ saving ? 'Guardando…' : 'Registrar actividad' }}</ion-button
+      >
+    </form>
+  </main></ion-content
+>

@@ -36,6 +36,38 @@
       <h2>Registra tu primera finca</h2>
       <p>Cuando tengas una finca asociada a tu cuenta, aquí aparecerá su resumen.</p>
     </div>
+    } @else if (auth.currentUser?.rol === 'TRABAJADOR') {
+    <section class="worker-home-section">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">TU JORNADA</p>
+          <h2>Mis tareas</h2>
+        </div>
+        <span class="alert-count">{{ workerTasks.length }} pendientes</span>
+      </div>
+      @if (workerTasks.length) {
+      <div class="worker-task-list">
+        @for (task of workerTasks; track task.id) {
+        <article class="worker-task">
+          <span class="task-mark">✓</span>
+          <div>
+            <strong>{{ task.titulo }}</strong>
+            <p>{{ task.descripcion || task.fechaLimite || 'Pendiente' }}</p>
+          </div>
+          <span class="task-status">{{ task.estado }}</span>
+        </article>
+        }
+      </div>
+      } @else {
+      <div class="empty-alerts">
+        <span>✓</span>
+        <p>No tienes tareas pendientes. ¡Buen trabajo!</p>
+      </div>
+      }
+      <ion-button class="worker-activity-button" expand="block" routerLink="/tabs/actividad/nueva"
+        >Registrar actividad</ion-button
+      >
+    </section>
     } @else if (dashboard) {
     <section class="metric-grid" aria-label="Resumen de la finca">
       <article class="metric-card animals-card">

@@ -40,6 +40,9 @@
         ></ion-item
       >
       <p class="form-label">Unidad *</p>
+      @if (form.controls.categoria.value === 'ALIMENTOS') {
+      <ion-item class="form-input" lines="none"><ion-input value="BULTO" readonly></ion-input></ion-item>
+      } @else {
       <ion-item class="form-input" lines="none"
         ><ion-select formControlName="unidad" interface="popover"
           ><ion-select-option value="UNIDAD">Unidad</ion-select-option
@@ -50,14 +53,18 @@
         ></ion-item
       >
       }
+      }
       <div class="two-fields">
         <div>
           <p class="form-label">Cantidad *</p>
           <ion-item class="form-input" lines="none"
             ><ion-input
               type="number"
-              min="0.001"
+              [min]="alimentacion ? 1 : 0.001"
+              [step]="alimentacion ? 1 : 'any'"
+              [inputmode]="alimentacion ? 'numeric' : 'decimal'"
               formControlName="cantidad"
+              (ionInput)="onQuantityInput($event)"
               inputmode="decimal"
               placeholder="Ej. 5"
             ></ion-input

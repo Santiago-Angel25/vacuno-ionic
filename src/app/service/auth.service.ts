@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import type { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
@@ -31,6 +31,11 @@ export interface RegisterRequest {
   password: string;
   finca: { nombre: string; direccion?: string };
   aceptaTerminos: boolean;
+}
+
+export interface WorkerActivationResponse {
+  email: string;
+  message: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -73,10 +78,14 @@ export class AuthService {
       .pipe(tap((response) => this.saveSession(response)));
   }
 
+  activateWorker(codigo: string, password: string): Observable<LoginResponse> {
+    return this.http
+      .post<WorkerActivationResponse>(`${this.apiUrl}/auth/activar-trabajador`, { codigo, password })
+      .pipe(switchMap(({ email }) => this.login(email, password)));
+  }
+
   getProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).pipe(
-      tap((profile) => (this.currentUser = profile)),
-    );
+    return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).pipe(tap((profile) => (this.currentUser = profile)));
   }
 
   logout(): void {

@@ -1,1 +1,98 @@
 @use '../module-page';
+.activities-page {
+  width: min(100%, 700px);
+  margin: auto;
+  padding: 22px 17px 100px;
+}
+.activities-page h1 {
+  margin: 0 0 6px;
+  color: #20372a;
+  font-size: 24px;
+  font-weight: 850;
+}
+.intro {
+  margin: 0 0 17px;
+  color: #778079;
+  font-size: 12px;
+}
+.activity-list {
+  display: grid;
+  gap: 10px;
+}
+.activity-card,
+.state-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e5eae3;
+  border-radius: 15px;
+  background: #fff;
+}
+.activity-mark {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  place-items: center;
+  border-radius: 12px;
+  background: #eaf4e6;
+  color: #26743b;
+  font-size: 17px;
+  font-weight: 800;
+}
+.activity-info {
+  min-width: 0;
+  flex: 1;
+}
+.activity-photo {
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  border: 1px solid #e5eae3;
+  border-radius: 10px;
+  object-fit: cover;
+}
+.activity-type {
+  color: #68866c;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.activity-info h2 {
+  margin: 3px 0;
+  color: #2a3c2f;
+  font-size: 13px;
+}
+.activity-info p,
+.activity-info small {
+  margin: 2px 0 0;
+  color: #7d877e;
+  font-size: 10px;
+}
+.state-card {
+  min-height: 150px;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  color: #78827a;
+}
+.state-card h2 {
+  margin: 0;
+  color: #293b2e;
+  font-size: 16px;
+}
+.state-card p {
+  margin: 0;
+  font-size: 12px;
+}
+.error-state {
+  color: #a23e35;
+}
+.activity-fab {
+  margin: 0 8px 14px;
+}
+.activity-fab ion-fab-button {
+  --background: #26743b;
+  --color: #fff;
+}

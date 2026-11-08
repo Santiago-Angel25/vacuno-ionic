@@ -1,21 +1,13 @@
-import type { OnInit} from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import {
-  IonAvatar,
-  IonButton,
-  IonButtons,
-  IonContent,
-  IonHeader,
-  IonIcon,
-  IonToolbar,
-} from '@ionic/angular';
+import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { alertCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline } from 'ionicons/icons';
-import { finalize, of, switchMap } from 'rxjs';
+import { finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
-import type { DashboardResponse} from '../service/farm.service';
+import type { DashboardResponse, FarmTask } from '../service/farm.service';
 import { FarmService } from '../service/farm.service';
 
 @Component({
@@ -31,6 +23,7 @@ export class Tab1Page implements OnInit {
 
   farmName = '';
   dashboard: DashboardResponse | null = null;
+  workerTasks: FarmTask[] = [];
   loading = true;
   errorMessage = '';
   hasFarm = true;
@@ -74,6 +67,14 @@ export class Tab1Page implements OnInit {
           }
           this.hasFarm = true;
           this.farmName = farm.nombre;
+          if (this.auth.currentUser?.rol === 'TRABAJADOR') {
+            return this.farms.myTasks(farm.id).pipe(
+              tap((tasks) => {
+                this.workerTasks = tasks;
+              }),
+              map(() => null),
+            );
+          }
           return this.farms.dashboard(farm.id);
         }),
         finalize(() => {

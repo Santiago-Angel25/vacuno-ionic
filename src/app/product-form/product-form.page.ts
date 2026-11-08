@@ -28,6 +28,10 @@ export class ProductFormPage {
   errorMessage = '';
 
   constructor() {
+    this.form.controls.categoria.valueChanges.subscribe((category) => {
+      this.form.controls.unidad.setValue(category === 'ALIMENTOS' ? 'BULTO' : 'UNIDAD');
+      this.changeDetector.markForCheck();
+    });
     this.farms.myFarms().subscribe({
       next: (farms) => {
         this.farmId = farms[0]?.id ?? null;
@@ -47,6 +51,10 @@ export class ProductFormPage {
       return;
     }
     const value = this.form.getRawValue();
+    if (value.categoria === 'ALIMENTOS' && !Number.isInteger(Number(value.stockMinimo))) {
+      this.errorMessage = 'El stock mínimo debe ser un número entero de bultos.';
+      return;
+    }
     this.saving = true;
     this.errorMessage = '';
     this.farms.createProduct({

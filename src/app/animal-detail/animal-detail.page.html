@@ -1,0 +1,81 @@
+<ion-header
+  ><ion-toolbar
+    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/ganado" text=""></ion-back-button></ion-buttons
+    ><ion-title>Ficha del animal</ion-title></ion-toolbar
+  ></ion-header
+>
+<ion-content [fullscreen]="true" class="animal-detail-content"
+  ><main class="animal-detail-page">
+    @if (loading) {
+    <div class="state-card"><ion-spinner name="crescent"></ion-spinner>Cargando ficha…</div>
+    } @else if (errorMessage && !animal) {
+    <div class="state-card error-state" role="alert">
+      {{ errorMessage }}<ion-button fill="outline" (click)="load()">Reintentar</ion-button>
+    </div>
+    } @else if (animal) { @if (animal.fotoUrl) {
+    <img class="hero-photo" [src]="animal.fotoUrl" [alt]="'Foto de ' + animal.nombre" /> } @else {
+    <div class="hero-placeholder">🐄</div>
+    }
+    <div class="animal-title-row">
+      <div>
+        <span class="animal-id">#{{ idLabel() }}</span>
+        <h1>{{ animal.nombre || 'Sin nombre' }}</h1>
+        <p>{{ animal.sexo }} · {{ animal.raza }} · {{ animal.fechaNacimiento || 'Nacimiento no registrado' }}</p>
+      </div>
+      <span class="health-badge" [class.attention]="animal.estado === 'EN_ATENCION'"
+        >{{ animal.estado === 'EN_ATENCION' ? 'En atención' : 'Saludable' }}</span
+      >
+    </div>
+    <section class="info-card">
+      <h2>Información</h2>
+      <p><span>Peso actual</span><strong>{{ animal.pesoActual || animal.pesoInicial || '—' }} kg</strong></p>
+      <p><span>Identificador</span><strong>{{ animal.identificador }}</strong></p>
+      <p><span>Observaciones</span><strong>{{ animal.observaciones || '—' }}</strong></p>
+    </section>
+    @if (canUpdateFollowUp) { <section class="follow-up-card">
+      <h2>Actualizar seguimiento</h2>
+      <p>El cambio quedará guardado en el historial del animal.</p>
+      <form [formGroup]="form" (ngSubmit)="saveFollowUp()">
+        <label for="current-weight">Peso actual (kg)</label
+        ><ion-item lines="none"
+          ><ion-input
+            id="current-weight"
+            formControlName="pesoActual"
+            type="number"
+            min="0.01"
+            inputmode="decimal"
+          ></ion-input
+        ></ion-item>
+        <label for="health-state">Estado</label
+        ><ion-item lines="none"
+          ><ion-select id="health-state" formControlName="estado" interface="popover"
+            ><ion-select-option value="SALUDABLE">Saludable</ion-select-option
+            ><ion-select-option value="EN_ATENCION">En atención</ion-select-option></ion-select
+          ></ion-item
+        >
+        @if (errorMessage) {
+        <p class="form-error" role="alert">{{ errorMessage }}</p>
+        }
+        <ion-button expand="block" type="submit" [disabled]="saving"
+          >{{ saving ? 'Guardando…' : 'Guardar seguimiento' }}</ion-button
+        >
+      </form>
+    </section> } @else { <section class="follow-up-card"><h2>Seguimiento cerrado</h2><p>Este animal está marcado como {{ animal.estado }}.</p></section> }
+    <section class="history-section">
+      <h2>Historial reciente</h2>
+      @if (!history.length) {
+      <p class="muted">Todavía no hay registros para este animal.</p>
+      } @for (item of history; track item.tipoRegistro + '-' + item.id) {
+      <article class="history-item">
+        <span class="history-mark">{{ item.tipoRegistro === 'SALUD' ? '♥' : '✓' }}</span>
+        <div>
+          <strong>{{ item.tipo.replace('_', ' ') }}</strong>
+          <p>{{ item.descripcion }}</p>
+          <time>{{ date(item.fecha) }}</time>
+        </div>
+      </article>
+      }
+    </section>
+    }
+  </main></ion-content
+>

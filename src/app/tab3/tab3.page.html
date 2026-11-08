@@ -42,10 +42,10 @@
         <div class="product-info">
           <span class="category-label">{{ product.categoria }}</span>
           <h2>{{ product.nombre }}</h2>
-          <p>Stock: {{ product.stockActual }} {{ product.unidad }}</p>
+          <p>Stock: {{ displayStock(product) }} {{ product.unidad }}</p>
         </div>
-        <span class="stock-badge" [class.low-stock]="product.stockActual <= product.stockMinimo"
-          >{{ product.stockActual <= product.stockMinimo ? 'Stock bajo' : 'Disponible' }}</span
+        <span class="stock-badge" [class.low-stock]="displayStock(product) <= product.stockMinimo"
+          >{{ displayStock(product) <= product.stockMinimo ? 'Stock bajo' : 'Disponible' }}</span
         >
       </article>
       }

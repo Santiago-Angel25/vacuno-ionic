@@ -1,0 +1,88 @@
+<ion-header
+  ><ion-toolbar><ion-title>Trabajadores</ion-title></ion-toolbar></ion-header
+>
+<ion-content [fullscreen]="true" class="workers-content"
+  ><main class="workers-page">
+    <p class="eyebrow">EQUIPO DE LA FINCA</p>
+    <h1>Crear trabajador</h1>
+    @if (auth.currentUser?.rol !== 'PROPIETARIO') {
+    <section class="state-card error-state">Esta sección es exclusiva del propietario de la finca.</section>
+    } @else {
+    <form class="worker-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="worker-names">Nombres *</label
+      ><ion-item lines="none"
+        ><ion-input id="worker-names" formControlName="nombres" placeholder="Nombres"></ion-input
+      ></ion-item>
+      <label for="worker-surnames">Apellidos *</label
+      ><ion-item lines="none"
+        ><ion-input id="worker-surnames" formControlName="apellidos" placeholder="Apellidos"></ion-input
+      ></ion-item>
+      <label for="worker-email">Correo electrónico *</label
+      ><ion-item lines="none"
+        ><ion-input id="worker-email" type="email" formControlName="email" placeholder="persona@correo.com"></ion-input
+      ></ion-item>
+      <label for="worker-phone">Teléfono</label
+      ><ion-item lines="none"
+        ><ion-input id="worker-phone" type="tel" formControlName="telefono" placeholder="Número de contacto"></ion-input
+      ></ion-item>
+      <label for="worker-birthdate">Fecha de nacimiento</label
+      ><ion-item lines="none"
+        ><ion-input id="worker-birthdate" type="date" formControlName="fechaNacimiento"></ion-input
+      ></ion-item>
+      <label class="photo-upload" for="worker-photo"
+        >{{ photoUrl ? 'Cambiar foto de perfil' : 'Agregar foto de perfil' }}</label
+      >
+      <input
+        class="worker-photo-input"
+        id="worker-photo"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="onPhoto($event)"
+      />
+      @if (photoUrl) { <img class="worker-photo-preview" [src]="photoUrl" alt="Vista previa de foto de perfil" /> } @if
+      (photoError) {
+      <p class="request-error" role="alert">{{ photoError }}</p>
+      } @if (errorMessage) {
+      <p class="request-error" role="alert">{{ errorMessage }}</p>
+      }
+      <ion-button expand="block" type="submit" [disabled]="saving || !farmId"
+        ><ion-icon slot="start" name="person-add-outline"></ion-icon>{{ saving ? 'Creando…' : 'Crear trabajador'
+        }}</ion-button
+      >
+    </form>
+    @if (invite) {
+    <section class="invite-card">
+      <p class="eyebrow">CUENTA CREADA · ENTREGA ESTE CÓDIGO AL TRABAJADOR</p>
+      <div class="invite-code">{{ invite.codigo }}</div>
+      <p>{{ invite.email }}</p>
+      <p>Vence: {{ invite.venceEn | date:'short' }}</p>
+      <ion-button fill="outline" size="small" (click)="copyCode()">Copiar código</ion-button>
+    </section>
+    }
+    <section class="worker-list-section">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">EQUIPO</p>
+          <h2>Trabajadores activos</h2>
+        </div>
+        @if (loading) { <ion-spinner name="crescent"></ion-spinner> }
+      </div>
+      @if (errorMessage && !workers.length) {
+      <p class="request-error">{{ errorMessage }}</p>
+      } @else if (!workers.length && !loading) {
+      <div class="state-card">Aún no hay trabajadores activos.</div>
+      } @else { @for (worker of workers; track worker.id) {
+      <a class="worker-card" [routerLink]="['/tabs/trabajadores', worker.id]"
+        >@if (worker.fotoUrl) { <img class="worker-avatar worker-avatar-photo" [src]="worker.fotoUrl" alt="" /> } @else
+        { <span class="worker-avatar">{{ worker.nombres.charAt(0) }}{{ worker.apellidos.charAt(0) }}</span> } ><span
+          class="worker-info"
+          ><strong>{{ worker.nombres }} {{ worker.apellidos }}</strong
+          ><small>{{ worker.actividadesMes }} actividades este mes</small
+          ><small>Última: {{ worker.ultimaActividad || 'Sin actividad' }}</small></span
+        ><span class="active-badge">Activo</span></a
+      >
+      } }
+    </section>
+    }
+  </main></ion-content
+>

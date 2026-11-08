@@ -8,7 +8,9 @@
   <main class="login-shell">
     <a class="brand" routerLink="/login" aria-label="VACUNO inicio">
       <svg viewBox="0 0 120 120" aria-hidden="true">
-        <path d="M28 34 12 18l3 28c-6 8-9 18-9 29 0 24 23 39 54 39s54-15 54-39c0-11-3-21-9-29l3-28-16 16c-9-5-20-8-32-8s-23 3-32 8Z" />
+        <path
+          d="M28 34 12 18l3 28c-6 8-9 18-9 29 0 24 23 39 54 39s54-15 54-39c0-11-3-21-9-29l3-28-16 16c-9-5-20-8-32-8s-23 3-32 8Z"
+        />
         <path class="eyes" d="M42 61v1m36-1v1" />
         <ellipse class="muzzle" cx="60" cy="87" rx="22" ry="14" />
         <circle class="nostril" cx="52" cy="86" r="2" />
@@ -36,7 +38,7 @@
           ></ion-input>
         </ion-item>
         @if (form.controls.email.touched && form.controls.email.invalid) {
-          <p class="field-error">Ingresa un correo válido.</p>
+        <p class="field-error">Ingresa un correo válido.</p>
         }
 
         <label class="field-label password-label" for="password">Contraseña</label>
@@ -59,23 +61,22 @@
           </button>
         </ion-item>
         @if (form.controls.password.touched && form.controls.password.invalid) {
-          <p class="field-error">Ingresa tu contraseña.</p>
-        }
-
-        @if (errorMessage) {
-          <p class="request-error" role="alert">{{ errorMessage }}</p>
+        <p class="field-error">Ingresa tu contraseña.</p>
+        } @if (errorMessage) {
+        <p class="request-error" role="alert">{{ errorMessage }}</p>
         }
 
         <ion-button class="login-button" expand="block" type="submit" [disabled]="loading">
           @if (loading) {
-            <ion-spinner name="crescent"></ion-spinner>
-          } @else {
-            Ingresar
-          }
+          <ion-spinner name="crescent"></ion-spinner>
+          } @else { Ingresar }
         </ion-button>
       </form>
 
       <p class="login-footnote">Gestión ganadera inteligente</p>
+      <p class="login-footnote">
+        ¿Eres trabajador? <a routerLink="/activar-trabajador">Activa tu cuenta con un código</a>
+      </p>
       <p class="login-footnote">¿Aún no tienes cuenta? <a routerLink="/registro">Crear cuenta</a></p>
     </section>
   </main>

@@ -50,7 +50,7 @@ export class CompraFormPage {
     productoId: ['nuevo', Validators.required],
     nombre: [''],
     categoria: ['ALIMENTOS'],
-    unidad: ['KG'],
+    unidad: ['BULTO'],
     cantidad: ['', [Validators.required, Validators.min(0.001)]],
     precioUnitario: ['', [Validators.required, Validators.min(0)]],
   });
@@ -60,9 +60,18 @@ export class CompraFormPage {
   productPhoto = '';
   photoError = '';
   errorMessage = '';
+  invalidIntegerQuantity = false;
   saving = false;
 
   constructor() {
+    this.form.controls.categoria.valueChanges.subscribe((category) => {
+      this.form.controls.unidad.setValue(category === 'ALIMENTOS' ? 'BULTO' : 'UNIDAD');
+      this.cdr.markForCheck();
+    });
+    this.form.controls.cantidad.valueChanges.subscribe(() => {
+      this.invalidIntegerQuantity = false;
+      this.errorMessage = '';
+    });
     this.farms
       .myFarms()
       .pipe(
@@ -81,6 +90,29 @@ export class CompraFormPage {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  get alimentacion(): boolean {
+    if (this.form.controls.productoId.value === 'nuevo')
+      return this.form.controls.categoria.value === 'ALIMENTOS';
+    return this.products.find((product) => String(product.id) === this.form.controls.productoId.value)
+      ?.categoria.toUpperCase() === 'ALIMENTOS';
+  }
+
+  onQuantityInput(event: CustomEvent<{ value?: string | null }>): void {
+    if (!this.alimentacion) return;
+    const raw = event.detail.value ?? '';
+    const integerPart = raw.replace(/[.,].*$/, '').replace(/\D/g, '');
+    if (raw !== integerPart) {
+      this.invalidIntegerQuantity = true;
+      this.form.controls.cantidad.setValue(integerPart, { emitEvent: false });
+      this.errorMessage = 'La cantidad de alimento solo permite bultos enteros.';
+      this.cdr.markForCheck();
+    } else {
+      this.invalidIntegerQuantity = false;
+      if (this.errorMessage === 'La cantidad de alimento solo permite bultos enteros.')
+        this.errorMessage = '';
+    }
   }
 
   private localDate(): string {
@@ -119,6 +151,7 @@ export class CompraFormPage {
   }
 
   submit(): void {
+    if (this.invalidIntegerQuantity) return;
     if (!this.farmId || this.form.invalid || this.saving) {
       this.form.markAllAsTouched();
       return;
@@ -128,6 +161,10 @@ export class CompraFormPage {
       return;
     }
     const value = this.form.getRawValue();
+    if (this.alimentacion && !Number.isInteger(Number(value.cantidad))) {
+      this.errorMessage = 'La cantidad de alimento debe ser un número entero de bultos.';
+      return;
+    }
     const productId = Number(value.productoId);
     if (Number.isNaN(productId) && (!value.nombre.trim() || !value.categoria || !value.unidad)) {
       this.errorMessage = 'Completa nombre, categoría y unidad del producto nuevo.';

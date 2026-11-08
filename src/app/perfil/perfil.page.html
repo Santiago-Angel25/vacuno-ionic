@@ -9,21 +9,58 @@
   <main class="module-page profile-page">
     <p class="eyebrow">TU CUENTA</p>
     <h1>Mi perfil</h1>
-    @if (loading) { <p class="profile-loading">Actualizando perfil…</p> }
-    @if (errorMessage) { <p class="profile-error" role="alert">{{ errorMessage }}</p> }
+    @if (loading) {
+    <p class="profile-loading">Actualizando perfil…</p>
+    } @if (errorMessage) {
+    <p class="profile-error" role="alert">{{ errorMessage }}</p>
+    }
     <section class="profile-card">
       <ion-avatar class="profile-avatar">
-        @if (auth.currentUser?.fotoUrl) { <img [src]="auth.currentUser.fotoUrl" alt="Foto de perfil" /> }
-        @else { <span>{{ initials }}</span> }
+        @if (auth.currentUser?.fotoUrl) { <img [src]="auth.currentUser.fotoUrl" alt="Foto de perfil" /> } @else {
+        <span>{{ initials }}</span> }
       </ion-avatar>
       <h2>{{ auth.currentUser?.nombres }} {{ auth.currentUser?.apellidos }}</h2>
       <dl class="profile-details">
-        <div><dt>ID de usuario</dt><dd>{{ auth.currentUser?.id }}</dd></div>
-        <div><dt>Correo electrónico</dt><dd>{{ auth.currentUser?.email }}</dd></div>
-        <div><dt>Teléfono</dt><dd>{{ auth.currentUser?.telefono || 'No registrado' }}</dd></div>
-        <div><dt>Rol</dt><dd><span class="role-badge"><ion-icon name="person-outline"></ion-icon>{{ auth.currentUser?.rol }}</span></dd></div>
+        <div>
+          <dt>ID de usuario</dt>
+          <dd>{{ auth.currentUser?.id }}</dd>
+        </div>
+        <div>
+          <dt>Correo electrónico</dt>
+          <dd>{{ auth.currentUser?.email }}</dd>
+        </div>
+        <div>
+          <dt>Teléfono</dt>
+          <dd>{{ auth.currentUser?.telefono || 'No registrado' }}</dd>
+        </div>
+        <div>
+          <dt>Rol</dt>
+          <dd>
+            <span class="role-badge"><ion-icon name="person-outline"></ion-icon>{{ auth.currentUser?.rol }}</span>
+          </dd>
+        </div>
       </dl>
     </section>
+    @if (auth.currentUser?.rol === 'TRABAJADOR') {
+    <section class="profile-activity">
+      <div>
+        <p class="eyebrow">MI JORNADA</p>
+        <h2>Lo que he hecho</h2>
+      </div>
+      @if (!activities.length && !loading) {
+      <p class="empty-activity">Aún no tienes actividades registradas.</p>
+      } @for (activity of activities.slice(0, 10); track activity.id) {
+      <article>
+        <span>{{ activity.tipo.charAt(0) }}</span>
+        <div>
+          <strong>{{ activity.tipo.replace('_', ' ') }}</strong>
+          <p>{{ activity.descripcion }}</p>
+          <time>{{ activityDate(activity.realizadaEn) }}</time>
+        </div>
+      </article>
+      }
+    </section>
+    }
     <ion-button class="logout-button" expand="block" fill="outline" (click)="logout()">
       <ion-icon slot="start" name="log-out-outline"></ion-icon>
       Cerrar sesión
