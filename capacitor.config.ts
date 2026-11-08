@@ -1,9 +1,13 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'vacuno',
-  webDir: 'www'
+  appId: 'com.example.vacuno',
+  appName: 'Vacuno',
+  webDir: 'www-android',
+  server: {
+    androidScheme: 'http',
+    cleartext: true,
+  },
 };
 
 export default config;

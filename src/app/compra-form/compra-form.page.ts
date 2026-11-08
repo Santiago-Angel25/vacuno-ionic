@@ -14,10 +14,10 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular';
-import { finalize, of, switchMap } from 'rxjs';
+import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
 import { FarmService } from '../service/farm.service';
-import type { InventoryProduct } from '../service/farm.service';
+import type { InventoryProduct, Purchase } from '../service/farm.service';
 
 @Component({
   selector: 'app-compra-form',
@@ -56,6 +56,7 @@ export class CompraFormPage {
   });
   farmId: number | null = null;
   products: InventoryProduct[] = [];
+  previousPurchases: Purchase[] = [];
   invoicePhoto = '';
   productPhoto = '';
   photoError = '';
@@ -72,17 +73,28 @@ export class CompraFormPage {
       this.invalidIntegerQuantity = false;
       this.errorMessage = '';
     });
+    this.form.controls.productoId.valueChanges.subscribe((productId) => {
+      this.applyProductDefaults(productId);
+    });
     this.farms
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId ? this.farms.inventory(this.farmId) : of([] as InventoryProduct[]);
+          return this.farmId
+            ? forkJoin({
+                products: this.farms.inventory(this.farmId),
+                purchases: this.farms.purchases(this.farmId),
+              })
+            : of({ products: [] as InventoryProduct[], purchases: [] as Purchase[] });
         }),
       )
       .subscribe({
-        next: (items) => {
-          this.products = items;
+        next: ({ products, purchases }) => {
+          this.products = products;
+          this.previousPurchases = purchases;
+          if (this.form.controls.productoId.value !== 'nuevo')
+            this.applyProductDefaults(this.form.controls.productoId.value);
           this.cdr.markForCheck();
         },
         error: () => {
@@ -97,6 +109,50 @@ export class CompraFormPage {
       return this.form.controls.categoria.value === 'ALIMENTOS';
     return this.products.find((product) => String(product.id) === this.form.controls.productoId.value)
       ?.categoria.toUpperCase() === 'ALIMENTOS';
+  }
+
+  get selectedProduct(): InventoryProduct | undefined {
+    return this.products.find((product) => String(product.id) === this.form.controls.productoId.value);
+  }
+
+  get requiresProductPhoto(): boolean {
+    return !this.selectedProduct?.fotoUrl;
+  }
+
+  private applyProductDefaults(productId: string): void {
+    const product = this.products.find((item) => String(item.id) === productId);
+    if (!product) {
+      this.form.patchValue({
+        nombre: '',
+        categoria: 'ALIMENTOS',
+        unidad: 'BULTO',
+        proveedor: '',
+        cantidad: '',
+        precioUnitario: '',
+        observaciones: '',
+      });
+      this.productPhoto = '';
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const containsProduct = (purchase: Purchase) =>
+      purchase.productos.some((item) => item.productoId === product.id);
+    const previous = this.previousPurchases
+      .filter(containsProduct)
+      .sort((first, second) => second.fecha.localeCompare(first.fecha) || second.id - first.id)[0];
+    const previousLine = previous?.productos.find((item) => item.productoId === product.id);
+    this.form.patchValue({
+      nombre: product.nombre,
+      categoria: product.categoria,
+      unidad: product.unidad,
+      proveedor: previous?.proveedor ?? '',
+      cantidad: previousLine ? String(previousLine.cantidad) : '',
+      precioUnitario: previousLine ? String(previousLine.precioUnitario) : '',
+      observaciones: previous?.observaciones ?? '',
+    });
+    this.productPhoto = product.fotoUrl ?? '';
+    this.cdr.markForCheck();
   }
 
   onQuantityInput(event: CustomEvent<{ value?: string | null }>): void {
@@ -156,8 +212,10 @@ export class CompraFormPage {
       this.form.markAllAsTouched();
       return;
     }
-    if (!this.invoicePhoto || !this.productPhoto) {
-      this.photoError = 'Adjunta la foto de la factura y del producto.';
+    if (!this.invoicePhoto || (this.requiresProductPhoto && !this.productPhoto)) {
+      this.photoError = this.requiresProductPhoto
+        ? 'Adjunta la foto de la factura y del producto.'
+        : 'Adjunta la foto de la factura.';
       return;
     }
     const value = this.form.getRawValue();

@@ -55,6 +55,9 @@
             <p>{{ task.descripcion || task.fechaLimite || 'Pendiente' }}</p>
           </div>
           <span class="task-status">{{ task.estado }}</span>
+          <ion-button size="small" [routerLink]="['/tabs/actividad/nueva']" [queryParams]="{ taskId: task.id }">
+            Registrar actividad
+          </ion-button>
         </article>
         }
       </div>
@@ -64,9 +67,6 @@
         <p>No tienes tareas pendientes. ¡Buen trabajo!</p>
       </div>
       }
-      <ion-button class="worker-activity-button" expand="block" routerLink="/tabs/actividad/nueva"
-        >Registrar actividad</ion-button
-      >
     </section>
     } @else if (dashboard) {
     <section class="metric-grid" aria-label="Resumen de la finca">

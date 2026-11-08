@@ -13,6 +13,10 @@
   font-weight: 800;
   letter-spacing: 0.1em;
 }
+.form-hint { margin: -14px 0 16px; color: #778079; font-size: 12px; }
+.task-summary { margin-bottom: 18px; padding: 16px; border: 1px solid #e1e9dd; border-radius: 14px; background: #fff; }
+.task-summary h2 { margin: 4px 0 8px; color: #20372a; font-size: 17px; }
+.task-summary > p:last-child { margin: 0; color: #68766c; font-size: 13px; }
 h1 {
   margin: 0 0 22px;
   color: #20372a;

@@ -16,6 +16,21 @@
     <p class="eyebrow">TRAZABILIDAD DE INSUMOS</p>
     <h1>Compras de la finca</h1>
     <p class="intro">Cada compra aprobada suma existencias al inventario y registra el gasto.</p>
+    @if (purchases.length) {
+    <section class="purchase-filters" aria-label="Filtrar compras por fecha">
+      <ion-item lines="none" class="filter-item">
+        <ion-select label="Rango" interface="popover" [value]="daysFilter" (ionChange)="onDaysFilter($event)">
+          <ion-select-option value="ALL">Todas las fechas</ion-select-option>
+          <ion-select-option value="7">Últimos 7 días</ion-select-option>
+          <ion-select-option value="30">Últimos 30 días</ion-select-option>
+          <ion-select-option value="90">Últimos 90 días</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item lines="none" class="filter-item month-item">
+        <ion-input type="month" label="Mes" [value]="monthFilter" (ionInput)="onMonthFilter($event)"></ion-input>
+      </ion-item>
+    </section>
+    }
     @if (errorMessage) {
     <p class="request-error" role="alert">{{ errorMessage }}</p>
     } @if (loading) {
@@ -27,9 +42,11 @@
       <p>Registra una compra y adjunta la factura y el producto.</p>
       <ion-button routerLink="/tabs/compras/nueva">Registrar compra</ion-button>
     </div>
+    } @else if (!filteredPurchases.length) {
+    <div class="state-card empty"><h2>Sin compras en este periodo</h2><p>Prueba con otro rango de días o selecciona otro mes.</p></div>
     } @else {
     <section aria-label="Compras registradas" class="purchase-list">
-      @for (purchase of purchases; track purchase.id) {
+      @for (purchase of filteredPurchases; track purchase.id) {
       <article class="purchase-card">
         <div class="card-heading">
           <div>

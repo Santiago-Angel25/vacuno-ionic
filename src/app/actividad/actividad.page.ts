@@ -13,11 +13,11 @@ import {
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add, createOutline, personAddOutline } from 'ionicons/icons';
-import { finalize, of, switchMap } from 'rxjs';
+import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import { FarmService } from '../service/farm.service';
-import type { FarmActivity } from '../service/farm.service';
+import type { FarmActivity, FarmTask } from '../service/farm.service';
 
 @Component({
   selector: 'app-actividad',
@@ -42,6 +42,7 @@ export class ActividadPage {
   readonly auth = inject(AuthService);
   farmId: number | null = null;
   activities: FarmActivity[] = [];
+  tasks: FarmTask[] = [];
   loading = true;
   errorMessage = '';
 
@@ -56,7 +57,13 @@ export class ActividadPage {
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId ? this.farms.activities(this.farmId) : of([] as FarmActivity[]);
+          if (!this.farmId) return of({ activities: [], tasks: [] } as { activities: FarmActivity[]; tasks: FarmTask[] });
+          return forkJoin({
+            activities: this.farms.activities(this.farmId),
+            tasks: this.auth.currentUser?.rol === 'PROPIETARIO'
+              ? this.farms.tasks(this.farmId)
+              : this.farms.myTasks(this.farmId),
+          });
         }),
         finalize(() => {
           this.loading = false;
@@ -64,8 +71,9 @@ export class ActividadPage {
         }),
       )
       .subscribe({
-        next: (items) => {
-          this.activities = items;
+        next: ({ activities, tasks }) => {
+          this.activities = activities;
+          this.tasks = tasks.filter((task) => task.estado === 'PENDIENTE');
           this.cdr.markForCheck();
         },
         error: () => {
@@ -73,6 +81,10 @@ export class ActividadPage {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  get hasContent(): boolean {
+    return this.activities.length > 0 || this.tasks.length > 0;
   }
 
   date(value: string): string {

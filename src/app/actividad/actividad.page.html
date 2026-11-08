@@ -13,13 +13,31 @@
     <div class="state-card"><ion-spinner name="crescent"></ion-spinner><span>Cargando actividades…</span></div>
     } @else if (errorMessage) {
     <div class="state-card error-state" role="alert">{{ errorMessage }}</div>
-    } @else if (!activities.length) {
+    } @else if (!hasContent) {
     <div class="state-card">
       <div class="activity-mark">✓</div>
       <h2>Aún no hay actividades</h2>
       <p>Registra la primera actividad de tu jornada.</p>
     </div>
     } @else {
+    @if (tasks.length) {
+    <section class="pending-section" aria-label="Actividades pendientes">
+      <div class="pending-heading"><h2>Actividades pendientes</h2><span>{{ tasks.length }}</span></div>
+      @for (task of tasks; track task.id) {
+      <article class="pending-card">
+        <div class="activity-mark">!</div>
+        <div class="activity-info">
+          <span class="activity-type">{{ task.titulo }}</span>
+          <h2>{{ task.descripcion || 'Actividad asignada por el propietario' }}</h2>
+          @if (task.fechaLimite) { <p>Fecha límite: {{ task.fechaLimite }}</p> }
+          @if (auth.currentUser?.rol === 'PROPIETARIO' && task.asignadaAId) { <small>Asignada al trabajador #{{ task.asignadaAId }}</small> }
+        </div>
+        <span class="task-pending-label">Pendiente</span>
+      </article>
+      }
+    </section>
+    }
+    @if (activities.length) {
     <section class="activity-list" aria-label="Actividades registradas">
       @for (activity of activities; track activity.id) {
       <article class="activity-card">
@@ -42,6 +60,7 @@
       </article>
       }
     </section>
+    }
     }
   </main>
   @if (farmId) {

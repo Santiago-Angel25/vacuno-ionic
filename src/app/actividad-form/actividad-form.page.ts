@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonBackButton,
   IonButton,
@@ -14,10 +14,11 @@ import {
   IonTitle,
   IonToolbar,
 } from '@ionic/angular';
-import { finalize, forkJoin, of, switchMap } from 'rxjs';
+import { finalize, forkJoin, map, of, switchMap } from 'rxjs';
 
+import { AuthService } from '../service/auth.service';
 import { FarmService } from '../service/farm.service';
-import type { Animal, InventoryProduct } from '../service/farm.service';
+import type { Animal, FarmTask, InventoryProduct, WorkerSummary } from '../service/farm.service';
 
 @Component({
   selector: 'app-actividad-form',
@@ -41,6 +42,8 @@ import type { Animal, InventoryProduct } from '../service/farm.service';
 export class ActividadFormPage {
   private readonly fb = inject(FormBuilder);
   private readonly farms = inject(FarmService);
+  readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly form = this.fb.nonNullable.group({
@@ -50,17 +53,45 @@ export class ActividadFormPage {
     cantidadPorDosis: ['', [Validators.min(0.001)]],
     numeroDosis: ['1', [Validators.min(1)]],
     descripcion: ['', [Validators.required, Validators.maxLength(1000)]],
+    asignadaA: [''],
+    fechaLimite: [''],
   });
   farmId: number | null = null;
   animals: Animal[] = [];
   products: InventoryProduct[] = [];
+  workers: WorkerSummary[] = [];
+  taskId: number | null = null;
+  task: FarmTask | null = null;
   photoUrl: string | null = null;
   photoError = '';
   invalidIntegerInput = false;
   saving = false;
   errorMessage = '';
 
+  get ownerMode(): boolean {
+    return this.auth.currentUser?.rol === 'PROPIETARIO';
+  }
+
+  get taskMode(): boolean {
+    return this.taskId !== null;
+  }
+
+  get activityTitle(): string {
+    return ({
+      VACUNACION: 'Vacunación',
+      ALIMENTACION: 'Alimentación',
+      MEDICAMENTO: 'Medicamento',
+      PESAJE: 'Pesaje',
+      REVISION: 'Revisión',
+      REPRODUCCION: 'Reproducción',
+      INSUMO: 'Insumo',
+      OTRO: 'Otra actividad',
+    } as Record<string, string>)[this.form.controls.tipo.value] ?? 'Actividad';
+  }
+
   constructor() {
+    const taskId = Number(this.route.snapshot.queryParamMap.get('taskId'));
+    this.taskId = Number.isInteger(taskId) && taskId > 0 ? taskId : null;
     this.form.controls.tipo.valueChanges.subscribe(() => {
       this.form.controls.productoId.setValue('');
       this.form.controls.cantidadPorDosis.setValue('');
@@ -86,15 +117,33 @@ export class ActividadFormPage {
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId
-            ? forkJoin({ animals: this.farms.animals(this.farmId), products: this.farms.inventory(this.farmId) })
-            : of({ animals: [] as Animal[], products: [] as InventoryProduct[] });
+          if (!this.farmId) return of({ animals: [], products: [], workers: [], task: null } as {
+            animals: Animal[]; products: InventoryProduct[]; workers: WorkerSummary[]; task: FarmTask | null;
+          });
+          if (this.taskMode && !this.ownerMode) {
+            return this.farms.myTasks(this.farmId).pipe(map((tasks) => ({
+              animals: [] as Animal[], products: [] as InventoryProduct[], workers: [] as WorkerSummary[],
+              task: tasks.find((item) => item.id === this.taskId) ?? null,
+            })));
+          }
+          return this.ownerMode
+            ? this.farms.workers(this.farmId).pipe(switchMap((workers) =>
+                of({ animals: [] as Animal[], products: [] as InventoryProduct[], workers, task: null })))
+            : forkJoin({ animals: this.farms.animals(this.farmId), products: this.farms.inventory(this.farmId) })
+                .pipe(switchMap((data) => of({ ...data, workers: [] as WorkerSummary[], task: null })));
         }),
       )
       .subscribe({
         next: (items) => {
           this.animals = items.animals;
           this.products = items.products;
+          this.workers = items.workers;
+          this.task = items.task;
+          if (this.task) {
+            this.form.patchValue({ tipo: this.activityType(this.task.titulo), descripcion: this.task.descripcion ?? '' });
+          } else if (this.taskMode) {
+            this.errorMessage = 'Esta tarea ya no está pendiente o no está asignada a tu usuario.';
+          }
           this.cdr.markForCheck();
         },
         error: () => {
@@ -172,6 +221,21 @@ export class ActividadFormPage {
     return !this.requiresAnimal || !!this.form.controls.animalId.value;
   }
 
+  private activityType(title: string): string {
+    const normalized = title.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+    return ({
+      VACUNACION: 'VACUNACION',
+      ALIMENTACION: 'ALIMENTACION',
+      MEDICAMENTO: 'MEDICAMENTO',
+      PESAJE: 'PESAJE',
+      REVISION: 'REVISION',
+      REPRODUCCION: 'REPRODUCCION',
+      INSUMO: 'INSUMO',
+      'OTRA ACTIVIDAD': 'OTRO',
+      OTRO: 'OTRO',
+    } as Record<string, string>)[normalized] ?? 'OTRO';
+  }
+
   async onPhoto(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -201,6 +265,14 @@ export class ActividadFormPage {
 
   submit(): void {
     if (!this.farmId || this.saving) return;
+    if (this.ownerMode) {
+      this.submitTask();
+      return;
+    }
+    if (this.taskMode) {
+      this.submitTaskActivity();
+      return;
+    }
     if (!this.photoUrl) {
       this.photoError = 'Adjunta una foto para registrar la actividad.';
       this.form.markAllAsTouched();
@@ -253,6 +325,59 @@ export class ActividadFormPage {
         error: (error: { error?: { detail?: string; message?: string; title?: string } }) => {
           this.errorMessage = error.error?.detail ?? error.error?.message ?? error.error?.title
             ?? 'No fue posible registrar la actividad.';
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private submitTask(): void {
+    if (this.form.invalid || !this.form.controls.asignadaA.value) {
+      this.form.markAllAsTouched();
+      this.errorMessage = 'Selecciona un trabajador y describe la tarea pendiente.';
+      return;
+    }
+    const value = this.form.getRawValue();
+    this.saving = true;
+    this.errorMessage = '';
+    this.farms.createTask({
+      fincaId: this.farmId!,
+      titulo: this.activityTitle,
+      descripcion: value.descripcion.trim(),
+      asignadaA: Number(value.asignadaA),
+      ...(value.fechaLimite ? { fechaLimite: value.fechaLimite } : {}),
+      prioridad: 'MEDIA',
+    }).pipe(finalize(() => {
+      this.saving = false;
+      this.cdr.markForCheck();
+    })).subscribe({
+      next: () => void this.router.navigateByUrl('/tabs/actividad'),
+      error: (error: { error?: { detail?: string; message?: string } }) => {
+        this.errorMessage = error.error?.detail ?? error.error?.message ?? 'No fue posible crear la tarea.';
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private submitTaskActivity(): void {
+    if (!this.task || !this.farmId) {
+      this.errorMessage = 'No encontramos la tarea pendiente.';
+      return;
+    }
+    if (!this.photoUrl) {
+      this.photoError = 'Adjunta una foto para registrar la actividad.';
+      return;
+    }
+    this.saving = true;
+    this.errorMessage = '';
+    this.farms.registerTaskActivity(this.farmId, this.task.id, this.photoUrl)
+      .pipe(finalize(() => {
+        this.saving = false;
+        this.cdr.markForCheck();
+      }))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/tabs/actividad'),
+        error: (error: { error?: { detail?: string; message?: string } }) => {
+          this.errorMessage = error.error?.detail ?? error.error?.message ?? 'No fue posible registrar la actividad.';
           this.cdr.markForCheck();
         },
       });

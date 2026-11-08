@@ -1,3 +1,4 @@
+import type { HttpErrorResponse } from '@angular/common/http';
 import type { OnInit } from '@angular/core';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -63,8 +64,12 @@ export class LoginPage implements OnInit {
       }))
       .subscribe({
         next: () => void this.router.navigateByUrl('/tabs/inicio', { replaceUrl: true }),
-        error: (error: { error?: { detail?: string; message?: string } }) => {
-          this.errorMessage = error.error?.detail ?? 'Correo o contraseña incorrectos.';
+        error: (error: HttpErrorResponse) => {
+          if (error.status === 0 || error.status >= 500) {
+            this.errorMessage = 'No se pudo conectar con el servidor. Intenta de nuevo en unos minutos.';
+          } else {
+            this.errorMessage = error.error?.detail ?? 'Correo o contraseña incorrectos.';
+          }
           this.changeDetector.markForCheck();
         },
       });

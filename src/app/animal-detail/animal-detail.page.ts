@@ -13,6 +13,7 @@ import {
   IonSelectOption,
   IonSpinner,
   IonTitle,
+  IonTextarea,
   IonToolbar,
 } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
@@ -37,6 +38,7 @@ import type { Animal, AnimalHistoryItem } from '../service/farm.service';
     IonSelectOption,
     IonSpinner,
     IonTitle,
+    IonTextarea,
     IonToolbar,
   ],
 })
@@ -48,6 +50,7 @@ export class AnimalDetailPage {
   readonly form = this.fb.nonNullable.group({
     pesoActual: ['', [Validators.required, Validators.min(0.01)]],
     estado: ['SALUDABLE', Validators.required],
+    motivoEstado: [''],
   });
   farmId: number | null = null;
   animalId = Number(this.route.snapshot.paramMap.get('id'));
@@ -105,9 +108,19 @@ export class AnimalDetailPage {
       return;
     }
     const value = this.form.getRawValue();
+    if (this.enteringAttention && !value.motivoEstado.trim()) {
+      this.errorMessage = 'Explica por qué el animal pasa a estado de atención.';
+      return;
+    }
     this.saving = true;
     this.farms
-      .updateAnimalFollowUp(this.farmId, this.animalId, Number(value.pesoActual), value.estado)
+      .updateAnimalFollowUp(
+        this.farmId,
+        this.animalId,
+        Number(value.pesoActual),
+        value.estado,
+        value.motivoEstado.trim(),
+      )
       .pipe(
         finalize(() => {
           this.saving = false;
@@ -136,5 +149,9 @@ export class AnimalDetailPage {
 
   get canUpdateFollowUp(): boolean {
     return !!this.animal && !['VENDIDO', 'FALLECIDO', 'INACTIVO'].includes(this.animal.estado);
+  }
+
+  get enteringAttention(): boolean {
+    return this.form.controls.estado.value === 'EN_ATENCION' && this.animal?.estado !== 'EN_ATENCION';
   }
 }

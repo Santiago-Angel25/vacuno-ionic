@@ -6,6 +6,10 @@ import {
   IonContent,
   IonHeader,
   IonIcon,
+  IonInput,
+  IonItem,
+  IonSelect,
+  IonSelectOption,
   IonSpinner,
   IonTitle,
   IonToolbar,
@@ -22,7 +26,7 @@ import type { Purchase } from '../service/farm.service';
   selector: 'app-compras',
   templateUrl: './compras.page.html',
   styleUrl: './compras.page.scss',
-  imports: [RouterLink, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonSpinner, IonTitle, IonToolbar],
+  imports: [RouterLink, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToolbar],
 })
 export class ComprasPage {
   private readonly farms = inject(FarmService);
@@ -37,6 +41,8 @@ export class ComprasPage {
   evidenceError = '';
   evidenceErrorId: number | null = null;
   errorMessage = '';
+  daysFilter: 'ALL' | '7' | '30' | '90' = 'ALL';
+  monthFilter = '';
 
   constructor() {
     addIcons({ add, checkmarkCircleOutline, receiptOutline });
@@ -126,5 +132,27 @@ export class ComprasPage {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(
       value,
     );
+  }
+
+  get filteredPurchases(): Purchase[] {
+    if (this.monthFilter)
+      return this.purchases.filter((purchase) => purchase.fecha.startsWith(this.monthFilter));
+    if (this.daysFilter === 'ALL') return this.purchases;
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - Number(this.daysFilter));
+    const date = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, '0')}-${String(cutoff.getDate()).padStart(2, '0')}`;
+    return this.purchases.filter((purchase) => purchase.fecha >= date);
+  }
+
+  onDaysFilter(event: CustomEvent<{ value?: string }>): void {
+    this.daysFilter = (event.detail.value as 'ALL' | '7' | '30' | '90') || 'ALL';
+    this.monthFilter = '';
+    this.cdr.markForCheck();
+  }
+
+  onMonthFilter(event: CustomEvent<{ value?: string | null }>): void {
+    this.monthFilter = event.detail.value ?? '';
+    if (this.monthFilter) this.daysFilter = 'ALL';
+    this.cdr.markForCheck();
   }
 }

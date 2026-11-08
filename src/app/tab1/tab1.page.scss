@@ -241,6 +241,13 @@
   font-size: 12px;
 }
 
+.worker-home-section { margin-top: 24px; }
+.worker-task-list { display: grid; gap: 8px; }
+.worker-task { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 12px; border: 1px solid #e9eee6; border-radius: 15px; background: #fff; }
+.worker-task p { margin: 4px 0 0; color: #79847b; font-size: 11px; }
+.worker-task ion-button { grid-column: 1 / -1; margin: 0; --color: #26743b; }
+.task-status { color: #26743b; font-size: 10px; font-weight: 800; }
+
 .summary-card {
   display: flex;
   align-items: center;

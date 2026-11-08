@@ -1,4 +1,3 @@
-import type { OnInit } from '@angular/core';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar } from '@ionic/angular';
@@ -16,7 +15,7 @@ import { FarmService } from '../service/farm.service';
   styleUrls: ['tab1.page.scss'],
   imports: [IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar, RouterLink],
 })
-export class Tab1Page implements OnInit {
+export class Tab1Page {
   private readonly farms = inject(FarmService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
@@ -32,7 +31,7 @@ export class Tab1Page implements OnInit {
     addIcons({ alertCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline });
   }
 
-  ngOnInit(): void {
+  ionViewWillEnter(): void {
     this.loadDashboard();
   }
 

@@ -47,8 +47,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "6kb",
+                  "maximumError": "8kb"
                 }
               ],
               "fileReplacements": [
@@ -58,6 +58,21 @@
                 }
               ],
               "outputHashing": "all"
+            },
+            "androidTest": {
+              "outputPath": {
+                "base": "www-android",
+                "browser": ""
+              },
+              "optimization": true,
+              "extractLicenses": true,
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.android-test.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
@@ -116,7 +131,10 @@
     }
   },
   "cli": {
-    "schematicCollections": ["@ionic/angular-toolkit"]
+    "schematicCollections": [
+      "@ionic/angular-toolkit"
+    ],
+    "analytics": false
   },
   "schematics": {
     "@ionic/angular-toolkit:component": {

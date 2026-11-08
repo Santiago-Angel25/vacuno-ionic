@@ -138,6 +138,16 @@ export interface FarmTask {
   fechaLimite: string | null;
   prioridad: string;
   estado: string;
+  asignadaAId?: number | null;
+}
+
+export interface TaskRequest {
+  fincaId: number;
+  titulo: string;
+  descripcion: string;
+  asignadaA: number;
+  fechaLimite?: string;
+  prioridad: string;
 }
 
 export interface WorkerRequest {
@@ -214,10 +224,16 @@ export class FarmService {
     });
   }
 
-  updateAnimalFollowUp(farmId: number, animalId: number, pesoActual: number, estado: string): Observable<Animal> {
+  updateAnimalFollowUp(
+    farmId: number,
+    animalId: number,
+    pesoActual: number,
+    estado: string,
+    motivoEstado?: string,
+  ): Observable<Animal> {
     return this.http.put<Animal>(
       `${this.apiUrl}/animales/${animalId}/seguimiento`,
-      { pesoActual, estado },
+      { pesoActual, estado, motivoEstado },
       { params: { fincaId: farmId } },
     );
   }
@@ -232,6 +248,20 @@ export class FarmService {
 
   myTasks(farmId: number): Observable<FarmTask[]> {
     return this.http.get<FarmTask[]>(`${this.apiUrl}/tareas/mias`, { params: { fincaId: farmId } });
+  }
+
+  tasks(farmId: number): Observable<FarmTask[]> {
+    return this.http.get<FarmTask[]>(`${this.apiUrl}/tareas`, { params: { fincaId: farmId } });
+  }
+
+  createTask(task: TaskRequest): Observable<FarmTask> {
+    return this.http.post<FarmTask>(`${this.apiUrl}/tareas`, task);
+  }
+
+  registerTaskActivity(farmId: number, taskId: number, fotoUrl: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/tareas/${taskId}/registrar-actividad`, { fotoUrl }, {
+      params: { fincaId: farmId },
+    });
   }
 
   workers(farmId: number): Observable<WorkerSummary[]> {

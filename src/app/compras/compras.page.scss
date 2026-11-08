@@ -3,6 +3,9 @@
 .eyebrow { margin: 0 0 5px; color: #68866c; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
 h1 { margin: 0 0 6px; color: #20372a; font-size: 25px; font-weight: 850; }
 .intro { margin: 0 0 18px; color: #758078; font-size: 13px; }
+.purchase-filters { display: grid; grid-template-columns: 1.1fr 1fr; gap: 9px; margin-bottom: 14px; }
+.filter-item { min-height: 46px; --background: #fff; --border-radius: 11px; border: 1px solid #e5eae3; border-radius: 11px; font-size: 12px; }
+.month-item ion-input { --padding-start: 0; }
 .purchase-list { display: grid; gap: 13px; }
 .purchase-card,.state-card { padding: 16px; border: 1px solid #e5eae3; border-radius: 17px; background: white; box-shadow: 0 5px 16px #20372a0a; }
 .card-heading { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }

@@ -25,6 +25,12 @@
           }</ion-select
         ></ion-item
       >
+      @if (selectedProduct) {
+      <section class="selected-product-summary">
+        <strong>{{ form.controls.nombre.value }}</strong>
+        <span>{{ form.controls.categoria.value }} · Unidad: {{ form.controls.unidad.value }}</span>
+      </section>
+      }
       @if (form.controls.productoId.value === 'nuevo') {
       <p class="form-label">Nombre del producto *</p>
       <ion-item class="form-input" lines="none"
@@ -65,7 +71,6 @@
               [inputmode]="alimentacion ? 'numeric' : 'decimal'"
               formControlName="cantidad"
               (ionInput)="onQuantityInput($event)"
-              inputmode="decimal"
               placeholder="Ej. 5"
             ></ion-input
           ></ion-item>
@@ -88,6 +93,7 @@
         ><input id="invoice-photo" type="file" accept="image/*" (change)="onPhoto($event, 'invoice')" />{{ invoicePhoto
         ? 'Cambiar foto de factura' : 'Tomar o elegir foto de factura' }}</label
       >@if (invoicePhoto) { <img class="photo-preview" [src]="invoicePhoto" alt="Vista previa de la factura" /> }
+      @if (requiresProductPhoto) {
       <p class="form-label">Foto de lo comprado *</p>
       <label class="photo-pick" for="product-photo"
         ><input
@@ -97,8 +103,11 @@
           capture="environment"
           (change)="onPhoto($event, 'product')"
         />{{ productPhoto ? 'Cambiar foto del producto' : 'Tomar o elegir foto del producto' }}</label
-      >@if (productPhoto) {
-      <img class="photo-preview" [src]="productPhoto" alt="Vista previa del producto comprado" /> }
+      >@if (productPhoto) { <img class="photo-preview" [src]="productPhoto" alt="Vista previa del producto comprado" /> }
+      } @else {
+      <p class="form-label">Foto del producto guardada</p>
+      <img class="photo-preview" [src]="productPhoto" alt="Foto guardada del producto" />
+      }
       <p class="form-label">Observaciones</p>
       <ion-item class="form-input" lines="none"
         ><ion-input formControlName="observaciones" placeholder="Detalle opcional"></ion-input

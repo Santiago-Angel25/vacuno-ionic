@@ -7,8 +7,18 @@
 <ion-content [fullscreen]="true" class="activity-form-content"
   ><main class="activity-form-page">
     <p class="eyebrow">JORNADA DE LA FINCA</p>
-    <h1>¿Qué actividad realizaste?</h1>
+    <h1>{{ taskMode ? 'Registrar actividad' : ownerMode ? 'Asignar actividad pendiente' : '¿Qué actividad realizaste?' }}</h1>
+    @if (ownerMode) { <p class="form-hint">La tarea aparecerá en las actividades pendientes del trabajador.</p> }
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      @if (taskMode) {
+      @if (task) {
+      <section class="task-summary">
+        <p class="eyebrow">ACTIVIDAD ASIGNADA</p>
+        <h2>{{ task.titulo }}</h2>
+        <p>{{ task.descripcion }}</p>
+      </section>
+      }
+      } @else {
       <label class="form-label" for="activity-type">Tipo de actividad *</label
       ><ion-item class="form-input" lines="none"
         ><ion-select id="activity-type" formControlName="tipo" interface="popover"
@@ -22,6 +32,7 @@
           ><ion-select-option value="OTRO">Otro</ion-select-option></ion-select
         ></ion-item
       >
+      @if (!ownerMode) {
       <label class="form-label" for="animal">Animal relacionado {{ requiresAnimal ? '*' : '(opcional)' }}</label
       ><ion-item class="form-input" lines="none"
         ><ion-select id="animal" formControlName="animalId" placeholder="Sin animal específico" interface="popover"
@@ -33,7 +44,20 @@
         ></ion-item
       >
       @if (requiresAnimal && !form.controls.animalId.value) { <p class="field-error">Selecciona el animal vacunado.</p> }
-      @if (consumesInventory) {
+      } @else {
+      <label class="form-label" for="assigned-worker">Asignar a trabajador *</label>
+      <ion-item class="form-input" lines="none">
+        <ion-select id="assigned-worker" formControlName="asignadaA" placeholder="Seleccionar trabajador" interface="popover">
+          @for (worker of workers; track worker.id) {
+          <ion-select-option [value]="'' + worker.id">{{ worker.nombres }} {{ worker.apellidos }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      @if (!workers.length) { <p class="field-error">No hay trabajadores activos para asignar tareas.</p> }
+      <label class="form-label" for="due-date">Fecha límite (opcional)</label>
+      <ion-item class="form-input" lines="none"><ion-input id="due-date" formControlName="fechaLimite" type="date"></ion-input></ion-item>
+      }
+      @if (!ownerMode && consumesInventory) {
       <section class="inventory-use">
         <p class="form-label">Consumo de inventario</p>
         <label class="form-label" for="activity-product">Producto · {{ productCategory.toLowerCase() }} *</label>
@@ -74,9 +98,12 @@
       ></ion-item>
       @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
       <p class="field-error">Escribe una descripción.</p>
-      } @if (errorMessage) {
+      }
+      }
+      @if (errorMessage) {
       <p class="request-error" role="alert">{{ errorMessage }}</p>
       }
+      @if (!ownerMode || taskMode) {
       <label class="form-label" for="activity-photo">Foto de la actividad *</label>
       <label class="photo-picker" for="activity-photo">
         @if (photoUrl) { <img [src]="photoUrl" alt="Foto de la actividad" /> }
@@ -84,8 +111,9 @@
         <input id="activity-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" (change)="onPhoto($event)" />
       </label>
       @if (photoError) { <p class="field-error" role="alert">{{ photoError }}</p> }
-      <ion-button class="submit-activity" expand="block" type="submit" [disabled]="saving || !farmId"
-        >{{ saving ? 'Guardando…' : 'Registrar actividad' }}</ion-button
+      }
+      <ion-button class="submit-activity" expand="block" type="submit" [disabled]="saving || !farmId || (taskMode && !task)"
+        >{{ saving ? 'Guardando…' : taskMode ? 'Guardar actividad' : ownerMode ? 'Crear actividad pendiente' : 'Registrar actividad' }}</ion-button
       >
     </form>
   </main></ion-content
