@@ -29,16 +29,20 @@
       ><ion-item lines="none"
         ><ion-input id="worker-birthdate" type="date" formControlName="fechaNacimiento"></ion-input
       ></ion-item>
+      <app-camera-picker #workerCamera subject="perfil" (selected)="onPhoto($event)" />
+      @if (!workerCamera.native) {
       <label class="photo-upload" for="worker-photo"
         >{{ photoUrl ? 'Cambiar foto de perfil' : 'Agregar foto de perfil' }}</label
       >
       <input
+        #workerFile
         class="worker-photo-input"
         id="worker-photo"
         type="file"
         accept="image/jpeg,image/png,image/webp"
-        (change)="onPhoto($event)"
+        (change)="onPhoto(workerFile.files?.[0])"
       />
+      }
       @if (photoUrl) { <img class="worker-photo-preview" [src]="photoUrl" alt="Vista previa de foto de perfil" /> } @if
       (photoError) {
       <p class="request-error" role="alert">{{ photoError }}</p>

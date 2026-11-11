@@ -5,12 +5,13 @@ import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, 
 import { finalize } from 'rxjs';
 
 import { FarmService } from '../service/farm.service';
+import { CameraPickerComponent } from '../shared/camera-picker.component';
 
 @Component({
   selector: 'app-animal-form',
   templateUrl: './animal-form.page.html',
   styleUrl: './animal-form.page.scss',
-  imports: [ReactiveFormsModule, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonSelect, IonSelectOption, IonTitle, IonToolbar],
+  imports: [CameraPickerComponent, ReactiveFormsModule, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonSelect, IonSelectOption, IonTitle, IonToolbar],
 })
 export class AnimalFormPage {
   private readonly fb = inject(FormBuilder);
@@ -45,8 +46,7 @@ export class AnimalFormPage {
     });
   }
 
-  selectPhoto(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  selectPhoto(file?: File): void {
     if (!file) return;
     if (!file.type.startsWith('image/') || file.size > 2 * 1024 * 1024) {
       this.errorMessage = 'Elige una imagen de máximo 2 MB.';
@@ -56,8 +56,12 @@ export class AnimalFormPage {
     reader.onload = () => {
       this.photoUrl = typeof reader.result === 'string' ? reader.result : '';
       this.errorMessage = '';
+      this.changeDetector.markForCheck();
     };
-    reader.onerror = () => { this.errorMessage = 'No pudimos leer la fotografía.'; };
+    reader.onerror = () => {
+      this.errorMessage = 'No pudimos leer la fotografía.';
+      this.changeDetector.markForCheck();
+    };
     reader.readAsDataURL(file);
   }
 

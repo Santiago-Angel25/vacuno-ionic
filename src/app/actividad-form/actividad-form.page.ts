@@ -18,6 +18,7 @@ import { finalize, forkJoin, map, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import { FarmService } from '../service/farm.service';
+import { CameraPickerComponent } from '../shared/camera-picker.component';
 import type { Animal, FarmTask, InventoryProduct, WorkerSummary } from '../service/farm.service';
 
 @Component({
@@ -25,6 +26,7 @@ import type { Animal, FarmTask, InventoryProduct, WorkerSummary } from '../servi
   templateUrl: './actividad-form.page.html',
   styleUrl: './actividad-form.page.scss',
   imports: [
+    CameraPickerComponent,
     ReactiveFormsModule,
     IonBackButton,
     IonButton,
@@ -236,20 +238,16 @@ export class ActividadFormPage {
     } as Record<string, string>)[normalized] ?? 'OTRO';
   }
 
-  async onPhoto(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+  async onPhoto(file?: File): Promise<void> {
     if (!file) return;
     this.photoError = '';
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       this.photoError = 'Usa una foto JPG, PNG o WebP.';
-      input.value = '';
       this.cdr.markForCheck();
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
       this.photoError = 'La foto debe pesar máximo 2 MB.';
-      input.value = '';
       this.cdr.markForCheck();
       return;
     }

@@ -104,12 +104,17 @@
       <p class="request-error" role="alert">{{ errorMessage }}</p>
       }
       @if (!ownerMode || taskMode) {
-      <label class="form-label" for="activity-photo">Foto de la actividad *</label>
-      <label class="photo-picker" for="activity-photo">
+      <p class="form-label">Foto de la actividad *</p>
+      <app-camera-picker #activityCamera subject="actividad" (selected)="onPhoto($event)" />
+      @if (!activityCamera.native || photoUrl) {
+      <label class="photo-picker" [attr.for]="activityCamera.native ? null : 'activity-photo'">
         @if (photoUrl) { <img [src]="photoUrl" alt="Foto de la actividad" /> }
-        <span>{{ photoUrl ? 'Cambiar foto' : 'Tomar o seleccionar foto' }}</span>
-        <input id="activity-photo" type="file" accept="image/jpeg,image/png,image/webp" capture="environment" (change)="onPhoto($event)" />
+        @if (!activityCamera.native) {
+          <span>{{ photoUrl ? 'Cambiar foto' : 'Seleccionar foto' }}</span>
+          <input #activityPhoto id="activity-photo" type="file" accept="image/jpeg,image/png,image/webp" (change)="onPhoto(activityPhoto.files?.[0])" />
+        }
       </label>
+      }
       @if (photoError) { <p class="field-error" role="alert">{{ photoError }}</p> }
       }
       <ion-button class="submit-activity" expand="block" type="submit" [disabled]="saving || !farmId || (taskMode && !task)"

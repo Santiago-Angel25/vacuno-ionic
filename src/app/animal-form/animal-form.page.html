@@ -7,11 +7,16 @@
 <ion-content [fullscreen]="true" class="animal-form-content">
   <main class="animal-form-page">
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <label class="photo-picker" for="animal-photo">
+      <app-camera-picker #animalCamera subject="animal" (selected)="selectPhoto($event)" />
+      @if (!animalCamera.native || photoUrl) {
+      <label class="photo-picker" [attr.for]="animalCamera.native ? null : 'animal-photo'">
         @if (photoUrl) { <img [src]="photoUrl" alt="Vista previa de la fotografía del animal" /> }
         @else { <span class="camera-icon" aria-hidden="true">📷</span><strong>Agregar fotografía</strong> }
-        <input id="animal-photo" type="file" accept="image/*" capture="environment" (change)="selectPhoto($event)" />
+        @if (!animalCamera.native) {
+          <input #animalPhoto id="animal-photo" type="file" accept="image/*" (change)="selectPhoto(animalPhoto.files?.[0])" />
+        }
       </label>
+      }
 
       <label class="form-label" for="nombre">Nombre *</label>
       <ion-item class="form-input" lines="none"><ion-input id="nombre" formControlName="nombre" placeholder="Ej. Luna"></ion-input></ion-item>

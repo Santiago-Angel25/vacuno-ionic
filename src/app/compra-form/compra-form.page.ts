@@ -17,6 +17,7 @@ import {
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
 import { FarmService } from '../service/farm.service';
+import { CameraPickerComponent } from '../shared/camera-picker.component';
 import type { InventoryProduct, Purchase } from '../service/farm.service';
 
 @Component({
@@ -24,6 +25,7 @@ import type { InventoryProduct, Purchase } from '../service/farm.service';
   templateUrl: './compra-form.page.html',
   styleUrl: './compra-form.page.scss',
   imports: [
+    CameraPickerComponent,
     ReactiveFormsModule,
     IonBackButton,
     IonButton,
@@ -177,8 +179,7 @@ export class CompraFormPage {
     return date.toISOString().slice(0, 10);
   }
 
-  async onPhoto(event: Event, type: 'invoice' | 'product'): Promise<void> {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  async onPhoto(file: File | undefined, type: 'invoice' | 'product'): Promise<void> {
     if (!file) return;
     this.photoError = '';
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
@@ -199,6 +200,7 @@ export class CompraFormPage {
     }).catch(() => '');
     if (!dataUrl) {
       this.photoError = 'No fue posible leer la foto.';
+      this.cdr.markForCheck();
       return;
     }
     if (type === 'invoice') this.invoicePhoto = dataUrl;

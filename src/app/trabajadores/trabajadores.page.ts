@@ -19,6 +19,7 @@ import { finalize, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import { FarmService } from '../service/farm.service';
+import { CameraPickerComponent } from '../shared/camera-picker.component';
 import type { WorkerInvite, WorkerSummary } from '../service/farm.service';
 
 @Component({
@@ -26,6 +27,7 @@ import type { WorkerInvite, WorkerSummary } from '../service/farm.service';
   templateUrl: './trabajadores.page.html',
   styleUrl: './trabajadores.page.scss',
   imports: [
+    CameraPickerComponent,
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
@@ -98,8 +100,7 @@ export class TrabajadoresPage {
       });
   }
 
-  async onPhoto(event: Event): Promise<void> {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  async onPhoto(file?: File): Promise<void> {
     if (!file) return;
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
       this.photoError = 'La foto debe ser JPG, PNG o WebP.';
