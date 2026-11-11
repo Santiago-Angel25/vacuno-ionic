@@ -4,11 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import {
   IonButton,
   IonContent,
-  IonHeader,
   IonInput,
   IonItem,
-  IonTitle,
-  IonToolbar,
   ToastController,
 } from '@ionic/angular';
 import { finalize } from 'rxjs';
@@ -19,7 +16,7 @@ import { AuthService } from '../service/auth.service';
   selector: 'app-activar-trabajador',
   templateUrl: './activar-trabajador.page.html',
   styleUrl: './activar-trabajador.page.scss',
-  imports: [ReactiveFormsModule, RouterLink, IonButton, IonContent, IonHeader, IonInput, IonItem, IonTitle, IonToolbar],
+  imports: [ReactiveFormsModule, RouterLink, IonButton, IonContent, IonInput, IonItem],
 })
 export class ActivarTrabajadorPage {
   private readonly fb = inject(FormBuilder);
