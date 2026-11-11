@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
+  IonBackButton,
   IonButton,
   IonButtons,
   IonContent,
@@ -26,7 +27,22 @@ import type { Purchase } from '../service/farm.service';
   selector: 'app-compras',
   templateUrl: './compras.page.html',
   styleUrl: './compras.page.scss',
-  imports: [RouterLink, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonSelect, IonSelectOption, IonSpinner, IonTitle, IonToolbar],
+  imports: [
+    RouterLink,
+    IonBackButton,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonSelect,
+    IonSelectOption,
+    IonSpinner,
+    IonTitle,
+    IonToolbar,
+  ],
 })
 export class ComprasPage {
   private readonly farms = inject(FarmService);

@@ -1,10 +1,11 @@
-<ion-header
-  ><ion-toolbar
-    ><ion-buttons slot="start"
-      ><ion-button routerLink="/tabs/inicio" aria-label="Volver al inicio">‹</ion-button></ion-buttons
-    ><ion-title>Gastos de la finca</ion-title></ion-toolbar
-  ></ion-header
->
+<ion-header class="expenses-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gastos de la finca</ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content [fullscreen]="true" class="expenses-content"
   ><main class="expenses-page">
     <p class="eyebrow">CONTROL FINANCIERO</p>

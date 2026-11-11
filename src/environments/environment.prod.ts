@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://cookbook-priced-richards-structure.trycloudflare.com/api/v1',
+  apiUrl: 'https://surf-declaration-comments-now.trycloudflare.com/api/v1',
 };

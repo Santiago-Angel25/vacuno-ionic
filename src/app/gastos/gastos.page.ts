@@ -1,7 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
 import { finalize, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
@@ -14,7 +13,7 @@ const COLORS = ['#2c7b3e', '#3989a4', '#e67852', '#e6b544', '#8c9f48', '#8976bd'
   selector: 'app-gastos',
   templateUrl: './gastos.page.html',
   styleUrl: './gastos.page.scss',
-  imports: [DecimalPipe, RouterLink, IonButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar],
+  imports: [DecimalPipe, IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar],
 })
 export class GastosPage {
   private readonly farms = inject(FarmService);

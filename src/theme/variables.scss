@@ -1,5 +1,8 @@
 // VACUNO brand palette.
 :root {
+  /* Global typeface for the whole app. */
+  --ion-font-family: 'Montserrat', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+
   --ion-color-primary: #26743b;
   --ion-color-primary-rgb: 38, 116, 59;
   --ion-color-primary-contrast: #ffffff;

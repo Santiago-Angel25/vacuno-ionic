@@ -1,6 +1,11 @@
-<ion-header
-  ><ion-toolbar><ion-title>Actividad</ion-title></ion-toolbar></ion-header
->
+<ion-header class="activities-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Actividad</ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content [fullscreen]="true" class="module-content">
   <main class="activities-page">
     <p class="eyebrow">TRABAJO DIARIO</p>
@@ -19,25 +24,28 @@
       <h2>Aún no hay actividades</h2>
       <p>Registra la primera actividad de tu jornada.</p>
     </div>
-    } @else {
-    @if (tasks.length) {
+    } @else { @if (tasks.length) {
     <section class="pending-section" aria-label="Actividades pendientes">
-      <div class="pending-heading"><h2>Actividades pendientes</h2><span>{{ tasks.length }}</span></div>
+      <div class="pending-heading">
+        <h2>Actividades pendientes</h2>
+        <span>{{ tasks.length }}</span>
+      </div>
       @for (task of tasks; track task.id) {
       <article class="pending-card">
         <div class="activity-mark">!</div>
         <div class="activity-info">
           <span class="activity-type">{{ task.titulo }}</span>
           <h2>{{ task.descripcion || 'Actividad asignada por el propietario' }}</h2>
-          @if (task.fechaLimite) { <p>Fecha límite: {{ task.fechaLimite }}</p> }
-          @if (auth.currentUser?.rol === 'PROPIETARIO' && task.asignadaAId) { <small>Asignada al trabajador #{{ task.asignadaAId }}</small> }
+          @if (task.fechaLimite) {
+          <p>Fecha límite: {{ task.fechaLimite }}</p>
+          } @if (auth.currentUser?.rol === 'PROPIETARIO' && task.asignadaAId) {
+          <small>Asignada al trabajador #{{ task.asignadaAId }}</small> }
         </div>
         <span class="task-pending-label">Pendiente</span>
       </article>
       }
     </section>
-    }
-    @if (activities.length) {
+    } @if (activities.length) {
     <section class="activity-list" aria-label="Actividades registradas">
       @for (activity of activities; track activity.id) {
       <article class="activity-card">
@@ -47,21 +55,21 @@
           <h2>{{ activityDescription(activity) }}</h2>
           <p>{{ date(activity.realizadaEn) }}</p>
           @if (auth.currentUser?.rol === 'PROPIETARIO') {
-          <small>Registrada por {{ activity.realizadaPorNombre || 'usuario #' + activity.realizadaPorId }}</small> }
-          @if (activity.productoNombre) {
-          @if (activity.tipo === 'ALIMENTACION') {
+          <small>Registrada por {{ activity.realizadaPorNombre || 'usuario #' + activity.realizadaPorId }}</small> } @if
+          (activity.productoNombre) { @if (activity.tipo === 'ALIMENTACION') {
           <small>{{ activity.productoNombre }} · {{ activityQuantity(activity) }} bultos</small>
           } @else {
-          <small>Inventario: {{ activity.productoNombre }} · {{ activity.cantidadPorDosis }} × {{ activity.numeroDosis }} dosis</small>
-          }
-          }
+          <small
+            >Inventario: {{ activity.productoNombre }} · {{ activity.cantidadPorDosis }} × {{ activity.numeroDosis }}
+            dosis</small
+          >
+          } }
         </div>
         @if (activity.fotoUrl) { <img class="activity-photo" [src]="activity.fotoUrl" alt="Foto de la actividad" /> }
       </article>
       }
     </section>
-    }
-    }
+    } }
   </main>
   @if (farmId) {
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="activity-fab">

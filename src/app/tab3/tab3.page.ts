@@ -1,6 +1,19 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonSpinner, IonTitle, IonToolbar } from '@ionic/angular';
+import {
+  IonBackButton,
+  IonButtons,
+  IonContent,
+  IonFab,
+  IonFabButton,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonSpinner,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add, leafOutline, searchOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
@@ -15,7 +28,21 @@ type InventoryFilter = 'TODOS' | 'MEDICAMENTOS' | 'ALIMENTOS' | 'INSUMOS';
   selector: 'app-tab3',
   templateUrl: './tab3.page.html',
   styleUrls: ['./tab3.page.scss'],
-  imports: [RouterLink, IonContent, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonSpinner, IonTitle, IonToolbar],
+  imports: [
+    RouterLink,
+    IonBackButton,
+    IonButtons,
+    IonContent,
+    IonFab,
+    IonFabButton,
+    IonHeader,
+    IonIcon,
+    IonInput,
+    IonItem,
+    IonSpinner,
+    IonTitle,
+    IonToolbar,
+  ],
 })
 export class Tab3Page {
   private readonly farms = inject(FarmService);
@@ -28,7 +55,9 @@ export class Tab3Page {
   loading = true;
   errorMessage = '';
 
-  constructor() { addIcons({ add, leafOutline, searchOutline }); }
+  constructor() {
+    addIcons({ add, leafOutline, searchOutline });
+  }
 
   ionViewWillEnter(): void {
     if (this.farmId) {
@@ -37,44 +66,52 @@ export class Tab3Page {
     }
     this.loading = true;
     this.errorMessage = '';
-    this.farms.myFarms().pipe(
-      switchMap((farms) => {
-        this.farmId = farms[0]?.id ?? null;
-        return this.farmId ? this.farms.inventory(this.farmId) : of([] as InventoryProduct[]);
-      }),
-      finalize(() => {
-        this.loading = false;
-        this.changeDetector.markForCheck();
-      }),
-    ).subscribe({
-      next: (products) => {
-        this.products = products;
-        this.changeDetector.markForCheck();
-      },
-      error: () => {
-        this.errorMessage = 'No fue posible cargar el inventario.';
-        this.changeDetector.markForCheck();
-      },
-    });
+    this.farms
+      .myFarms()
+      .pipe(
+        switchMap((farms) => {
+          this.farmId = farms[0]?.id ?? null;
+          return this.farmId ? this.farms.inventory(this.farmId) : of([] as InventoryProduct[]);
+        }),
+        finalize(() => {
+          this.loading = false;
+          this.changeDetector.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (products) => {
+          this.products = products;
+          this.changeDetector.markForCheck();
+        },
+        error: () => {
+          this.errorMessage = 'No fue posible cargar el inventario.';
+          this.changeDetector.markForCheck();
+        },
+      });
   }
 
   loadInventory(): void {
     if (!this.farmId) return;
     this.loading = true;
     this.errorMessage = '';
-    this.farms.inventory(this.farmId).pipe(finalize(() => {
-      this.loading = false;
-      this.changeDetector.markForCheck();
-    })).subscribe({
-      next: (products) => {
-        this.products = products;
-        this.changeDetector.markForCheck();
-      },
-      error: () => {
-        this.errorMessage = 'No fue posible cargar el inventario.';
-        this.changeDetector.markForCheck();
-      },
-    });
+    this.farms
+      .inventory(this.farmId)
+      .pipe(
+        finalize(() => {
+          this.loading = false;
+          this.changeDetector.markForCheck();
+        }),
+      )
+      .subscribe({
+        next: (products) => {
+          this.products = products;
+          this.changeDetector.markForCheck();
+        },
+        error: () => {
+          this.errorMessage = 'No fue posible cargar el inventario.';
+          this.changeDetector.markForCheck();
+        },
+      });
   }
 
   get visibleProducts(): InventoryProduct[] {
@@ -87,11 +124,13 @@ export class Tab3Page {
     });
   }
 
-  setFilter(filter: InventoryFilter): void { this.filter = filter; }
-  displayStock(product: InventoryProduct): number {
-    return product.categoria.toUpperCase() === 'ALIMENTOS'
-      ? Math.floor(product.stockActual)
-      : product.stockActual;
+  setFilter(filter: InventoryFilter): void {
+    this.filter = filter;
   }
-  onSearch(event: CustomEvent<{ value?: string | null }>): void { this.search = event.detail.value ?? ''; }
+  displayStock(product: InventoryProduct): number {
+    return product.categoria.toUpperCase() === 'ALIMENTOS' ? Math.floor(product.stockActual) : product.stockActual;
+  }
+  onSearch(event: CustomEvent<{ value?: string | null }>): void {
+    this.search = event.detail.value ?? '';
+  }
 }

@@ -18,12 +18,65 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
+/* Montserrat: app-wide typeface, self-hosted so it also works offline on device.
+   Only the Latin subset is bundled (the app is in Spanish). */
+@import "@fontsource/montserrat/latin-400.css";
+@import "@fontsource/montserrat/latin-500.css";
+@import "@fontsource/montserrat/latin-600.css";
+@import "@fontsource/montserrat/latin-700.css";
+@import "@fontsource/montserrat/latin-800.css";
+@import "@fontsource/montserrat/latin-900.css";
+
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+
+/*
+ * Shared app shell
+ * ----------------------------------------------------------------------------
+ * One single look for every screen: green top bar, white text and the same
+ * spacing, so all pages feel like the same app.
+ */
+ion-header {
+  box-shadow: none;
+}
+
+ion-header ion-toolbar {
+  --background: #1e6237;
+  --color: #ffffff;
+  --border-width: 0;
+  --min-height: 72px;
+  padding: 0 12px;
+}
+
+ion-header ion-title {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+ion-header ion-button,
+ion-header ion-back-button {
+  --color: #ffffff;
+  --color-activated: #ffffff;
+  --color-focused: #ffffff;
+  --background-focused: rgb(255 255 255 / 12%);
+  --background-activated: rgb(255 255 255 / 18%);
+  font-weight: 700;
+  text-transform: none;
+}
+
+ion-header ion-back-button {
+  --icon-font-size: 22px;
+}
+
+/* Every content area shares the same light background. */
+ion-content {
+  --background: #f5f7f3;
+}
 
 /**
  * Ionic Dark Mode
@@ -35,6 +88,15 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 /* The app uses the light palette from the VACUNO screens. */
+
+/* Montserrat is the default text font for the whole app. */
+html,
+body,
+ion-app,
+ion-content {
+  font-family: var(--ion-font-family);
+}
+
 .worker-home-section { margin-top: 14px; }
 .worker-task-list { padding: 0 12px; border: 1px solid #e9eee6; border-radius: 16px; background: white; }
 .worker-task { display: flex; align-items: center; gap: 9px; min-height: 60px; border-bottom: 1px solid #eff2ed; }

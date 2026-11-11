@@ -1,6 +1,8 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
+  IonBackButton,
+  IonButtons,
   IonContent,
   IonFab,
   IonFabButton,
@@ -25,6 +27,8 @@ import type { FarmActivity, FarmTask } from '../service/farm.service';
   styleUrl: './actividad.page.scss',
   imports: [
     RouterLink,
+    IonBackButton,
+    IonButtons,
     IonContent,
     IonFab,
     IonFabButton,
@@ -57,12 +61,14 @@ export class ActividadPage {
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          if (!this.farmId) return of({ activities: [], tasks: [] } as { activities: FarmActivity[]; tasks: FarmTask[] });
+          if (!this.farmId)
+            return of({ activities: [], tasks: [] } as { activities: FarmActivity[]; tasks: FarmTask[] });
           return forkJoin({
             activities: this.farms.activities(this.farmId),
-            tasks: this.auth.currentUser?.rol === 'PROPIETARIO'
-              ? this.farms.tasks(this.farmId)
-              : this.farms.myTasks(this.farmId),
+            tasks:
+              this.auth.currentUser?.rol === 'PROPIETARIO'
+                ? this.farms.tasks(this.farmId)
+                : this.farms.myTasks(this.farmId),
           });
         }),
         finalize(() => {
@@ -94,7 +100,7 @@ export class ActividadPage {
   activityQuantity(activity: FarmActivity): number {
     return activity.tipo === 'ALIMENTACION'
       ? Math.floor(activity.cantidadPorDosis ?? 0)
-      : activity.cantidadPorDosis ?? 0;
+      : (activity.cantidadPorDosis ?? 0);
   }
 
   activityDescription(activity: FarmActivity): string {

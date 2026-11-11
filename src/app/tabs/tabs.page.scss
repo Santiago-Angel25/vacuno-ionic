@@ -1,33 +1,59 @@
-
 :host {
   --ion-safe-area-bottom: 0;
 }
 
 .vacuno-tab-bar {
-  --background: #fff;
-  --border: 1px solid #e9eee8;
-  padding: 5px 4px calc(5px + env(safe-area-inset-bottom));
-  box-shadow: 0 -5px 20px rgb(24 57 31 / 7%);
+  position: absolute;
+  right: 14px;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  left: 14px;
+  width: auto;
+  min-height: 54px;
+  overflow: hidden;
+  --background: rgb(255 255 255 / 72%);
+  --border: 1px solid rgb(255 255 255 / 72%);
+  padding: 3px 5px;
+  border: 1px solid rgb(27 68 37 / 12%);
+  border-radius: 20px;
+  box-shadow: 0 9px 28px rgb(31 65 36 / 20%);
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
 }
 
 .vacuno-tab-bar ion-tab-button {
   --color: #8b948d;
   --color-selected: #26743b;
-  font-size: 10px;
+  --background-focused: transparent;
+  min-width: 0;
+  border-radius: 14px;
+  font-size: 9px;
+}
+
+.vacuno-tab-bar ion-tab-button.tab-selected {
+  --background: rgb(38 116 59 / 12%);
 }
 
 .vacuno-tab-bar ion-icon {
-  font-size: 21px;
+  font-size: 18px;
 }
 
 .tab-avatar {
-  width: 22px;
-  height: 22px;
-  margin-bottom: 2px;
+  width: 19px;
+  height: 19px;
+  margin-bottom: 1px;
   display: grid;
   place-items: center;
   background: #e7f1e6;
   color: #26743b;
   font-size: 10px;
   font-weight: 800;
+}
+
+@media (min-width: 768px) {
+  .vacuno-tab-bar {
+    right: 50%;
+    left: auto;
+    width: min(500px, calc(100% - 28px));
+    transform: translateX(50%);
+  }
 }

@@ -1,6 +1,11 @@
-<ion-header
-  ><ion-toolbar><ion-title>Inventario</ion-title></ion-toolbar></ion-header
->
+<ion-header class="inventory-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Inventario</ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content [fullscreen]="true" class="module-content">
   <main class="inventory-page">
     <p class="eyebrow">INSUMOS Y EXISTENCIAS</p>

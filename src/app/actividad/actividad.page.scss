@@ -19,12 +19,43 @@
   display: grid;
   gap: 10px;
 }
-.pending-section { display: grid; gap: 9px; margin: 0 0 22px; }
-.pending-heading { display: flex; align-items: center; justify-content: space-between; color: #263b2d; }
-.pending-heading h2 { margin: 0; font-size: 16px; font-weight: 800; }
-.pending-heading span,.task-pending-label { color: #91670b; background: #fff3d5; border-radius: 20px; padding: 5px 9px; font-size: 10px; font-weight: 800; }
-.pending-card { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid #eee4c9; border-radius: 15px; background: #fffdf7; }
-.pending-card .activity-info h2 { font-weight: 600; }
+.pending-section {
+  display: grid;
+  gap: 9px;
+  margin: 0 0 22px;
+}
+.pending-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #263b2d;
+}
+.pending-heading h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+.pending-heading span,
+.task-pending-label {
+  color: #91670b;
+  background: #fff3d5;
+  border-radius: 20px;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.pending-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #eee4c9;
+  border-radius: 15px;
+  background: #fffdf7;
+}
+.pending-card .activity-info h2 {
+  font-weight: 600;
+}
 .activity-card,
 .state-card {
   display: flex;
@@ -96,7 +127,9 @@
   color: #a23e35;
 }
 .activity-fab {
-  margin: 0 8px 14px;
+  right: 9px;
+  bottom: 128px;
+  margin: 0;
 }
 .activity-fab ion-fab-button {
   --background: #26743b;

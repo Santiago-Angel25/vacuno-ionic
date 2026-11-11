@@ -3,7 +3,9 @@ import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
+  IonBackButton,
   IonButton,
+  IonButtons,
   IonContent,
   IonHeader,
   IonIcon,
@@ -31,7 +33,9 @@ import type { WorkerInvite, WorkerSummary } from '../service/farm.service';
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
+    IonBackButton,
     IonButton,
+    IonButtons,
     IonContent,
     IonHeader,
     IonIcon,

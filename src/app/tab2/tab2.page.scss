@@ -9,7 +9,7 @@
   margin: 0 0 16px;
   color: #20372a;
   font-size: 25px;
-  font-weight: 850;
+  font-weight: 900;
 }
 .search-field {
   min-height: 48px;
@@ -149,7 +149,9 @@
   color: #a23e35;
 }
 .add-animal-fab {
-  margin: 0 9px 14px 0;
+  right: 9px;
+  bottom: 128px;
+  margin: 0;
 }
 .add-animal-fab ion-fab-button {
   --background: #26743b;

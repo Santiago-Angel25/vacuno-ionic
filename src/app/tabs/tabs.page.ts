@@ -1,13 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IonAvatar, IonIcon, IonLabel, IonTabBar, IonTabButton, IonTabs } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import {
-  calendarOutline,
-  homeOutline,
-  leafOutline,
-  pawOutline,
-  personOutline,
-} from 'ionicons/icons';
+import { calendarOutline, cubeOutline, homeOutline, pawOutline, personOutline } from 'ionicons/icons';
 import { AuthService } from '../service/auth.service';
 
 @Component({
@@ -20,7 +14,7 @@ export class TabsPage {
   readonly auth = inject(AuthService);
 
   constructor() {
-    addIcons({ homeOutline, pawOutline, leafOutline, calendarOutline, personOutline });
+    addIcons({ homeOutline, pawOutline, cubeOutline, calendarOutline, personOutline });
   }
 
   get avatarInitial(): string {

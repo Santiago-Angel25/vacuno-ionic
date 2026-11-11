@@ -1,6 +1,16 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonToolbar } from '@ionic/angular';
+import {
+  IonAvatar,
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { logOutOutline, personOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
@@ -13,7 +23,17 @@ import type { FarmActivity } from '../service/farm.service';
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
   styleUrl: './perfil.page.scss',
-  imports: [IonAvatar, IonButton, IonContent, IonHeader, IonIcon, IonToolbar],
+  imports: [
+    IonAvatar,
+    IonBackButton,
+    IonButton,
+    IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonTitle,
+    IonToolbar,
+  ],
 })
 export class PerfilPage {
   readonly auth = inject(AuthService);
