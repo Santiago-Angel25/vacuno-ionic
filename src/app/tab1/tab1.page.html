@@ -5,7 +5,7 @@
       <span>VACUNO</span>
     </div>
     <ion-buttons slot="end">
-      <ion-button fill="clear" aria-label="Notificaciones">
+      <ion-button fill="clear" aria-label="Notificaciones" [disabled]="farmId === null" (click)="openAlerts()">
         <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
       </ion-button>
       <ion-button class="header-profile" fill="clear" routerLink="/tabs/perfil" aria-label="Abrir perfil">
@@ -92,18 +92,37 @@
       </article>
     </section>
 
+    }
+    @if (!loading && !errorMessage && hasFarm) {
     <section class="alerts-section">
       <div class="section-heading">
         <div>
           <p class="section-kicker">A TENER EN CUENTA</p>
           <h2>Alertas importantes</h2>
         </div>
-        <span class="alert-count">{{ dashboard.necesidades.abiertas }} abiertas</span>
+        <ion-button fill="clear" size="small" (click)="openAlerts()">Ver todas</ion-button>
       </div>
 
-      @if (dashboard.proximosControles.length) {
+      @if (alertsError) {
+      <div class="message-card error-card" role="alert">
+        <p>No pudimos cargar las notificaciones.</p>
+        <ion-button size="small" fill="outline" (click)="loadAlerts()">Reintentar</ion-button>
+      </div>
+      } @else if (alertsLoading && !alerts.length) {
+      <div class="loading-card" role="status">Cargando notificaciones…</div>
+      } @else if (alerts.length || dashboard?.proximosControles?.length) {
       <div class="alert-list">
-        @for (control of dashboard.proximosControles.slice(0, 3); track $index) {
+        @for (alert of alerts.slice(0, 3); track alert.id) {
+        <article class="alert-item">
+          <span class="alert-symbol"><ion-icon name="notifications-outline"></ion-icon></span>
+          <div>
+            <strong>{{ alert.titulo }}</strong>
+            <p>{{ alert.detalle }}</p>
+          </div>
+          <time>{{ alert.fecha | date:'dd/MM HH:mm' }}</time>
+        </article>
+        }
+        @for (control of (dashboard?.proximosControles ?? []).slice(0, 3); track $index) {
         <article class="alert-item">
           <span class="alert-symbol"><ion-icon name="time-outline"></ion-icon></span>
           <div>
@@ -117,11 +136,13 @@
       } @else {
       <div class="empty-alerts">
         <span>✓</span>
-        <p>Todo al día. No tienes controles próximos.</p>
+        <p>Todo al día. No hay alertas recientes.</p>
       </div>
       }
     </section>
+    }
 
+    @if (!loading && !errorMessage && dashboard) {
     <section class="summary-card">
       <div class="summary-copy">
         <p class="section-kicker">ESTE MES</p>
@@ -134,3 +155,37 @@
     }
   </main>
 </ion-content>
+
+<ion-modal [isOpen]="alertsOpen" (didDismiss)="alertsOpen = false">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Notificaciones</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="alertsOpen = false">Cerrar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      @if (alertsLoading) {
+        <p role="status">Cargando notificaciones…</p>
+      } @else if (alertsError) {
+        <p role="alert">No pudimos cargar las notificaciones.</p>
+        <ion-button (click)="loadAlerts()">Reintentar</ion-button>
+      } @else if (!alerts.length) {
+        <p>Aún no hay notificaciones.</p>
+      } @else {
+        @for (alert of alerts; track alert.id) {
+          <article class="ion-margin-bottom">
+            <strong>{{ alert.titulo }}</strong>
+            @if (alert.detalle) { <p>{{ alert.detalle }}</p> }
+            @if (alert.fecha) { <time>{{ alert.fecha | date:'dd/MM/yyyy HH:mm' }}</time> }
+            <ion-button fill="clear" size="small"
+              [routerLink]="alert.destino === 'COMPRAS' ? '/tabs/compras' : '/tabs/actividad'"
+              (click)="alertsOpen = false">Ver {{ alert.destino === 'COMPRAS' ? 'compras' : 'actividades' }}</ion-button>
+          </article>
+        }
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

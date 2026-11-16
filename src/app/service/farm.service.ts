@@ -105,6 +105,14 @@ export interface FarmExpense {
   fecha: string;
 }
 
+export interface FarmAlert {
+  id: string;
+  titulo: string;
+  detalle: string | null;
+  fecha: string | null;
+  destino: 'ACTIVIDAD' | 'COMPRAS';
+}
+
 export interface FarmActivity {
   id: number;
   tipo: string;
@@ -240,6 +248,10 @@ export class FarmService {
 
   activities(farmId: number): Observable<FarmActivity[]> {
     return this.http.get<FarmActivity[]>(`${this.apiUrl}/actividades`, { params: { fincaId: farmId } });
+  }
+
+  alerts(farmId: number): Observable<FarmAlert[]> {
+    return this.http.get<FarmAlert[]>(`${this.apiUrl}/alertas`, { params: { fincaId: farmId } });
   }
 
   createActivity(activity: ActivityRequest): Observable<FarmActivity> {

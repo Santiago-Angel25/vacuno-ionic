@@ -1,19 +1,20 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar } from '@ionic/angular';
+import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { alertCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline } from 'ionicons/icons';
 import { finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
-import type { DashboardResponse, FarmTask } from '../service/farm.service';
+import type { DashboardResponse, FarmAlert, FarmTask } from '../service/farm.service';
 import { FarmService } from '../service/farm.service';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonToolbar, RouterLink],
+  imports: [DatePipe, IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar, RouterLink],
 })
 export class Tab1Page {
   private readonly farms = inject(FarmService);
@@ -21,6 +22,11 @@ export class Tab1Page {
   readonly auth = inject(AuthService);
 
   farmName = '';
+  farmId: number | null = null;
+  alerts: FarmAlert[] = [];
+  alertsOpen = false;
+  alertsLoading = false;
+  alertsError = false;
   dashboard: DashboardResponse | null = null;
   workerTasks: FarmTask[] = [];
   loading = true;
@@ -51,6 +57,26 @@ export class Tab1Page {
     }).format(value);
   }
 
+  openAlerts(): void {
+    this.alertsOpen = true;
+    this.loadAlerts();
+  }
+
+  loadAlerts(): void {
+    if (this.farmId === null || this.alertsLoading) return;
+    this.alertsLoading = true;
+    this.alertsError = false;
+    this.farms.alerts(this.farmId)
+      .pipe(finalize(() => {
+        this.alertsLoading = false;
+        this.changeDetector.markForCheck();
+      }))
+      .subscribe({
+        next: (alerts) => { this.alerts = alerts; },
+        error: () => { this.alertsError = true; },
+      });
+  }
+
   loadDashboard(): void {
     this.loading = true;
     this.errorMessage = '';
@@ -59,6 +85,9 @@ export class Tab1Page {
       .pipe(
         switchMap((farms) => {
           const farm = farms[0];
+          if (this.farmId !== (farm?.id ?? null)) this.alerts = [];
+          this.farmId = farm?.id ?? null;
+          this.loadAlerts();
           if (!farm) {
             this.hasFarm = false;
             this.farmName = '';
