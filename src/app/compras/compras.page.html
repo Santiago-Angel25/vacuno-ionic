@@ -4,7 +4,9 @@
     <p class="eyebrow">TRAZABILIDAD DE INSUMOS</p>
     <h1>Compras de la finca</h1>
     <p class="intro">Cada compra aprobada suma existencias al inventario y registra el gasto.</p>
-    @if (purchases.length) {
+    @if (selectedPurchaseId) {
+    <ion-button fill="clear" routerLink="/tabs/compras" [queryParams]="{}">Ver todas las compras</ion-button>
+    } @else if (purchases.length) {
     <section class="purchase-filters" aria-label="Filtrar compras por fecha">
       <ion-item lines="none" class="filter-item">
         <ion-select label="Rango" interface="popover" [value]="daysFilter" (ionChange)="onDaysFilter($event)">
@@ -23,6 +25,8 @@
     <p class="request-error" role="alert">{{ errorMessage }}</p>
     } @if (loading) {
     <div class="state-card"><ion-spinner name="crescent"></ion-spinner><span>Cargando compras…</span></div>
+    } @else if (selectedPurchaseId && !filteredPurchases.length) {
+    <div class="state-card empty"><h2>Compra no disponible</h2></div>
     } @else if (!purchases.length) {
     <div class="state-card empty">
       <ion-icon name="receipt-outline"></ion-icon>

@@ -1,6 +1,6 @@
 @let pageTitle = auth.currentUser?.rol === 'TRABAJADOR' ? 'Ganado' : 'Mi ganado';
 <app-vacuno-header [title]="pageTitle" [showBack]="true"></app-vacuno-header>
-<ion-content [fullscreen]="true" class="module-content">
+<ion-content class="module-content list-content" [scrollY]="false">
   <main class="livestock-page">
     <p class="eyebrow">GESTIÓN DE LA FINCA</p>
     <h1>{{ pageTitle }}</h1>
@@ -48,7 +48,7 @@
       <p>{{ search ? 'Prueba con otro nombre o identificador.' : 'Usa el botón + para registrar el primero.' }}</p>
     </div>
     } @else {
-    <section class="animal-list" aria-label="Animales de la finca">
+    <section class="animal-list" aria-label="Animales de la finca" tabindex="0">
       @for (animal of visibleAnimals; track animal.id) {
       <a class="animal-card" [routerLink]="['/tabs/ganado', animal.id]">
         @if (animal.fotoUrl) {

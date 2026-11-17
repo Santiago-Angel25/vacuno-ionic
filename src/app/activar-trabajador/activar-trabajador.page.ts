@@ -65,7 +65,7 @@ export class ActivarTrabajadorPage {
     const toast = await this.toastController.create({
       message: 'Cuenta activada con éxito',
       duration: 1800,
-      position: 'top',
+      position: 'bottom',
       color: 'success',
     });
     await toast.present();

@@ -26,10 +26,11 @@ export interface RegisterRequest {
   nombres: string;
   apellidos: string;
   fechaNacimiento?: string;
-  telefono?: string;
+  telefono: string;
+  fotoUrl?: string;
   email: string;
   password: string;
-  finca: { nombre: string; direccion?: string };
+  finca: { nombre: string; direccion?: string; latitud?: number; longitud?: number };
   aceptaTerminos: boolean;
 }
 
@@ -38,12 +39,21 @@ export interface WorkerActivationResponse {
   message: string;
 }
 
+export interface ProfileUpdate {
+  nombres: string;
+  apellidos: string;
+  email: string;
+  telefono: string;
+  fotoUrl?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = environment.apiUrl;
 
   accessToken: string | null = null;
+  private expiresAt = 0;
   currentUser: LoginResponse['usuario'] | null = null;
 
   constructor() {
@@ -57,6 +67,7 @@ export class AuthService {
       };
       if (session.expiresAt > Date.now()) {
         this.accessToken = session.accessToken;
+        this.expiresAt = session.expiresAt;
         this.currentUser = session.currentUser;
       } else {
         localStorage.removeItem('vacuno-session');
@@ -88,6 +99,15 @@ export class AuthService {
     return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).pipe(tap((profile) => (this.currentUser = profile)));
   }
 
+  updateProfile(request: ProfileUpdate): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${this.apiUrl}/auth/me`, request).pipe(
+      tap((profile) => {
+        this.currentUser = profile;
+        this.persistSession();
+      }),
+    );
+  }
+
   logout(): void {
     this.accessToken = null;
     this.currentUser = null;
@@ -101,12 +121,17 @@ export class AuthService {
   private saveSession(response: LoginResponse): void {
     this.accessToken = response.accessToken;
     this.currentUser = response.usuario;
+    this.expiresAt = Date.now() + response.expiresIn * 1000;
+    this.persistSession();
+  }
+
+  private persistSession(): void {
     localStorage.setItem(
       'vacuno-session',
       JSON.stringify({
-        accessToken: response.accessToken,
-        currentUser: response.usuario,
-        expiresAt: Date.now() + response.expiresIn * 1000,
+        accessToken: this.accessToken,
+        currentUser: { ...this.currentUser, fotoUrl: undefined },
+        expiresAt: this.expiresAt,
       }),
     );
   }

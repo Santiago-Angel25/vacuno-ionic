@@ -303,6 +303,10 @@ export class FarmService {
     return this.http.get<FarmTask[]>(`${this.apiUrl}/tareas/mias`, { params: { fincaId: farmId } });
   }
 
+  deleteOverdueTask(farmId: number, taskId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/tareas/${taskId}`, { params: { fincaId: farmId } });
+  }
+
   tasks(farmId: number): Observable<FarmTask[]> {
     return this.http.get<FarmTask[]>(`${this.apiUrl}/tareas`, { params: { fincaId: farmId } });
   }

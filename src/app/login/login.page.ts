@@ -75,7 +75,7 @@ export class LoginPage implements OnInit {
     const toast = await this.toastController.create({
       message: 'Ingreso exitoso',
       duration: 1800,
-      position: 'top',
+      position: 'bottom',
       color: 'success',
     });
     await toast.present();

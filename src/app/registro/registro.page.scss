@@ -18,6 +18,69 @@
 .register-shell .login-button {
   margin-top: 16px;
 }
+.municipality-section .input-item {
+  --background: #f6f8f4;
+  border-color: #dbe4d8;
+}
+.municipality-search,
+.municipality-gps {
+  min-height: 44px;
+  margin: 8px 0 0;
+  --border-radius: 12px;
+  --box-shadow: none;
+  font-weight: 750;
+  text-transform: none;
+}
+.municipality-search {
+  --background: #dcefd8;
+  --background-hover: #cce5c8;
+  --color: #184b29;
+}
+.municipality-gps { --color: #207637; }
+.municipality-results {
+  min-width: 0;
+  margin: 12px 0 0;
+  padding: 0;
+  border: 0;
+}
+.municipality-options {
+  overflow: hidden;
+  border: 1px solid #c4d5c2;
+  border-radius: 12px;
+}
+.municipality-option {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  color: #1b4828;
+  cursor: pointer;
+}
+.municipality-option + .municipality-option { border-top: 1px solid #dbe4d8; }
+.municipality-option.is-selected { background: #e0f0db; }
+.municipality-option strong,
+.municipality-option small { display: block; }
+.municipality-option small { color: #506452; }
+.municipality-option input {
+  appearance: none;
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
+  border: 1.5px solid #849087;
+  border-radius: 50%;
+  background: #fff;
+}
+.municipality-option input:checked {
+  border-color: #207637;
+  background: radial-gradient(circle, #207637 0 5px, #fff 5.5px);
+}
+.municipality-option input:focus-visible {
+  outline: 2px solid #207637;
+  outline-offset: 2px;
+}
+.municipality-credit { margin: 15px 0 0; color: #657368; font-size: 11px; text-align: center; }
 .terms-row {
   margin-top: 16px;
   color: #506452;

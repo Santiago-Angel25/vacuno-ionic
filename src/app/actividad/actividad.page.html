@@ -99,7 +99,7 @@
 </ion-content>
 
 <ion-modal #detailModal class="activity-detail-modal" [isOpen]="selected !== null" aria-labelledby="activity-detail-title"
-  (didDismiss)="selected = null">
+  (didDismiss)="selected = null; deleteError = ''">
   <ng-template>
       @if (selected; as detail) {
         <section class="activity-detail">
@@ -140,7 +140,13 @@
                 </div>
               }
             </dl>
-            @if (auth.currentUser?.rol === 'TRABAJADOR') {
+            @if (auth.currentUser?.rol === 'PROPIETARIO' && isTaskOverdue(detail.data)) {
+              @if (deleteError) { <p class="detail-expired" role="alert">{{ deleteError }}</p> }
+              <ion-button color="danger" fill="outline" expand="block" [disabled]="deletingTask"
+                (click)="deleteOverdueTask(detailModal, detail.data)">
+                {{ deletingTask ? 'Eliminando…' : 'Eliminar actividad vencida' }}
+              </ion-button>
+            } @else if (auth.currentUser?.rol === 'TRABAJADOR') {
               @if (isTaskOverdue(detail.data)) {
                 <p class="detail-expired" role="alert">{{ taskOverdueMessage }}</p>
               } @else if (detail.data.estado === 'PENDIENTE') {

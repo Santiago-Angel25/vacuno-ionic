@@ -22,24 +22,26 @@
   left: 0;
   display: grid;
   place-items: center;
-  padding: 0 15%;
+  padding: 0 16px;
   animation: brand-enter 650ms ease-out both;
 }
 
 .brand-logo {
   display: block;
-  width: min(100%, 198px);
+  width: min(70vw, 198px);
   height: auto;
   filter: drop-shadow(0 4px 11px rgb(20 59 27 / 8%));
 }
 
 .brand-tagline {
+  width: 100%;
   margin: 12px 0 0;
   color: #0e2219;
-  font-size: clamp(13px, 4.1vw, 17px);
+  font-size: clamp(12px, 3.9vw, 17px);
   font-weight: 800;
   letter-spacing: 0.01em;
   line-height: 1.2;
+  text-align: center;
   text-shadow: 0 1px 5px rgb(255 255 255 / 72%);
 }
 

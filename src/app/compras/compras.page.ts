@@ -1,7 +1,7 @@
 import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { DetailModalComponent } from '../shared/detail-modal.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
   IonButton,
   IonContent,
@@ -44,6 +44,7 @@ import type { Purchase } from '../service/farm.service';
 })
 export class ComprasPage {
   private readonly farms = inject(FarmService);
+  private readonly route = inject(ActivatedRoute);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   farmId: number | null = null;
@@ -64,6 +65,8 @@ export class ComprasPage {
   }
 
   ionViewWillEnter(): void {
+    this.loading = true;
+    this.errorMessage = '';
     this.farms
       .myFarms()
       .pipe(
@@ -150,6 +153,9 @@ export class ComprasPage {
   }
 
   get filteredPurchases(): Purchase[] {
+    if (this.selectedPurchaseId) {
+      return this.purchases.filter((purchase) => purchase.id === this.selectedPurchaseId);
+    }
     if (this.monthFilter)
       return this.purchases.filter((purchase) => purchase.fecha.startsWith(this.monthFilter));
     if (this.daysFilter === 'ALL') return this.purchases;
@@ -157,6 +163,11 @@ export class ComprasPage {
     cutoff.setDate(cutoff.getDate() - Number(this.daysFilter));
     const date = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, '0')}-${String(cutoff.getDate()).padStart(2, '0')}`;
     return this.purchases.filter((purchase) => purchase.fecha >= date);
+  }
+
+  get selectedPurchaseId(): number | null {
+    const id = Number(this.route.snapshot.queryParamMap.get('compraId'));
+    return Number.isSafeInteger(id) && id > 0 ? id : null;
   }
 
   onDaysFilter(event: CustomEvent<{ value?: string }>): void {

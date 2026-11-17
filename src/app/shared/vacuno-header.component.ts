@@ -45,12 +45,12 @@ import { arrowBackOutline, notificationsOutline } from 'ionicons/icons';
     </ion-header>
   `,
   styles: [`
-    .vacuno-hero-header { overflow: hidden; box-shadow: none; position: relative; z-index: 3; min-height: calc(76px + env(safe-area-inset-top)); background: var(--vacuno-green-900); }
-    .header-mountain { position: absolute; z-index: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 58px; pointer-events: none; }
+    .vacuno-hero-header { overflow: hidden; box-shadow: none; position: relative; z-index: 3; background: var(--vacuno-green-900); }
+    .header-mountain { position: absolute; z-index: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 36px; pointer-events: none; }
     .header-mountain path { fill: #07512c; opacity: .82; }.header-mountain .mountain-front { fill: #043d22; opacity: .76; }
-    ion-toolbar { position: relative; z-index: 1; --background: transparent; --color: #fff; --border-width: 0; --min-height: calc(76px + env(safe-area-inset-top)); padding: 0; }
+    .vacuno-hero-header ion-toolbar:first-of-type { position: relative; z-index: 1; --background: transparent; --color: #fff; --border-width: 0; --min-height: 52px; padding: var(--ion-safe-area-top, env(safe-area-inset-top, 0px)) 0 0; }
     ion-toolbar::before { content: none; }
-    .header-row { display: flex; position: relative; z-index: 1; align-items: center; min-height: calc(76px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 10px 0; box-sizing: border-box; }
+    .header-row { display: flex; position: relative; z-index: 1; align-items: center; min-height: 52px; padding: 0 10px; box-sizing: border-box; }
     .header-title { flex: 1; color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -.3px; }
     ion-button { --color: #fff; --padding-start: 7px; --padding-end: 7px; }
     ion-icon { font-size: 22px; }

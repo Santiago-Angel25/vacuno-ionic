@@ -7,17 +7,18 @@ import { IonButton } from '@ionic/angular';
   selector: 'app-camera-picker',
   imports: [IonButton],
   template: `
-    @if (native) {
+    @if (native && showActions()) {
       <ion-button type="button" size="small" fill="outline" [disabled]="busy()"
         [attr.aria-label]="'Tomar foto de ' + subject()" (click)="takePhoto()">Tomar foto</ion-button>
       <ion-button type="button" size="small" fill="clear" [disabled]="busy()"
         [attr.aria-label]="'Elegir foto de ' + subject() + ' desde la galería'" (click)="choosePhoto()">Galería</ion-button>
-      @if (error()) { <p role="alert">{{ error() }}</p> }
     }
+    @if (error()) { <p role="alert">{{ error() }}</p> }
   `,
 })
 export class CameraPickerComponent {
   readonly subject = input.required<string>();
+  readonly showActions = input(true);
   readonly selected = output<File>();
   readonly native = Capacitor.isNativePlatform();
   readonly busy = signal(false);

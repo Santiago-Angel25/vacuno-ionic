@@ -24,6 +24,18 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "leaflet/dist/leaflet.css";
+
+.farm-map .leaflet-tile {
+  mix-blend-mode: normal;
+}
+
+.farm-map .farm-map-pin {
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #21683a;
+  box-shadow: 0 1px 5px #2228;
+}
 
 /* Roboto variable is bundled for offline use. Its license is in assets/fonts/roboto. */
 @font-face {

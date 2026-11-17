@@ -3,7 +3,7 @@
     <ion-button class="purchases-link" fill="solid" routerLink="/tabs/compras">Ir a compras</ion-button>
   }
 </app-vacuno-header>
-<ion-content [fullscreen]="true" class="module-content">
+<ion-content class="module-content list-content" [scrollY]="false">
   <main class="inventory-page">
     <p class="eyebrow">INSUMOS Y EXISTENCIAS</p>
     <h1>Inventario</h1>
@@ -33,7 +33,7 @@
       <p>{{ search ? 'Prueba con otro nombre o categoría.' : 'Los productos de tu finca aparecerán aquí.' }}</p>
     </div>
     } @else {
-    <section class="product-list" aria-label="Productos del inventario">
+    <section class="product-list" aria-label="Productos del inventario" tabindex="0">
       @for (product of visibleProducts; track product.id) {
       <article class="product-card vacuno-detail-target">
         <button type="button" class="vacuno-detail-hit" aria-haspopup="dialog"

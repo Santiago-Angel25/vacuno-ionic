@@ -367,6 +367,7 @@ export class ActividadFormPage {
     if (dueDate && dueDate < this.minDueDate) {
       const toast = await this.toasts.create({
         message: 'La fecha límite debe ser hoy o una fecha futura.',
+        position: 'bottom',
         color: 'warning',
         duration: 3000,
       });

@@ -97,10 +97,11 @@
       <div class="loading-card" role="status">Cargando notificaciones…</div>
       } @else if (alerts.length) {
       <div class="alert-list">
-        @for (alert of alerts.slice(0, 3); track alert.id) {
+        @for (alert of alerts; track alert.id) {
         <article class="alert-item vacuno-detail-target" [class]="'alert-' + alertColor(alert)">
-          <button type="button" class="vacuno-detail-hit" aria-haspopup="dialog"
-            [attr.aria-label]="'Ver detalle: ' + alert.titulo" (click)="selectedAlert = alert"></button>
+          <button type="button" class="vacuno-detail-hit"
+            [attr.aria-haspopup]="alert.destino === 'COMPRAS' ? null : 'dialog'"
+            [attr.aria-label]="'Ver detalle: ' + alert.titulo" (click)="openAlert(alert)"></button>
           <span class="alert-symbol"><ion-icon name="notifications-outline"></ion-icon></span>
           <div>
             <strong>{{ alert.titulo }}</strong>

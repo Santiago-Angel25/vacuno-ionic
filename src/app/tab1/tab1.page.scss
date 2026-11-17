@@ -149,11 +149,18 @@
 
 .alert-list {
   padding: 0 13px;
+  max-height: 203px;
+  overflow-y: auto;
 }
 
 .alert-item {
   display: grid;
-  min-height: 67px;
+  box-sizing: border-box;
+  height: 67px;
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  text-align: start;
   grid-template-columns: 34px minmax(0, 1fr) auto;
   align-items: center;
   gap: 9px;
@@ -190,6 +197,10 @@
 }
 
 .alert-item strong {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   color: #35443a;
   font-size: 12px;
 }

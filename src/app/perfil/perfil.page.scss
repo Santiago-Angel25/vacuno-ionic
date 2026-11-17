@@ -62,7 +62,7 @@
 .profile-card h2 {
   position: relative;
   z-index: 1;
-  display: inline-block;
+  display: block;
   margin: 0;
   padding: 2px 10px;
   border-radius: 12px;
@@ -134,4 +134,19 @@
 }
 .profile-error {
   color: #a23e35;
+}
+.profile-edit {
+  display: grid;
+  gap: 12px;
+}
+.edit-profile-button {
+  --background: #e5f3e7;
+  --color: #0d6b39;
+  --border-radius: 14px;
+  --box-shadow: none;
+  display: flex;
+  width: fit-content;
+  margin: 8px auto 0;
+  font-weight: 700;
+  text-transform: none;
 }

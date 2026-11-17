@@ -69,6 +69,15 @@ export class Tab1Page {
     return alert.tareaVencida ? 'red' : this.activityColor(alert.titulo);
   }
 
+  openAlert(alert: FarmAlert): void {
+    if (alert.destino === 'COMPRAS') {
+      const compraId = /^compra-(?:revision-)?(\d+)$/.exec(alert.id)?.[1];
+      void this.router.navigate(['/tabs/compras'], { queryParams: { compraId } });
+      return;
+    }
+    this.selectedAlert = alert;
+  }
+
   activityColor(label: string): 'red' | 'yellow' | 'green' | 'gray' {
     const title = label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/_/g, ' ');
     if (/\bmedicamentos?\b/.test(title)) return 'red';

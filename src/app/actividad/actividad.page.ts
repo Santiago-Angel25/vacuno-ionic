@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
+  AlertController,
   IonButton,
   IonContent,
   IonFab,
@@ -38,6 +39,7 @@ import { isTaskOverdue, taskOverdueMessage } from '../shared/task-due-date';
   ],
 })
 export class ActividadPage {
+  private readonly alertController = inject(AlertController);
   private readonly router = inject(Router);
   readonly taskOverdueMessage = taskOverdueMessage;
   readonly isTaskOverdue = isTaskOverdue;
@@ -50,6 +52,8 @@ export class ActividadPage {
   selected: { kind: 'task'; data: FarmTask } | { kind: 'activity'; data: FarmActivity } | null = null;
   loading = true;
   errorMessage = '';
+  deletingTask = false;
+  deleteError = '';
 
   constructor() {
     addIcons({ add, calendarOutline, checkmarkOutline, createOutline, documentTextOutline, medkitOutline, nutritionOutline, pawOutline, personAddOutline, personOutline, timeOutline });
@@ -98,6 +102,47 @@ export class ActividadPage {
     if (this.auth.currentUser?.rol !== 'TRABAJADOR' || task.estado !== 'PENDIENTE' || isTaskOverdue(task)) return;
     if (await modal.dismiss()) {
       await this.router.navigate(['/tabs/actividad/nueva'], { queryParams: { taskId: task.id } });
+    }
+  }
+
+  async deleteOverdueTask(modal: IonModal, task: FarmTask): Promise<void> {
+    const farmId = this.farmId;
+    if (!farmId || this.deletingTask || this.auth.currentUser?.rol !== 'PROPIETARIO' || !isTaskOverdue(task)) return;
+    this.deletingTask = true;
+    this.deleteError = '';
+    try {
+      const confirmation = await this.alertController.create({
+        header: 'Eliminar actividad vencida',
+        message: 'La tarea se eliminará de forma permanente.',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          { text: 'Eliminar', role: 'destructive' },
+        ],
+      });
+      await confirmation.present();
+      if ((await confirmation.onDidDismiss()).role !== 'destructive') {
+        this.deletingTask = false;
+        this.cdr.markForCheck();
+        return;
+      }
+      this.farms.deleteOverdueTask(farmId, task.id).pipe(
+        finalize(() => {
+          this.deletingTask = false;
+          this.cdr.markForCheck();
+        }),
+      ).subscribe({
+        next: () => {
+          this.tasks = this.tasks.filter((item) => item.id !== task.id);
+          if (this.selected?.kind === 'task' && this.selected.data.id === task.id) void modal.dismiss();
+        },
+        error: (error: { error?: { detail?: string } }) => {
+          this.deleteError = error.error?.detail ?? 'No fue posible eliminar la actividad vencida.';
+        },
+      });
+    } catch {
+      this.deletingTask = false;
+      this.deleteError = 'No fue posible confirmar la eliminación.';
+      this.cdr.markForCheck();
     }
   }
 
