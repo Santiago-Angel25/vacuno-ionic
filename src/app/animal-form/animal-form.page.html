@@ -1,10 +1,5 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/ganado" text=""></ion-back-button></ion-buttons>
-    <ion-title>Agregar animal</ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true" class="animal-form-content">
+<app-vacuno-header title="Agregar animal" [showBack]="true" backHref="/tabs/ganado"></app-vacuno-header>
+<ion-content class="animal-form-content">
   <main class="animal-form-page">
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <app-camera-picker #animalCamera subject="animal" (selected)="selectPhoto($event)" />

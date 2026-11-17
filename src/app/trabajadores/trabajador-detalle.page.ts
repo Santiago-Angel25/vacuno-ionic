@@ -1,6 +1,7 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonContent } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
 import { FarmService } from '../service/farm.service';
@@ -10,7 +11,7 @@ import type { FarmActivity, WorkerSummary } from '../service/farm.service';
   selector: 'app-trabajador-detalle',
   templateUrl: './trabajador-detalle.page.html',
   styleUrl: './trabajador-detalle.page.scss',
-  imports: [IonBackButton, IonButtons, IonContent, IonHeader, IonTitle, IonToolbar],
+  imports: [VacunoHeaderComponent, IonContent],
 })
 export class TrabajadorDetallePage {
   private readonly route = inject(ActivatedRoute);

@@ -1,20 +1,19 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
+import { isTaskOverdue, localDate, taskOverdueMessage } from '../shared/task-due-date';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  IonBackButton,
+  AlertController,
+  ToastController,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
   IonInput,
   IonItem,
   IonSelect,
   IonSelectOption,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
-import { finalize, forkJoin, map, of, switchMap } from 'rxjs';
+import { EMPTY, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import { FarmService } from '../service/farm.service';
@@ -26,22 +25,23 @@ import type { Animal, FarmTask, InventoryProduct, WorkerSummary } from '../servi
   templateUrl: './actividad-form.page.html',
   styleUrl: './actividad-form.page.scss',
   imports: [
+    VacunoHeaderComponent,
     CameraPickerComponent,
     ReactiveFormsModule,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
     IonInput,
     IonItem,
     IonSelect,
     IonSelectOption,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class ActividadFormPage {
+  readonly taskOverdueMessage = taskOverdueMessage;
+  get taskExpired(): boolean { return this.task !== null && isTaskOverdue(this.task); }
+  private readonly toasts = inject(ToastController);
+  get minDueDate(): string { return localDate(); }
+  private readonly alerts = inject(AlertController);
   private readonly fb = inject(FormBuilder);
   private readonly farms = inject(FarmService);
   readonly auth = inject(AuthService);
@@ -123,10 +123,17 @@ export class ActividadFormPage {
             animals: Animal[]; products: InventoryProduct[]; workers: WorkerSummary[]; task: FarmTask | null;
           });
           if (this.taskMode && !this.ownerMode) {
-            return this.farms.myTasks(this.farmId).pipe(map((tasks) => ({
-              animals: [] as Animal[], products: [] as InventoryProduct[], workers: [] as WorkerSummary[],
-              task: tasks.find((item) => item.id === this.taskId) ?? null,
-            })));
+            return this.farms.myTasks(this.farmId).pipe(
+              switchMap((tasks) => {
+                const task = tasks.find((item) => item.id === this.taskId && item.estado === 'PENDIENTE') ?? null;
+                const products = task && this.typeConsumesInventory(this.activityType(task.titulo))
+                  ? this.farms.inventory(this.farmId!)
+                  : of([] as InventoryProduct[]);
+                return products.pipe(map((inventory) => ({
+                  animals: [] as Animal[], products: inventory, workers: [] as WorkerSummary[], task,
+                })));
+              }),
+            );
           }
           return this.ownerMode
             ? this.farms.workers(this.farmId).pipe(switchMap((workers) =>
@@ -149,14 +156,18 @@ export class ActividadFormPage {
           this.cdr.markForCheck();
         },
         error: () => {
-          this.errorMessage = 'No fue posible cargar los animales.';
+          this.errorMessage = 'No fue posible cargar los datos de la actividad.';
           this.cdr.markForCheck();
         },
       });
   }
 
   get consumesInventory(): boolean {
-    return ['VACUNACION', 'ALIMENTACION', 'MEDICAMENTO', 'INSUMO'].includes(this.form.controls.tipo.value);
+    return this.typeConsumesInventory(this.form.controls.tipo.value);
+  }
+
+  private typeConsumesInventory(type: string): boolean {
+    return ['VACUNACION', 'ALIMENTACION', 'MEDICAMENTO', 'INSUMO'].includes(type);
   }
 
   get requiresAnimal(): boolean {
@@ -174,6 +185,10 @@ export class ActividadFormPage {
       : this.form.controls.tipo.value === 'INSUMO'
         ? 'INSUMOS'
         : 'MEDICAMENTOS';
+  }
+
+  get availableProducts(): InventoryProduct[] {
+    return this.filteredProducts.filter((product) => this.displayStock(product) >= 1);
   }
 
   get selectedProduct(): InventoryProduct | undefined {
@@ -282,18 +297,7 @@ export class ActividadFormPage {
     }
     if (this.invalidIntegerInput) return;
     const value = this.form.getRawValue();
-    if (this.consumesInventory && (!value.productoId || !Number.isInteger(Number(value.cantidadPorDosis))
-        || Number(value.cantidadPorDosis) <= 0
-        || (this.showDoseCount && (!Number.isInteger(Number(value.numeroDosis)) || Number(value.numeroDosis) < 1)))) {
-      this.errorMessage = 'Selecciona el producto e indica la cantidad utilizada con números enteros.';
-      return;
-    }
-    if (this.consumesInventory && this.selectedProduct
-        && Number(value.cantidadPorDosis) * (this.showDoseCount ? Number(value.numeroDosis) : 1)
-          > this.selectedProduct.stockActual) {
-      this.errorMessage = `Stock insuficiente: hay ${this.selectedProduct.stockActual} ${this.selectedProduct.unidad}; puedes registrar máximo ${this.wholeUnitsAvailable} unidades enteras.`;
-      return;
-    }
+    if (!this.validateConsumption()) return;
     const animalId = Number(value.animalId);
     this.saving = true;
     this.errorMessage = '';
@@ -328,7 +332,47 @@ export class ActividadFormPage {
       });
   }
 
-  private submitTask(): void {
+  private validateConsumption(): boolean {
+    if (this.invalidIntegerInput) return false;
+    const value = this.form.getRawValue();
+    if (this.consumesInventory && (!this.selectedProduct || !Number.isInteger(Number(value.cantidadPorDosis))
+        || Number(value.cantidadPorDosis) <= 0
+        || (this.showDoseCount && (!Number.isInteger(Number(value.numeroDosis)) || Number(value.numeroDosis) < 1)))) {
+      this.errorMessage = 'Selecciona el producto e indica la cantidad utilizada con números enteros.';
+      return false;
+    }
+    if (this.consumesInventory && this.selectedProduct
+        && Number(value.cantidadPorDosis) * (this.showDoseCount ? Number(value.numeroDosis) : 1)
+          > this.selectedProduct.stockActual) {
+      this.errorMessage = `Stock insuficiente: hay ${this.selectedProduct.stockActual} ${this.selectedProduct.unidad}; puedes registrar máximo ${this.wholeUnitsAvailable} unidades enteras.`;
+      return false;
+    }
+    return true;
+  }
+
+  private async showRestockAlert(category: string): Promise<void> {
+    const alert = await this.alerts.create({
+      header: 'No hay stock disponible',
+      message: 'Repón las existencias de ' + category.toLowerCase() + ' para asignar esta actividad.',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Reponer', handler: () => void this.router.navigateByUrl('/tabs/compras/nueva') },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async submitTask(): Promise<void> {
+    const dueDate = this.form.controls.fechaLimite.value;
+    if (dueDate && dueDate < this.minDueDate) {
+      const toast = await this.toasts.create({
+        message: 'La fecha límite debe ser hoy o una fecha futura.',
+        color: 'warning',
+        duration: 3000,
+      });
+      await toast.present();
+      return;
+    }
     if (this.form.invalid || !this.form.controls.asignadaA.value) {
       this.form.markAllAsTouched();
       this.errorMessage = 'Selecciona un trabajador y describe la tarea pendiente.';
@@ -337,14 +381,27 @@ export class ActividadFormPage {
     const value = this.form.getRawValue();
     this.saving = true;
     this.errorMessage = '';
-    this.farms.createTask({
-      fincaId: this.farmId!,
-      titulo: this.activityTitle,
-      descripcion: value.descripcion.trim(),
-      asignadaA: Number(value.asignadaA),
-      ...(value.fechaLimite ? { fechaLimite: value.fechaLimite } : {}),
-      prioridad: 'MEDIA',
-    }).pipe(finalize(() => {
+    const farmId = this.farmId!;
+    const category = this.productCategory;
+    const title = this.activityTitle;
+    const availability: Observable<InventoryProduct[] | null> = this.consumesInventory
+      ? this.farms.inventory(farmId)
+      : of(null);
+    availability.pipe(switchMap((products) => {
+      if (products && !products.some((product) =>
+        product.categoria.toUpperCase() === category && this.displayStock(product) >= 1)) {
+        void this.showRestockAlert(category);
+        return EMPTY;
+      }
+      return this.farms.createTask({
+        fincaId: farmId,
+        titulo: title,
+        descripcion: value.descripcion.trim(),
+        asignadaA: Number(value.asignadaA),
+        ...(value.fechaLimite ? { fechaLimite: value.fechaLimite } : {}),
+        prioridad: 'MEDIA',
+      });
+    }), finalize(() => {
       this.saving = false;
       this.cdr.markForCheck();
     })).subscribe({
@@ -361,13 +418,24 @@ export class ActividadFormPage {
       this.errorMessage = 'No encontramos la tarea pendiente.';
       return;
     }
+    if (this.taskExpired) {
+      this.cdr.markForCheck();
+      return;
+    }
     if (!this.photoUrl) {
       this.photoError = 'Adjunta una foto para registrar la actividad.';
       return;
     }
+    if (!this.validateConsumption()) return;
+    const value = this.form.getRawValue();
+    const consumption = this.consumesInventory ? {
+      productoId: Number(value.productoId),
+      cantidadPorDosis: Number(value.cantidadPorDosis),
+      numeroDosis: this.showDoseCount ? Number(value.numeroDosis) : 1,
+    } : undefined;
     this.saving = true;
     this.errorMessage = '';
-    this.farms.registerTaskActivity(this.farmId, this.task.id, this.photoUrl)
+    this.farms.registerTaskActivity(this.farmId, this.task.id, this.photoUrl, consumption)
       .pipe(finalize(() => {
         this.saving = false;
         this.cdr.markForCheck();

@@ -1,18 +1,14 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
   IonInput,
   IonItem,
   IonSelect,
   IonSelectOption,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
@@ -25,19 +21,15 @@ import type { InventoryProduct, Purchase } from '../service/farm.service';
   templateUrl: './compra-form.page.html',
   styleUrl: './compra-form.page.scss',
   imports: [
+    VacunoHeaderComponent,
     CameraPickerComponent,
     ReactiveFormsModule,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
     IonInput,
     IonItem,
     IonSelect,
     IonSelectOption,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class CompraFormPage {

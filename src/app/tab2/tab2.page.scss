@@ -3,17 +3,17 @@
 .livestock-page {
   width: min(100%, 760px);
   margin: 0 auto;
-  padding: 22px 16px 94px;
+  padding: 16px 12px 110px;
 }
 .livestock-page h1 {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   color: #20372a;
   font-size: 25px;
   font-weight: 900;
 }
 .search-field {
-  min-height: 48px;
-  margin-bottom: 12px;
+  --min-height: 42px;
+  margin-bottom: 10px;
   --background: #fff;
   --border-radius: 14px;
   --padding-start: 13px;
@@ -29,7 +29,7 @@
   display: flex;
   justify-content: space-between;
   gap: 5px;
-  margin: 0 0 17px;
+  margin: 0 0 14px;
 }
 .filter-row ion-button {
   flex: 1;
@@ -41,23 +41,24 @@
   font-size: 10px;
   font-weight: 700;
   text-transform: none;
-  --color: #536458;
-  --border-color: #e1e8df;
+  --color: #216038;
+  --border-color: #dce9dd;
 }
 .filter-row ion-button[fill='solid'] {
-  --background: #26743b;
+  --background: #116533;
   --color: #fff;
 }
 .animal-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 .animal-card {
-  display: flex;
-  min-height: 104px;
-  align-items: center;
-  gap: 11px;
-  padding: 10px;
+  display: grid;
+  grid-template-columns: clamp(56px, 19vw, 78px) minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  column-gap: 8px;
+  padding: 7px;
   border: 1px solid #e9eee6;
   border-radius: 16px;
   background: #fff;
@@ -67,9 +68,9 @@
   cursor: pointer;
 }
 .animal-photo {
-  width: 74px;
-  height: 78px;
-  flex: 0 0 74px;
+  grid-row: 1 / span 2;
+  width: 100%;
+  height: 70px;
   border-radius: 12px;
   object-fit: cover;
 }
@@ -81,18 +82,20 @@
 }
 .animal-info {
   min-width: 0;
-  flex: 1;
+  grid-row: 1 / span 2;
+  align-self: center;
 }
 .animal-id {
-  color: #6b8a6e;
+  color: #216038;
   font-size: 9px;
   font-weight: 800;
 }
 .animal-info h2 {
   overflow: hidden;
-  margin: 3px 0;
+  margin: 0 0 3px;
   color: #28392d;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -102,25 +105,35 @@
   color: #778079;
   font-size: 10px;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .animal-info .animal-weight {
   color: #394b3d;
   font-weight: 700;
 }
+.animal-info ion-icon {
+  margin-inline-end: 3px;
+  font-size: 13px;
+  vertical-align: text-bottom;
+}
 .health-badge {
-  align-self: flex-end;
-  padding: 5px 7px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 3px;
+  padding: 4px 6px;
   border-radius: 12px;
-  background: #eaf4e6;
-  color: #327342;
+  background: #edf0ee;
+  color: #46544b;
   font-size: 8px;
   font-weight: 800;
   white-space: nowrap;
 }
+.health-badge ion-icon { font-size: 11px; }
+.healthy-badge { background: #dcf4d7; color: #216038; }
 .attention-badge {
-  background: #fff0e8;
-  color: #ac5233;
+  background: #ffe2d8;
+  color: #a32f19;
 }
 .state-card {
   display: grid;

@@ -1,19 +1,18 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
+import { DetailModalComponent } from '../shared/detail-modal.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
+  IonFab,
+  IonFabButton,
   IonIcon,
   IonInput,
   IonItem,
   IonSelect,
   IonSelectOption,
   IonSpinner,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { add, checkmarkCircleOutline, receiptOutline } from 'ionicons/icons';
@@ -28,20 +27,19 @@ import type { Purchase } from '../service/farm.service';
   templateUrl: './compras.page.html',
   styleUrl: './compras.page.scss',
   imports: [
+    VacunoHeaderComponent,
+    DetailModalComponent,
     RouterLink,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
+    IonFab,
+    IonFabButton,
     IonIcon,
     IonInput,
     IonItem,
     IonSelect,
     IonSelectOption,
     IonSpinner,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class ComprasPage {
@@ -50,6 +48,7 @@ export class ComprasPage {
   readonly auth = inject(AuthService);
   farmId: number | null = null;
   purchases: Purchase[] = [];
+  selectedPurchase: Purchase | null = null;
   loading = true;
   busyId: number | null = null;
   evidenceId: number | null = null;

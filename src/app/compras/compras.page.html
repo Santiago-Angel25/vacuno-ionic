@@ -1,17 +1,5 @@
-<ion-header
-  ><ion-toolbar>
-    <ion-buttons slot="start"
-      ><ion-back-button defaultHref="/tabs/inventario" text=""></ion-back-button></ion-buttons
-    >
-    <ion-title>Compras</ion-title>
-    <ion-buttons slot="end"
-      ><ion-button routerLink="/tabs/compras/nueva"
-        ><ion-icon slot="start" name="add"></ion-icon>Nueva</ion-button
-      ></ion-buttons
-    >
-  </ion-toolbar></ion-header
->
-<ion-content [fullscreen]="true" class="purchases-content">
+<app-vacuno-header title="Compras" [showBack]="true" backHref="/tabs/inventario"></app-vacuno-header>
+<ion-content class="purchases-content">
   <main class="purchases-page">
     <p class="eyebrow">TRAZABILIDAD DE INSUMOS</p>
     <h1>Compras de la finca</h1>
@@ -48,7 +36,10 @@
     <section aria-label="Compras registradas" class="purchase-list">
       @for (purchase of filteredPurchases; track purchase.id) {
       <article class="purchase-card">
-        <div class="card-heading">
+        <div class="card-heading vacuno-detail-target">
+          <button type="button" class="vacuno-detail-hit" aria-haspopup="dialog"
+            [attr.aria-label]="'Ver compra: ' + (purchase.proveedor || 'Compra sin proveedor')"
+            (click)="selectedPurchase = purchase"></button>
           <div>
             <span class="eyebrow">{{ purchase.fecha }}</span>
             <h2>{{ purchase.proveedor || 'Compra sin proveedor' }}</h2>
@@ -109,4 +100,28 @@
     </section>
     }
   </main>
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="add-purchase-fab">
+    <ion-fab-button routerLink="/tabs/compras/nueva" aria-label="Nueva compra">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
+<app-detail-modal [open]="selectedPurchase !== null" category="Compra"
+  [title]="selectedPurchase?.proveedor || 'Compra sin proveedor'" (closed)="selectedPurchase = null">
+  @if (selectedPurchase; as purchase) {
+    <dl>
+      <div><dt>Fecha</dt><dd>{{ purchase.fecha }}</dd></div>
+      <div><dt>Estado</dt><dd>{{ purchase.estado === 'RECIBIDA' ? 'Aprobada' : purchase.estado === 'PENDIENTE' ? 'Pendiente' : 'Rechazada' }}</dd></div>
+      @for (line of purchase.productos; track $index) {
+        <div>
+          <dt>{{ line.nombre }}</dt>
+          <dd>{{ line.cantidad }} {{ line.unidad }} × {{ money(line.precioUnitario) }}</dd>
+        </div>
+      }
+      <div><dt>Total de compra</dt><dd>{{ money(purchase.total) }}</dd></div>
+      @if (purchase.observaciones) {
+        <div><dt>Observaciones</dt><dd>{{ purchase.observaciones }}</dd></div>
+      }
+    </dl>
+  }
+</app-detail-modal>

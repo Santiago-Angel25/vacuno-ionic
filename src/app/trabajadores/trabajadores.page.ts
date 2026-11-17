@@ -1,19 +1,15 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonSpinner,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { personAddOutline } from 'ionicons/icons';
@@ -29,21 +25,17 @@ import type { WorkerInvite, WorkerSummary } from '../service/farm.service';
   templateUrl: './trabajadores.page.html',
   styleUrl: './trabajadores.page.scss',
   imports: [
+    VacunoHeaderComponent,
     CameraPickerComponent,
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
     IonIcon,
     IonInput,
     IonItem,
     IonSpinner,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class TrabajadoresPage {

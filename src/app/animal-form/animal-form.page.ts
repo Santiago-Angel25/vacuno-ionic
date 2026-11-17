@@ -1,7 +1,8 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonSelect, IonSelectOption, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonButton, IonContent, IonInput, IonItem, IonSelect, IonSelectOption } from '@ionic/angular';
 import { finalize } from 'rxjs';
 
 import { FarmService } from '../service/farm.service';
@@ -11,7 +12,7 @@ import { CameraPickerComponent } from '../shared/camera-picker.component';
   selector: 'app-animal-form',
   templateUrl: './animal-form.page.html',
   styleUrl: './animal-form.page.scss',
-  imports: [CameraPickerComponent, ReactiveFormsModule, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonSelect, IonSelectOption, IonTitle, IonToolbar],
+  imports: [VacunoHeaderComponent, CameraPickerComponent, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem, IonSelect, IonSelectOption],
 })
 export class AnimalFormPage {
   private readonly fb = inject(FormBuilder);

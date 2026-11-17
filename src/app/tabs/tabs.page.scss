@@ -8,13 +8,13 @@
   bottom: max(12px, env(safe-area-inset-bottom));
   left: 14px;
   width: auto;
-  min-height: 54px;
+  min-height: 56px;
   overflow: hidden;
   --background: rgb(255 255 255 / 72%);
   --border: 1px solid rgb(255 255 255 / 72%);
-  padding: 3px 5px;
+  padding: 4px 7px;
   border: 1px solid rgb(27 68 37 / 12%);
-  border-radius: 20px;
+  border-radius: 22px;
   box-shadow: 0 9px 28px rgb(31 65 36 / 20%);
   backdrop-filter: blur(16px) saturate(1.15);
   -webkit-backdrop-filter: blur(16px) saturate(1.15);
@@ -23,30 +23,29 @@
 .vacuno-tab-bar ion-tab-button {
   --color: #8b948d;
   --color-selected: #26743b;
+  --background: transparent;
   --background-focused: transparent;
+  --background-hover: transparent;
+  --ripple-color: transparent;
   min-width: 0;
-  border-radius: 14px;
-  font-size: 9px;
+  min-height: 48px;
+  margin: 0;
+  border-radius: 15px;
+  font-size: 0;
 }
 
 .vacuno-tab-bar ion-tab-button.tab-selected {
-  --background: rgb(38 116 59 / 12%);
+  --background: #dff3df;
 }
 
 .vacuno-tab-bar ion-icon {
-  font-size: 18px;
+  font-size: 22px;
 }
 
-.tab-avatar {
-  width: 19px;
-  height: 19px;
-  margin-bottom: 1px;
-  display: grid;
-  place-items: center;
-  background: #e7f1e6;
-  color: #26743b;
-  font-size: 10px;
-  font-weight: 800;
+.tab-cow-icon {
+  width: 22px;
+  height: 22px;
+  color: currentColor;
 }
 
 @media (min-width: 768px) {

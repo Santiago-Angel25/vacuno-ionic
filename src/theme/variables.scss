@@ -1,7 +1,21 @@
 // VACUNO brand palette.
 :root {
   /* Global typeface for the whole app. */
-  --ion-font-family: 'Montserrat', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+  --ion-font-family: 'Roboto', Arial, sans-serif;
+
+  /* VACUNO design tokens */
+  --vacuno-green-900: #075b31;
+  --vacuno-green-800: #0a6b39;
+  --vacuno-green-700: #168344;
+  --vacuno-green-100: #dff5df;
+  --vacuno-ink: #183b2a;
+  --vacuno-muted: #6f8075;
+  --vacuno-surface: #ffffff;
+  --vacuno-page: #ffffff;
+  --vacuno-radius-sm: 12px;
+  --vacuno-radius-md: 16px;
+  --vacuno-radius-lg: 22px;
+  --vacuno-shadow: 0 7px 20px rgb(18 75 42 / 10%);
 
   --ion-color-primary: #26743b;
   --ion-color-primary-rgb: 38, 116, 59;

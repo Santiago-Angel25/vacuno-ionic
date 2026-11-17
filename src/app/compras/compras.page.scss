@@ -1,5 +1,17 @@
 .purchases-content { --background: #f5f7f3; }
-.purchases-page { width: min(100%, 680px); margin: auto; padding: 22px 17px 90px; }
+.purchases-page { width: min(100%, 680px); margin: auto; padding: 22px 17px 196px; }
+
+.add-purchase-fab {
+  right: 9px;
+  bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+  margin: 0;
+}
+
+.add-purchase-fab ion-fab-button {
+  --background: #26743b;
+  --color: #fff;
+  --box-shadow: 0 5px 14px #26743b45;
+}
 .eyebrow { margin: 0 0 5px; color: #68866c; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
 h1 { margin: 0 0 6px; color: #20372a; font-size: 25px; font-weight: 850; }
 .intro { margin: 0 0 18px; color: #758078; font-size: 13px; }

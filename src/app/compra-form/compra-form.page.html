@@ -1,10 +1,5 @@
-<ion-header
-  ><ion-toolbar
-    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/compras" text=""></ion-back-button></ion-buttons
-    ><ion-title>Nueva compra</ion-title></ion-toolbar
-  ></ion-header
->
-<ion-content [fullscreen]="true" class="purchase-form-content">
+<app-vacuno-header title="Nueva compra" [showBack]="true" backHref="/tabs/compras"></app-vacuno-header>
+<ion-content class="purchase-form-content">
   <main class="purchase-form-page">
     <p class="eyebrow">REGISTRO CON SOPORTES</p>
     <h1>Registrar compra</h1>

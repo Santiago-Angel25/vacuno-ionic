@@ -50,6 +50,11 @@ export const routes: Routes = [
     redirectTo: 'tabs/gastos',
   },
   {
+    path: 'notificaciones',
+    canActivate: [authGuard],
+    loadComponent: () => import('./notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
+  },
+  {
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
   },

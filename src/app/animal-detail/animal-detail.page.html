@@ -1,10 +1,5 @@
-<ion-header
-  ><ion-toolbar
-    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/ganado" text=""></ion-back-button></ion-buttons
-    ><ion-title>Ficha del animal</ion-title></ion-toolbar
-  ></ion-header
->
-<ion-content [fullscreen]="true" class="animal-detail-content"
+<app-vacuno-header title="Ficha del animal" [showBack]="true" backHref="/tabs/ganado"></app-vacuno-header>
+<ion-content class="animal-detail-content"
   ><main class="animal-detail-page">
     @if (loading) {
     <div class="state-card"><ion-spinner name="crescent"></ion-spinner>Cargando ficha…</div>

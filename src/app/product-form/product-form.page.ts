@@ -1,7 +1,8 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonSelect, IonSelectOption, IonTitle, IonToolbar } from '@ionic/angular';
+import { IonButton, IonContent, IonInput, IonItem, IonSelect, IonSelectOption } from '@ionic/angular';
 import { finalize } from 'rxjs';
 
 import { FarmService } from '../service/farm.service';
@@ -10,7 +11,7 @@ import { FarmService } from '../service/farm.service';
   selector: 'app-product-form',
   templateUrl: './product-form.page.html',
   styleUrl: './product-form.page.scss',
-  imports: [ReactiveFormsModule, IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonInput, IonItem, IonSelect, IonSelectOption, IonTitle, IonToolbar],
+  imports: [VacunoHeaderComponent, ReactiveFormsModule, IonButton, IonContent, IonInput, IonItem, IonSelect, IonSelectOption],
 })
 export class ProductFormPage {
   private readonly fb = inject(FormBuilder);

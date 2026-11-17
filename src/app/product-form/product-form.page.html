@@ -1,10 +1,5 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start"><ion-back-button defaultHref="/tabs/inventario" text=""></ion-back-button></ion-buttons>
-    <ion-title>Agregar producto</ion-title>
-  </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true" class="product-form-content">
+<app-vacuno-header title="Agregar producto" [showBack]="true" backHref="/tabs/inventario"></app-vacuno-header>
+<ion-content class="product-form-content">
   <main class="product-form-page">
     <p class="eyebrow">NUEVO INSUMO</p>
     <h1>Agregar al inventario</h1>

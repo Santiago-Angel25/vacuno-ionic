@@ -136,13 +136,18 @@
 .error-state {
   color: #a23e35;
 }
-.add-product-fab {
-  right: 9px;
-  bottom: 128px;
-  margin: 0;
-}
-.add-product-fab ion-fab-button {
-  --background: #26743b;
-  --color: #fff;
-  --box-shadow: 0 5px 14px #26743b45;
+app-vacuno-header .purchases-link {
+  --background: #e3f7df;
+  --background-hover: #d4edcf;
+  --background-focused: #d4edcf;
+  --background-activated: #cbe6c6;
+  --color: #075b31;
+  --color-focused: #075b31;
+  --color-activated: #075b31;
+  --border-radius: 999px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --box-shadow: none;
+  font-weight: 700;
+  text-transform: none;
 }

@@ -1,51 +1,41 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import {
+  IonAlert,
   IonAvatar,
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
   IonIcon,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { logOutOutline, personOutline } from 'ionicons/icons';
-import { finalize, of, switchMap } from 'rxjs';
+import { callOutline, cardOutline, logOutOutline, mailOutline, personOutline } from 'ionicons/icons';
+import { finalize } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
-import { FarmService } from '../service/farm.service';
-import type { FarmActivity } from '../service/farm.service';
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
   styleUrl: './perfil.page.scss',
   imports: [
+    VacunoHeaderComponent,
+    IonAlert,
     IonAvatar,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
     IonIcon,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class PerfilPage {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly farms = inject(FarmService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   loading = false;
   errorMessage = '';
-  activities: FarmActivity[] = [];
 
   constructor() {
-    addIcons({ logOutOutline, personOutline });
+    addIcons({ callOutline, cardOutline, logOutOutline, mailOutline, personOutline });
   }
 
   ionViewWillEnter(): void {
@@ -54,12 +44,6 @@ export class PerfilPage {
     this.auth
       .getProfile()
       .pipe(
-        switchMap((profile) => {
-          if (profile.rol !== 'TRABAJADOR') return of([] as FarmActivity[]);
-          return this.farms
-            .myFarms()
-            .pipe(switchMap((farms) => (farms[0] ? this.farms.activities(farms[0].id) : of([] as FarmActivity[]))));
-        }),
         finalize(() => {
           this.loading = false;
           this.changeDetector.markForCheck();
@@ -78,12 +62,14 @@ export class PerfilPage {
     return `${user?.nombres.charAt(0) ?? ''}${user?.apellidos.charAt(0) ?? ''}`.toUpperCase() || 'V';
   }
 
-  logout(): void {
+  readonly logoutButtons = [
+    { text: 'Cancelar', role: 'cancel' },
+    { text: 'Cerrar sesión', role: 'confirm' },
+  ];
+
+  confirmLogout(role?: string): void {
+    if (role !== 'confirm') return;
     this.auth.logout();
     void this.router.navigateByUrl('/login', { replaceUrl: true });
-  }
-
-  activityDate(value: string): string {
-    return new Date(value).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
   }
 }

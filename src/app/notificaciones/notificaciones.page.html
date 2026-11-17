@@ -1,0 +1,21 @@
+<app-vacuno-header title="Notificaciones" [showBack]="true" backHref="/tabs/inicio"></app-vacuno-header>
+<ion-content class="notifications-content ion-padding">
+  @if (loading()) {
+    <p role="status">Cargando notificaciones…</p>
+  } @else if (failed()) {
+    <p role="alert">No pudimos cargar las notificaciones.</p>
+    <ion-button (click)="loadAlerts()">Reintentar</ion-button>
+  } @else if (!alerts().length) {
+    <p>Aún no hay notificaciones.</p>
+  } @else {
+    @for (alert of alerts(); track alert.id) {
+      <article class="notification-card">
+        <strong>{{ alert.titulo }}</strong>
+        @if (alert.detalle) { <p>{{ alert.detalle }}</p> }
+        @if (alert.fecha) { <time>{{ alert.fecha | date:'dd/MM/yyyy HH:mm' }}</time> }
+        <ion-button fill="clear" size="small"
+          [routerLink]="alert.destino === 'COMPRAS' ? '/tabs/compras' : '/tabs/actividad'">Ver {{ alert.destino === 'COMPRAS' ? 'compras' : 'actividades' }}</ion-button>
+      </article>
+    }
+  }
+</ion-content>

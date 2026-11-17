@@ -1,10 +1,5 @@
-<ion-header
-  ><ion-toolbar
-    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button></ion-buttons
-    ><ion-title>Trabajadores</ion-title></ion-toolbar
-  ></ion-header
->
-<ion-content [fullscreen]="true" class="workers-content"
+<app-vacuno-header title="Trabajadores" [showBack]="true" backHref="/tabs/inicio"></app-vacuno-header>
+<ion-content class="workers-content"
   ><main class="workers-page">
     <p class="eyebrow">EQUIPO DE LA FINCA</p>
     <h1>Crear trabajador</h1>

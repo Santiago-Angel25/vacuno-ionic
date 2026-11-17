@@ -1,10 +1,5 @@
-<ion-header
-  ><ion-toolbar
-    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/trabajadores" text=""></ion-back-button></ion-buttons
-    ><ion-title>Actividad del trabajador</ion-title></ion-toolbar
-  ></ion-header
->
-<ion-content [fullscreen]="true" class="worker-detail-content"
+<app-vacuno-header title="Actividad del trabajador" [showBack]="true" backHref="/tabs/trabajadores"></app-vacuno-header>
+<ion-content class="worker-detail-content"
   ><main class="worker-detail-page">
     @if (loading) {
     <div class="state-card">Cargando…</div>

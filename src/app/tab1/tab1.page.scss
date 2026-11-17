@@ -1,37 +1,7 @@
-.brand-mini {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding-left: 2px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-}
-
-.brand-mini img {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-  filter: brightness(0) invert(1);
-}
-
-.header-profile ion-avatar {
-  display: grid;
-  width: 33px;
-  height: 33px;
-  place-items: center;
-  border: 2px solid #d8e6d1;
-  background: #f2f8ed;
-  color: #1e6237;
-  font-size: 13px;
-  font-weight: 800;
-}
-
 .dashboard-page {
   width: min(100%, 760px);
   margin: 0 auto;
-  padding: 23px 18px 124px;
+  padding: 28px 18px 124px;
 }
 
 .welcome-block {
@@ -200,8 +170,23 @@
   height: 30px;
   place-items: center;
   border-radius: 50%;
+  background: #eef0ee;
+  color: #555e58;
+}
+
+.alert-green .alert-symbol {
+  background: #e4f4e8;
+  color: #256a3c;
+}
+
+.alert-yellow .alert-symbol {
   background: #fff5df;
-  color: #b17a20;
+  color: #865900;
+}
+
+.alert-red .alert-symbol {
+  background: #ffe7e4;
+  color: #a52c24;
 }
 
 .alert-item strong {
@@ -252,11 +237,15 @@
 .worker-task-list {
   display: grid;
   gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 .worker-task {
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
   padding: 12px;
   border: 1px solid #e9eee6;
   border-radius: 15px;
@@ -267,13 +256,35 @@
   color: #79847b;
   font-size: 11px;
 }
-.worker-task ion-button {
-  grid-column: 1 / -1;
-  margin: 0;
-  --color: #26743b;
+.task-register {
+  margin-top: 12px;
+  --background: #26743b;
+  --color: #fff;
+  --border-radius: 12px;
+}
+.task-expired-notice {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #ffe7e4;
+  color: #a52c24;
+  font-size: 13px;
+}
+.task-palette {
+  --task-tint: #e4f4e8;
+  --task-ink: #256a3c;
+}
+.task-palette[data-tone='yellow'] { --task-tint: #fff5df; --task-ink: #865900; }
+.task-palette[data-tone='red'] { --task-tint: #ffe7e4; --task-ink: #a52c24; }
+.task-palette .task-mark,
+.task-palette .task-status {
+  background: var(--task-tint);
+  color: var(--task-ink);
 }
 .task-status {
-  color: #26743b;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
   font-size: 10px;
   font-weight: 800;
 }
@@ -285,7 +296,8 @@
   margin-top: 16px;
   padding: 17px;
   border-radius: 17px;
-  background: #21683a;
+  overflow: hidden;
+  background: url('/assets/vacuno-expenses-banner.png') center / cover;
   color: #fff;
 }
 

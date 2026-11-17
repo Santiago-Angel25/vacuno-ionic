@@ -1,10 +1,5 @@
-<ion-header
-  ><ion-toolbar
-    ><ion-buttons slot="start"><ion-back-button defaultHref="/tabs/actividad" text=""></ion-back-button></ion-buttons
-    ><ion-title>Registrar actividad</ion-title></ion-toolbar
-  ></ion-header
->
-<ion-content [fullscreen]="true" class="activity-form-content"
+<app-vacuno-header title="Registrar actividad" [showBack]="true" backHref="/tabs/actividad"></app-vacuno-header>
+<ion-content class="activity-form-content"
   ><main class="activity-form-page">
     <p class="eyebrow">JORNADA DE LA FINCA</p>
     <h1>{{ taskMode ? 'Registrar actividad' : ownerMode ? 'Asignar actividad pendiente' : '¿Qué actividad realizaste?' }}</h1>
@@ -55,20 +50,21 @@
       </ion-item>
       @if (!workers.length) { <p class="field-error">No hay trabajadores activos para asignar tareas.</p> }
       <label class="form-label" for="due-date">Fecha límite (opcional)</label>
-      <ion-item class="form-input" lines="none"><ion-input id="due-date" formControlName="fechaLimite" type="date"></ion-input></ion-item>
+      <ion-item class="form-input" lines="none"><ion-input id="due-date" formControlName="fechaLimite" type="date" [min]="minDueDate"></ion-input></ion-item>
       }
-      @if (!ownerMode && consumesInventory) {
+      }
+      @if (!ownerMode && (!taskMode || task) && consumesInventory) {
       <section class="inventory-use">
         <p class="form-label">Consumo de inventario</p>
         <label class="form-label" for="activity-product">Producto · {{ productCategory.toLowerCase() }} *</label>
         <ion-item class="form-input" lines="none">
           <ion-select id="activity-product" formControlName="productoId" placeholder="Seleccionar producto" interface="popover">
-            @for (product of filteredProducts; track product.id) {
+            @for (product of availableProducts; track product.id) {
             <ion-select-option [value]="'' + product.id">{{ product.nombre }} · {{ displayStock(product) }} {{ product.unidad }}</ion-select-option>
             }
           </ion-select>
         </ion-item>
-        @if (!filteredProducts.length) { <p class="field-error">No hay productos de esta categoría en inventario. Registra una compra antes de esta actividad.</p> }
+        @if (!availableProducts.length) { <p class="field-error">No hay productos de esta categoría en inventario. Registra una compra antes de esta actividad.</p> }
         <div class="dose-fields">
           <div>
             <label class="form-label" for="dose-quantity">{{ quantityLabel }} *</label>
@@ -88,6 +84,7 @@
         }
       </section>
       }
+      @if (!taskMode) {
       <label class="form-label" for="activity-description">Descripción *</label
       ><ion-item class="form-input description-input" lines="none"
         ><ion-input
@@ -117,7 +114,10 @@
       }
       @if (photoError) { <p class="field-error" role="alert">{{ photoError }}</p> }
       }
-      <ion-button class="submit-activity" expand="block" type="submit" [disabled]="saving || !farmId || (taskMode && !task)"
+      @if (taskExpired) {
+        <p class="request-error" role="alert">{{ taskOverdueMessage }}</p>
+      }
+      <ion-button class="submit-activity" expand="block" type="submit" [disabled]="saving || !farmId || (taskMode && (!task || taskExpired))"
         >{{ saving ? 'Guardando…' : taskMode ? 'Guardar actividad' : ownerMode ? 'Crear actividad pendiente' : 'Registrar actividad' }}</ion-button
       >
     </form>

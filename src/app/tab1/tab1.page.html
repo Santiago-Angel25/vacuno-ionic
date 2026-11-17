@@ -1,19 +1,4 @@
-<ion-header class="home-header">
-  <ion-toolbar>
-    <div class="brand-mini" slot="start">
-      <img src="/assets/vacuno-cow-mark.png" alt="" aria-hidden="true" />
-      <span>VACUNO</span>
-    </div>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" aria-label="Notificaciones" [disabled]="farmId === null" (click)="openAlerts()">
-        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-      </ion-button>
-      <ion-button class="header-profile" fill="clear" routerLink="/tabs/perfil" aria-label="Abrir perfil">
-        <ion-avatar><span>{{ avatarInitial }}</span></ion-avatar>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<app-vacuno-header [brand]="true" [actions]="true" [initial]="avatarInitial" [photoUrl]="auth.currentUser?.fotoUrl"></app-vacuno-header>
 
 <ion-content [fullscreen]="true" class="dashboard-content">
   <main class="dashboard-page">
@@ -43,21 +28,21 @@
           <p class="section-kicker">TU JORNADA</p>
           <h2>Mis tareas</h2>
         </div>
-        <span class="alert-count">{{ workerTasks.length }} pendientes</span>
+        <span class="alert-count">{{ pendingTaskCount }} pendientes</span>
       </div>
       @if (workerTasks.length) {
       <div class="worker-task-list">
         @for (task of workerTasks; track task.id) {
-        <article class="worker-task">
-          <span class="task-mark">✓</span>
+        @let status = taskStatus(task);
+        <article class="worker-task vacuno-detail-target task-palette" [attr.data-tone]="status.tone">
+          <button type="button" class="vacuno-detail-hit" aria-haspopup="dialog"
+            [attr.aria-label]="'Ver tarea: ' + task.titulo + ', ' + status.label" (click)="selectedTask = task"></button>
+          <span class="task-mark"><ion-icon [name]="status.icon" aria-hidden="true"></ion-icon></span>
           <div>
             <strong>{{ task.titulo }}</strong>
             <p>{{ task.descripcion || task.fechaLimite || 'Pendiente' }}</p>
           </div>
-          <span class="task-status">{{ task.estado }}</span>
-          <ion-button size="small" [routerLink]="['/tabs/actividad/nueva']" [queryParams]="{ taskId: task.id }">
-            Registrar actividad
-          </ion-button>
+          <span class="task-status">{{ status.label }}</span>
         </article>
         }
       </div>
@@ -100,7 +85,7 @@
           <p class="section-kicker">A TENER EN CUENTA</p>
           <h2>Alertas importantes</h2>
         </div>
-        <ion-button fill="clear" size="small" (click)="openAlerts()">Ver todas</ion-button>
+        <ion-button fill="clear" size="small" routerLink="/notificaciones">Ver todas</ion-button>
       </div>
 
       @if (alertsError) {
@@ -110,26 +95,18 @@
       </div>
       } @else if (alertsLoading && !alerts.length) {
       <div class="loading-card" role="status">Cargando notificaciones…</div>
-      } @else if (alerts.length || dashboard?.proximosControles?.length) {
+      } @else if (alerts.length) {
       <div class="alert-list">
         @for (alert of alerts.slice(0, 3); track alert.id) {
-        <article class="alert-item">
+        <article class="alert-item vacuno-detail-target" [class]="'alert-' + alertColor(alert)">
+          <button type="button" class="vacuno-detail-hit" aria-haspopup="dialog"
+            [attr.aria-label]="'Ver detalle: ' + alert.titulo" (click)="selectedAlert = alert"></button>
           <span class="alert-symbol"><ion-icon name="notifications-outline"></ion-icon></span>
           <div>
             <strong>{{ alert.titulo }}</strong>
             <p>{{ alert.detalle }}</p>
           </div>
           <time>{{ alert.fecha | date:'dd/MM HH:mm' }}</time>
-        </article>
-        }
-        @for (control of (dashboard?.proximosControles ?? []).slice(0, 3); track $index) {
-        <article class="alert-item">
-          <span class="alert-symbol"><ion-icon name="time-outline"></ion-icon></span>
-          <div>
-            <strong>{{ control.tipo }}</strong>
-            <p>{{ control.descripcion }}</p>
-          </div>
-          <time>{{ control.proximoControl }}</time>
         </article>
         }
       </div>
@@ -150,42 +127,54 @@
         <strong>{{ formatMoney(dashboard.finanzas.totalMes) }}</strong>
         <a class="summary-link" routerLink="/tabs/gastos">Ver detalle de gastos</a>
       </div>
-      <div class="summary-mark" aria-hidden="true">$</div>
     </section>
     }
   </main>
 </ion-content>
-
-<ion-modal [isOpen]="alertsOpen" (didDismiss)="alertsOpen = false">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>Notificaciones</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="alertsOpen = false">Cerrar</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-      @if (alertsLoading) {
-        <p role="status">Cargando notificaciones…</p>
-      } @else if (alertsError) {
-        <p role="alert">No pudimos cargar las notificaciones.</p>
-        <ion-button (click)="loadAlerts()">Reintentar</ion-button>
-      } @else if (!alerts.length) {
-        <p>Aún no hay notificaciones.</p>
-      } @else {
-        @for (alert of alerts; track alert.id) {
-          <article class="ion-margin-bottom">
-            <strong>{{ alert.titulo }}</strong>
-            @if (alert.detalle) { <p>{{ alert.detalle }}</p> }
-            @if (alert.fecha) { <time>{{ alert.fecha | date:'dd/MM/yyyy HH:mm' }}</time> }
-            <ion-button fill="clear" size="small"
-              [routerLink]="alert.destino === 'COMPRAS' ? '/tabs/compras' : '/tabs/actividad'"
-              (click)="alertsOpen = false">Ver {{ alert.destino === 'COMPRAS' ? 'compras' : 'actividades' }}</ion-button>
-          </article>
-        }
+<app-detail-modal [open]="selectedTask !== null && !registeringTask"
+  [category]="selectedTask?.titulo || 'Tarea'" [title]="selectedTask?.descripcion || 'Detalle de tarea'"
+  [tone]="selectedTask ? activityColor(selectedTask.titulo) : 'gray'" (closed)="closeTaskDetail()">
+  @if (selectedTask; as task) {
+    @let status = taskStatus(task);
+    <dl class="task-palette" [attr.data-tone]="status.tone">
+      <div>
+        <dt>Estado</dt>
+        <dd><span class="task-status"><ion-icon [name]="status.icon" aria-hidden="true"></ion-icon>{{ status.label }}</span></dd>
+      </div>
+      @if (task.fechaLimite) {
+        <div><dt>Fecha límite</dt><dd>{{ task.fechaLimite | date:'dd/MM/yyyy' }}</dd></div>
       }
-    </ion-content>
-  </ng-template>
-</ion-modal>
+    </dl>
+    @if (isTaskOverdue(task)) {
+      <p class="task-expired-notice" role="alert">{{ taskOverdueMessage }}</p>
+    } @else if (task.estado === 'PENDIENTE') {
+      <ion-button class="task-register" fill="solid" expand="block" (click)="registeringTask = true">
+        Registrar actividad
+      </ion-button>
+    }
+  }
+</app-detail-modal>
+<app-detail-modal [open]="selectedAlert !== null && !registeringTask" category="Alerta"
+  [tone]="selectedAlert ? alertColor(selectedAlert) : 'gray'"
+  [title]="selectedAlert?.titulo || 'Detalle de alerta'" (closed)="closeTaskDetail()">
+  @if (selectedAlert; as alert) {
+    <dl>
+      @if (alert.fecha) {
+        <div><dt>Fecha de creación</dt><dd>{{ alert.fecha | date:'dd/MM/yyyy HH:mm' }}</dd></div>
+      }
+      @if (alert.fechaLimite) {
+        <div><dt>Fecha límite</dt><dd>{{ alert.fechaLimite | date:'dd/MM/yyyy' }}</dd></div>
+      }
+      <div><dt>Detalle</dt><dd>{{ alert.detalle || 'Sin detalles adicionales' }}</dd></div>
+    </dl>
+    @if (selectedAlertTask; as task) {
+      @if (isTaskOverdue(task)) {
+        <p class="task-expired-notice" role="alert">{{ taskOverdueMessage }}</p>
+      } @else if (task.estado === 'PENDIENTE') {
+        <ion-button class="task-register" fill="solid" expand="block" (click)="registeringTask = true">
+          Registrar actividad
+        </ion-button>
+      }
+    }
+  }
+</app-detail-modal>

@@ -1,22 +1,28 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar } from '@ionic/angular';
+import { Router, RouterLink } from '@angular/router';
+import { IonButton, IonContent, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { alertCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline } from 'ionicons/icons';
+import { alertCircleOutline, checkmarkCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline } from 'ionicons/icons';
 import { finalize, map, of, switchMap, tap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import type { DashboardResponse, FarmAlert, FarmTask } from '../service/farm.service';
 import { FarmService } from '../service/farm.service';
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
+import { DetailModalComponent } from '../shared/detail-modal.component';
+import { isTaskOverdue, taskOverdueMessage } from '../shared/task-due-date';
 
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
-  imports: [DatePipe, IonAvatar, IonButton, IonButtons, IonContent, IonHeader, IonIcon, IonModal, IonTitle, IonToolbar, RouterLink],
+  imports: [DatePipe, VacunoHeaderComponent, DetailModalComponent, IonButton, IonContent, IonIcon, RouterLink],
 })
 export class Tab1Page {
+  readonly isTaskOverdue = isTaskOverdue;
+  readonly taskOverdueMessage = taskOverdueMessage;
+  private readonly router = inject(Router);
   private readonly farms = inject(FarmService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
@@ -24,7 +30,9 @@ export class Tab1Page {
   farmName = '';
   farmId: number | null = null;
   alerts: FarmAlert[] = [];
-  alertsOpen = false;
+  selectedAlert: FarmAlert | null = null;
+  selectedTask: FarmTask | null = null;
+  registeringTask = false;
   alertsLoading = false;
   alertsError = false;
   dashboard: DashboardResponse | null = null;
@@ -34,7 +42,7 @@ export class Tab1Page {
   hasFarm = true;
 
   constructor() {
-    addIcons({ alertCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline });
+    addIcons({ alertCircleOutline, checkmarkCircleOutline, leafOutline, notificationsOutline, pawOutline, timeOutline });
   }
 
   ionViewWillEnter(): void {
@@ -57,16 +65,55 @@ export class Tab1Page {
     }).format(value);
   }
 
-  openAlerts(): void {
-    this.alertsOpen = true;
-    this.loadAlerts();
+  alertColor(alert: FarmAlert): 'red' | 'yellow' | 'green' | 'gray' {
+    return alert.tareaVencida ? 'red' : this.activityColor(alert.titulo);
+  }
+
+  activityColor(label: string): 'red' | 'yellow' | 'green' | 'gray' {
+    const title = label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/_/g, ' ');
+    if (/\bmedicamentos?\b/.test(title)) return 'red';
+    if (/\b(vacunacion|revision|reproduccion)\b/.test(title)) return 'yellow';
+    if (/\b(alimentacion|pesaje|insumos?)\b/.test(title)) return 'green';
+    return 'gray';
+  }
+
+  get pendingTaskCount(): number {
+    return this.workerTasks.filter((task) => task.estado === 'PENDIENTE').length;
+  }
+
+  taskStatus(task: FarmTask) {
+    if (isTaskOverdue(task)) return { label: 'Vencida', tone: 'red', icon: 'alert-circle-outline' };
+    if (['COMPLETADA', 'REALIZADA', 'HECHA'].includes(task.estado)) {
+      return { label: 'Realizada', tone: 'green', icon: 'checkmark-circle-outline' };
+    }
+    return {
+      label: task.estado === 'PENDIENTE' ? 'Pendiente' : task.estado,
+      tone: 'yellow',
+      icon: 'time-outline',
+    };
+  }
+
+  get selectedAlertTask(): FarmTask | undefined {
+    const taskId = this.selectedAlert?.tareaId;
+    if (taskId === undefined || this.auth.currentUser?.rol !== 'TRABAJADOR') return undefined;
+    return this.workerTasks.find((task) => task.id === taskId);
+  }
+
+  closeTaskDetail(): void {
+    const task = this.registeringTask ? this.selectedTask ?? this.selectedAlertTask : undefined;
+    this.selectedTask = null;
+    this.selectedAlert = null;
+    this.registeringTask = false;
+    if (task?.estado === 'PENDIENTE' && !isTaskOverdue(task)) {
+      void this.router.navigate(['/tabs/actividad/nueva'], { queryParams: { taskId: task.id } });
+    }
   }
 
   loadAlerts(): void {
     if (this.farmId === null || this.alertsLoading) return;
     this.alertsLoading = true;
     this.alertsError = false;
-    this.farms.alerts(this.farmId)
+    this.farms.alertsWithPendingTasks(this.farmId, this.auth.currentUser?.rol === 'PROPIETARIO')
       .pipe(finalize(() => {
         this.alertsLoading = false;
         this.changeDetector.markForCheck();

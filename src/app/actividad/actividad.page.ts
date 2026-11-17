@@ -1,57 +1,58 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
-  IonBackButton,
-  IonButtons,
+  IonButton,
   IonContent,
   IonFab,
   IonFabButton,
   IonFabList,
-  IonHeader,
   IonIcon,
+  IonModal,
   IonSpinner,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { add, createOutline, personAddOutline } from 'ionicons/icons';
+import { add, calendarOutline, checkmarkOutline, createOutline, documentTextOutline, medkitOutline, nutritionOutline, pawOutline, personAddOutline, personOutline, timeOutline } from 'ionicons/icons';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import { FarmService } from '../service/farm.service';
 import type { FarmActivity, FarmTask } from '../service/farm.service';
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
+import { isTaskOverdue, taskOverdueMessage } from '../shared/task-due-date';
 
 @Component({
   selector: 'app-actividad',
   templateUrl: './actividad.page.html',
   styleUrl: './actividad.page.scss',
   imports: [
+    VacunoHeaderComponent,
     RouterLink,
-    IonBackButton,
-    IonButtons,
+    IonButton,
     IonContent,
     IonFab,
     IonFabButton,
     IonFabList,
-    IonHeader,
     IonIcon,
+    IonModal,
     IonSpinner,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class ActividadPage {
+  private readonly router = inject(Router);
+  readonly taskOverdueMessage = taskOverdueMessage;
+  readonly isTaskOverdue = isTaskOverdue;
   private readonly farms = inject(FarmService);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   farmId: number | null = null;
   activities: FarmActivity[] = [];
   tasks: FarmTask[] = [];
+  selected: { kind: 'task'; data: FarmTask } | { kind: 'activity'; data: FarmActivity } | null = null;
   loading = true;
   errorMessage = '';
 
   constructor() {
-    addIcons({ add, createOutline, personAddOutline });
+    addIcons({ add, calendarOutline, checkmarkOutline, createOutline, documentTextOutline, medkitOutline, nutritionOutline, pawOutline, personAddOutline, personOutline, timeOutline });
   }
 
   ionViewWillEnter(): void {
@@ -93,6 +94,13 @@ export class ActividadPage {
     return this.activities.length > 0 || this.tasks.length > 0;
   }
 
+  async registerTaskFromDetail(modal: IonModal, task: FarmTask): Promise<void> {
+    if (this.auth.currentUser?.rol !== 'TRABAJADOR' || task.estado !== 'PENDIENTE' || isTaskOverdue(task)) return;
+    if (await modal.dismiss()) {
+      await this.router.navigate(['/tabs/actividad/nueva'], { queryParams: { taskId: task.id } });
+    }
+  }
+
   date(value: string): string {
     return new Date(value).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' });
   }
@@ -107,5 +115,12 @@ export class ActividadPage {
     return activity.tipo === 'ALIMENTACION'
       ? activity.descripcion.replace(/\s·\s[^·]+:\s[\d.,]+\s+\S+\s+usado\(s\)\s+en\s+\d+\s+dosis$/i, '')
       : activity.descripcion;
+  }
+
+  activityIcon(type: string): string {
+    const category = type.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+    if (category === 'ALIMENTACION') return 'nutrition-outline';
+    if (category === 'VACUNACION') return 'medkit-outline';
+    return 'paw-outline';
   }
 }

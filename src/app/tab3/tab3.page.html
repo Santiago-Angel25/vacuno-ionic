@@ -1,11 +1,8 @@
-<ion-header class="inventory-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
-    </ion-buttons>
-    <ion-title>Inventario</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-vacuno-header title="Inventario" [showBack]="true">
+  @if (farmId) {
+    <ion-button class="purchases-link" fill="solid" routerLink="/tabs/compras">Ir a compras</ion-button>
+  }
+</app-vacuno-header>
 <ion-content [fullscreen]="true" class="module-content">
   <main class="inventory-page">
     <p class="eyebrow">INSUMOS Y EXISTENCIAS</p>
@@ -38,7 +35,9 @@
     } @else {
     <section class="product-list" aria-label="Productos del inventario">
       @for (product of visibleProducts; track product.id) {
-      <article class="product-card">
+      <article class="product-card vacuno-detail-target">
+        <button type="button" class="vacuno-detail-hit" aria-haspopup="dialog"
+          [attr.aria-label]="'Ver detalle: ' + product.nombre" (click)="selectedProduct = product"></button>
         @if (product.fotoUrl) {
         <img class="product-mark product-photo" [src]="product.fotoUrl" [alt]="'Foto de ' + product.nombre" />
         } @else {
@@ -57,11 +56,18 @@
     </section>
     }
   </main>
-  @if (farmId) {
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="add-product-fab">
-    <ion-fab-button routerLink="/tabs/compras" aria-label="Registrar o revisar compras"
-      ><ion-icon name="add"></ion-icon
-    ></ion-fab-button>
-  </ion-fab>
-  }
 </ion-content>
+<app-detail-modal [open]="selectedProduct !== null" [category]="selectedProduct?.categoria || 'Inventario'"
+  [tone]="selectedProduct && displayStock(selectedProduct) <= selectedProduct.stockMinimo ? 'yellow' : 'green'"
+  [title]="selectedProduct?.nombre || 'Detalle de producto'" (closed)="selectedProduct = null">
+  @if (selectedProduct; as product) {
+    <dl>
+      <div><dt>Estado</dt><dd>{{ displayStock(product) <= product.stockMinimo ? 'Stock bajo' : 'Disponible' }}</dd></div>
+      <div><dt>Stock actual</dt><dd>{{ displayStock(product) }} {{ product.unidad }}</dd></div>
+      <div><dt>Stock mínimo</dt><dd>{{ product.stockMinimo }} {{ product.unidad }}</dd></div>
+    </dl>
+    @if (product.fotoUrl) {
+      <img class="vacuno-detail-photo" [src]="product.fotoUrl" alt="Foto del producto" />
+    }
+  }
+</app-detail-modal>

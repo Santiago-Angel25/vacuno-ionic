@@ -25,76 +25,13 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/*
- * Montserrat (SIL Open Font License, see src/assets/fonts/montserrat/OFL.txt).
- * The font files live inside the project, so the app works offline and does
- * not depend on npm packages or external CDNs.
- */
+/* Roboto variable is bundled for offline use. Its license is in assets/fonts/roboto. */
 @font-face {
-  font-family: 'Montserrat';
+  font-family: 'Roboto';
   font-style: normal;
   font-display: swap;
-  font-weight: 400;
-  src:
-    url('/assets/fonts/montserrat/montserrat-latin-400-normal.woff2') format('woff2'),
-    url('/assets/fonts/montserrat/montserrat-latin-400-normal.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 500;
-  src:
-    url('/assets/fonts/montserrat/montserrat-latin-500-normal.woff2') format('woff2'),
-    url('/assets/fonts/montserrat/montserrat-latin-500-normal.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 600;
-  src:
-    url('/assets/fonts/montserrat/montserrat-latin-600-normal.woff2') format('woff2'),
-    url('/assets/fonts/montserrat/montserrat-latin-600-normal.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 700;
-  src:
-    url('/assets/fonts/montserrat/montserrat-latin-700-normal.woff2') format('woff2'),
-    url('/assets/fonts/montserrat/montserrat-latin-700-normal.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 800;
-  src:
-    url('/assets/fonts/montserrat/montserrat-latin-800-normal.woff2') format('woff2'),
-    url('/assets/fonts/montserrat/montserrat-latin-800-normal.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 900;
-  src:
-    url('/assets/fonts/montserrat/montserrat-latin-900-normal.woff2') format('woff2'),
-    url('/assets/fonts/montserrat/montserrat-latin-900-normal.woff') format('woff');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  font-weight: 100 900;
+  src: url('/assets/fonts/roboto/Roboto.ttf') format('truetype');
 }
 
 /*
@@ -112,7 +49,25 @@ ion-header ion-toolbar {
   --color: #ffffff;
   --border-width: 0;
   --min-height: 72px;
+  isolation: isolate;
+  overflow: hidden;
   padding: 0 12px;
+}
+
+/* A quiet ranch horizon ties secondary forms and lists to the main modules. */
+ion-header ion-toolbar::before {
+  position: absolute;
+  z-index: -1;
+  right: -14%;
+  bottom: -34px;
+  width: 66%;
+  height: 72px;
+  border-radius: 50% 50% 0 0;
+  background: #4b9e4c;
+  box-shadow: -62px 14px 0 #26773a;
+  content: '';
+  opacity: .46;
+  transform: rotate(-5deg);
 }
 
 ion-header ion-title {
@@ -138,7 +93,7 @@ ion-header ion-back-button {
 
 /* Every content area shares the same light background. */
 ion-content {
-  --background: #f5f7f3;
+  --background: var(--vacuno-page);
 }
 
 /**
@@ -152,13 +107,39 @@ ion-content {
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 /* The app uses the light palette from the VACUNO screens. */
 
-/* Montserrat is the default text font for the whole app. */
+/* Roboto is the default text font for the whole app. */
 html,
 body,
 ion-app,
 ion-content {
   font-family: var(--ion-font-family);
 }
+
+ion-card {
+  --background: var(--vacuno-surface);
+  border-radius: var(--vacuno-radius-md);
+  box-shadow: var(--vacuno-shadow);
+}
+
+.vacuno-card { border: 1px solid #edf1ed; border-radius: var(--vacuno-radius-md); background: var(--vacuno-surface); box-shadow: var(--vacuno-shadow); }
+.vacuno-pill { display: inline-flex; align-items: center; border-radius: 999px; font-size: 11px; font-weight: 700; line-height: 1; padding: 6px 10px; }
+.vacuno-status-good { background: #e1f7e2; color: #19813e; }
+.vacuno-status-warning { background: #fff3d6; color: #a96c00; }
+.vacuno-status-alert { background: #ffebe7; color: #df4d26; }
+
+/* The cattle-head mark uses the same currentColor behavior as Ionic icons. */
+.vacuno-cow-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  color: inherit;
+  vertical-align: middle;
+  -webkit-mask: url('/assets/vacuno-cow-silhouette.svg') center / 100% 100% no-repeat;
+  mask: url('/assets/vacuno-cow-silhouette.svg') center / 100% 100% no-repeat;
+}
+
+.search-cow-icon { width: 20px; height: 20px; }
 
 .worker-home-section { margin-top: 14px; }
 .worker-task-list { padding: 0 12px; border: 1px solid #e9eee6; border-radius: 16px; background: white; }

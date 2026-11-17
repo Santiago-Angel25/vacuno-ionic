@@ -1,27 +1,23 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
   IonFab,
   IonFabButton,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonSpinner,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { add, pawOutline } from 'ionicons/icons';
+import { add, alertCircleOutline, femaleOutline, heartOutline, informationCircleOutline, maleOutline, pawOutline, scaleOutline, searchOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import type { Animal } from '../service/farm.service';
 import { FarmService } from '../service/farm.service';
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 
 type AnimalFilter = 'TODOS' | 'HEMBRA' | 'MACHO' | 'JOVEN';
 
@@ -30,20 +26,16 @@ type AnimalFilter = 'TODOS' | 'HEMBRA' | 'MACHO' | 'JOVEN';
   templateUrl: './tab2.page.html',
   styleUrls: ['./tab2.page.scss'],
   imports: [
+    VacunoHeaderComponent,
     RouterLink,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
     IonFab,
     IonFabButton,
-    IonHeader,
     IonIcon,
     IonInput,
     IonItem,
     IonSpinner,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class Tab2Page {
@@ -59,7 +51,7 @@ export class Tab2Page {
   private searchTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
-    addIcons({ add, pawOutline });
+    addIcons({ add, alertCircleOutline, femaleOutline, heartOutline, informationCircleOutline, maleOutline, pawOutline, scaleOutline, searchOutline });
   }
 
   ionViewWillEnter(): void {

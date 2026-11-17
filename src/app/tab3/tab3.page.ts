@@ -1,26 +1,22 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
-  IonBackButton,
-  IonButtons,
+  IonButton,
   IonContent,
-  IonFab,
-  IonFabButton,
-  IonHeader,
   IonIcon,
   IonInput,
   IonItem,
   IonSpinner,
-  IonTitle,
-  IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { add, leafOutline, searchOutline } from 'ionicons/icons';
+import { leafOutline, searchOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
 import { AuthService } from '../service/auth.service';
 import type { InventoryProduct } from '../service/farm.service';
 import { FarmService } from '../service/farm.service';
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
+import { DetailModalComponent } from '../shared/detail-modal.component';
 
 type InventoryFilter = 'TODOS' | 'MEDICAMENTOS' | 'ALIMENTOS' | 'INSUMOS';
 
@@ -29,19 +25,15 @@ type InventoryFilter = 'TODOS' | 'MEDICAMENTOS' | 'ALIMENTOS' | 'INSUMOS';
   templateUrl: './tab3.page.html',
   styleUrls: ['./tab3.page.scss'],
   imports: [
+    VacunoHeaderComponent,
+    DetailModalComponent,
     RouterLink,
-    IonBackButton,
-    IonButtons,
+    IonButton,
     IonContent,
-    IonFab,
-    IonFabButton,
-    IonHeader,
     IonIcon,
     IonInput,
     IonItem,
     IonSpinner,
-    IonTitle,
-    IonToolbar,
   ],
 })
 export class Tab3Page {
@@ -50,13 +42,14 @@ export class Tab3Page {
   readonly auth = inject(AuthService);
   farmId: number | null = null;
   products: InventoryProduct[] = [];
+  selectedProduct: InventoryProduct | null = null;
   filter: InventoryFilter = 'TODOS';
   search = '';
   loading = true;
   errorMessage = '';
 
   constructor() {
-    addIcons({ add, leafOutline, searchOutline });
+    addIcons({ leafOutline, searchOutline });
   }
 
   ionViewWillEnter(): void {

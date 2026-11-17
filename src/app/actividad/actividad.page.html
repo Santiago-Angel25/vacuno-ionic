@@ -1,11 +1,4 @@
-<ion-header class="activities-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
-    </ion-buttons>
-    <ion-title>Actividad</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-vacuno-header title="Actividad" [showBack]="true"></app-vacuno-header>
 <ion-content [fullscreen]="true" class="module-content">
   <main class="activities-page">
     <p class="eyebrow">TRABAJO DIARIO</p>
@@ -28,11 +21,15 @@
     <section class="pending-section" aria-label="Actividades pendientes">
       <div class="pending-heading">
         <h2>Actividades pendientes</h2>
-        <span>{{ tasks.length }}</span>
+        <span>{{ tasks.length }} pendientes</span>
       </div>
       @for (task of tasks; track task.id) {
-      <article class="pending-card">
-        <div class="activity-mark">!</div>
+      @let overdue = isTaskOverdue(task);
+      <article class="pending-card" [class.overdue-task]="overdue">
+        <button class="activity-detail-trigger" type="button" aria-haspopup="dialog"
+          [attr.aria-label]="'Ver detalle de ' + (task.descripcion || task.titulo)"
+          (click)="selected = { kind: 'task', data: task }"></button>
+        <div class="activity-mark pending-mark"><ion-icon name="create-outline"></ion-icon></div>
         <div class="activity-info">
           <span class="activity-type">{{ task.titulo }}</span>
           <h2>{{ task.descripcion || 'Actividad asignada por el propietario' }}</h2>
@@ -41,15 +38,22 @@
           } @if (auth.currentUser?.rol === 'PROPIETARIO' && task.asignadaAId) {
           <small>Asignada al trabajador #{{ task.asignadaAId }}</small> }
         </div>
-        <span class="task-pending-label">Pendiente</span>
+        <span class="task-pending-label">{{ overdue ? 'Vencida' : 'Pendiente' }}</span>
       </article>
       }
     </section>
     } @if (activities.length) {
+    <div class="recent-heading">
+      <h2>Actividades recientes</h2>
+      <span>Últimas {{ activities.length }}</span>
+    </div>
     <section class="activity-list" aria-label="Actividades registradas">
       @for (activity of activities; track activity.id) {
       <article class="activity-card">
-        <div class="activity-mark">{{ activity.tipo.charAt(0) }}</div>
+        <button class="activity-detail-trigger" type="button" aria-haspopup="dialog"
+          [attr.aria-label]="'Ver detalle de ' + activityDescription(activity)"
+          (click)="selected = { kind: 'activity', data: activity }"></button>
+        <div class="activity-mark"><ion-icon [name]="activityIcon(activity.tipo)"></ion-icon></div>
         <div class="activity-info">
           <span class="activity-type">{{ activity.tipo.replace('_', ' ') }}</span>
           <h2>{{ activityDescription(activity) }}</h2>
@@ -65,6 +69,7 @@
           >
           } }
         </div>
+        <span class="completed-label"><ion-icon name="checkmark-outline"></ion-icon>Completada</span>
         @if (activity.fotoUrl) { <img class="activity-photo" [src]="activity.fotoUrl" alt="Foto de la actividad" /> }
       </article>
       }
@@ -92,3 +97,106 @@
   </ion-fab>
   }
 </ion-content>
+
+<ion-modal #detailModal class="activity-detail-modal" [isOpen]="selected !== null" aria-labelledby="activity-detail-title"
+  (didDismiss)="selected = null">
+  <ng-template>
+      @if (selected; as detail) {
+        <section class="activity-detail">
+          <button type="button" class="detail-close" aria-label="Cerrar detalle" (click)="detailModal.dismiss()">×</button>
+          <div class="detail-hero" [class.overdue-task]="detail.kind === 'task' && isTaskOverdue(detail.data)">
+            <span class="detail-type-icon" [class.pending-mark]="detail.kind === 'task'">
+              <ion-icon [name]="activityIcon(detail.kind === 'task' ? detail.data.titulo : detail.data.tipo)" aria-hidden="true"></ion-icon>
+            </span>
+            <span class="detail-category">{{ (detail.kind === 'task' ? detail.data.titulo : detail.data.tipo).replaceAll('_', ' ') }}</span>
+            <h2 id="activity-detail-title">{{ detail.kind === 'task' ? (detail.data.descripcion || 'Actividad asignada') : activityDescription(detail.data) }}</h2>
+            @if (detail.kind === 'task') {
+              <span class="task-pending-label"><ion-icon name="time-outline" aria-hidden="true"></ion-icon>{{ isTaskOverdue(detail.data) ? 'Vencida' : 'Pendiente' }}</span>
+            } @else {
+              <span class="completed-label"><ion-icon name="checkmark-outline" aria-hidden="true"></ion-icon>Completada</span>
+            }
+          </div>
+          @if (detail.kind === 'task') {
+            <dl>
+              @if (detail.data.fechaLimite) {
+                <div class="detail-row">
+                  <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+                  <dt>Fecha límite</dt>
+                  <dd>{{ detail.data.fechaLimite }}</dd>
+                </div>
+              }
+              @if (detail.data.descripcion) {
+                <div class="detail-row">
+                  <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                  <dt>Descripción</dt>
+                  <dd>{{ detail.data.descripcion }}</dd>
+                </div>
+              }
+              @if (auth.currentUser?.rol === 'PROPIETARIO' && detail.data.asignadaAId) {
+                <div class="detail-row">
+                  <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+                  <dt>Asignada a</dt>
+                  <dd>Trabajador #{{ detail.data.asignadaAId }}</dd>
+                </div>
+              }
+            </dl>
+            @if (auth.currentUser?.rol === 'TRABAJADOR') {
+              @if (isTaskOverdue(detail.data)) {
+                <p class="detail-expired" role="alert">{{ taskOverdueMessage }}</p>
+              } @else if (detail.data.estado === 'PENDIENTE') {
+                <ion-button class="detail-register" expand="block" (click)="registerTaskFromDetail(detailModal, detail.data)">
+                  Registrar actividad
+                </ion-button>
+              }
+            }
+          } @else {
+            <dl>
+              <div class="detail-row">
+                  <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
+                  <dt>Registrada el</dt>
+                  <dd>{{ date(detail.data.realizadaEn) }}</dd>
+                </div>
+              @if (auth.currentUser?.rol === 'PROPIETARIO') {
+                <div class="detail-row">
+                  <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
+                  <dt>Registrada por</dt>
+                  <dd>{{ detail.data.realizadaPorNombre || 'Usuario #' + detail.data.realizadaPorId }}</dd>
+                </div>
+              }
+              @if (detail.data.animalId) {
+                <div class="detail-row">
+                  <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                  <dt>Animal</dt>
+                  <dd>#{{ detail.data.animalId }}</dd>
+                </div>
+              }
+              @if (detail.data.productoNombre) {
+                <div class="detail-row">
+                  <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                  <dt>Producto</dt>
+                  <dd>{{ detail.data.productoNombre }}</dd>
+                </div>
+              }
+              @if (detail.data.cantidadPorDosis != null) {
+                <div class="detail-row">
+                  <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                  <dt>{{ detail.data.tipo === 'ALIMENTACION' ? 'Cantidad utilizada' : 'Cantidad por dosis' }}</dt>
+                  <dd>{{ detail.data.cantidadPorDosis }}</dd>
+                </div>
+              }
+              @if (detail.data.tipo !== 'ALIMENTACION' && detail.data.numeroDosis != null) {
+                <div class="detail-row">
+                  <ion-icon name="document-text-outline" aria-hidden="true"></ion-icon>
+                  <dt>Número de dosis</dt>
+                  <dd>{{ detail.data.numeroDosis }}</dd>
+                </div>
+              }
+            </dl>
+            @if (detail.data.fotoUrl) {
+              <img class="detail-photo" [src]="detail.data.fotoUrl" alt="Foto de la actividad" />
+            }
+          }
+        </section>
+      }
+  </ng-template>
+</ion-modal>

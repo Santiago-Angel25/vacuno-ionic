@@ -1,15 +1,9 @@
-<ion-header class="livestock-header">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
-    </ion-buttons>
-    <ion-title>Mi ganado</ion-title>
-  </ion-toolbar>
-</ion-header>
+@let pageTitle = auth.currentUser?.rol === 'TRABAJADOR' ? 'Ganado' : 'Mi ganado';
+<app-vacuno-header [title]="pageTitle" [showBack]="true"></app-vacuno-header>
 <ion-content [fullscreen]="true" class="module-content">
   <main class="livestock-page">
     <p class="eyebrow">GESTIÓN DE LA FINCA</p>
-    <h1>Mi ganado</h1>
+    <h1>{{ pageTitle }}</h1>
     <ion-item class="search-field" lines="none">
       <ion-icon name="paw-outline" slot="start" aria-hidden="true"></ion-icon>
       <ion-input
@@ -18,6 +12,7 @@
         [value]="search"
         (ionInput)="onSearch($event)"
       ></ion-input>
+      <ion-icon name="search-outline" slot="end" aria-hidden="true"></ion-icon>
     </ion-item>
     <div class="filter-row" role="group" aria-label="Filtrar ganado">
       <ion-button size="small" [fill]="filter === 'TODOS' ? 'solid' : 'outline'" (click)="setFilter('TODOS')"
@@ -64,14 +59,22 @@
         <div class="animal-info">
           <span class="animal-id">#{{ displayId(animal.id) }}</span>
           <h2>{{ animal.nombre || 'Sin nombre' }}</h2>
-          <p>{{ animal.raza || 'Raza no especificada' }} · {{ animal.sexo || 'Sexo no especificado' }}</p>
+          <p class="animal-meta">
+            @if (animal.sexo === 'HEMBRA' || animal.sexo === 'MACHO') {
+              <ion-icon [name]="animal.sexo === 'HEMBRA' ? 'female-outline' : 'male-outline'" aria-hidden="true"></ion-icon>
+            }
+            {{ animal.sexo === 'HEMBRA' ? 'Hembra' : animal.sexo === 'MACHO' ? 'Macho' : (animal.sexo || 'Sin especificar') }}
+            @if (animal.raza) { <span aria-hidden="true">·</span> {{ animal.raza }} }
+          </p>
           @if (animal.pesoActual || animal.pesoInicial) {
-          <p class="animal-weight">{{ animal.pesoActual || animal.pesoInicial }} kg</p>
+          <p class="animal-weight"><ion-icon name="scale-outline" aria-hidden="true"></ion-icon>{{ animal.pesoActual || animal.pesoInicial }} kg</p>
           }
         </div>
         <span class="health-badge" [class.attention-badge]="animal.estado === 'EN_ATENCION'"
-          >{{ animal.estado || 'REGISTRADO' }}</span
-        >
+          [class.healthy-badge]="animal.estado === 'SALUDABLE'">
+          <ion-icon [name]="animal.estado === 'EN_ATENCION' ? 'alert-circle-outline' : animal.estado === 'SALUDABLE' ? 'heart-outline' : 'information-circle-outline'" aria-hidden="true"></ion-icon>
+          {{ (animal.estado || 'REGISTRADO').replaceAll('_', ' ') }}
+        </span>
       </a>
       }
     </section>

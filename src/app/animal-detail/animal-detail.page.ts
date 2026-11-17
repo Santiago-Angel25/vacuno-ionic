@@ -1,20 +1,16 @@
+import { VacunoHeaderComponent } from '../shared/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
-  IonBackButton,
   IonButton,
-  IonButtons,
   IonContent,
-  IonHeader,
   IonInput,
   IonItem,
   IonSelect,
   IonSelectOption,
   IonSpinner,
-  IonTitle,
   IonTextarea,
-  IonToolbar,
 } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
@@ -26,20 +22,16 @@ import type { Animal, AnimalHistoryItem } from '../service/farm.service';
   templateUrl: './animal-detail.page.html',
   styleUrl: './animal-detail.page.scss',
   imports: [
+    VacunoHeaderComponent,
     ReactiveFormsModule,
-    IonBackButton,
     IonButton,
-    IonButtons,
     IonContent,
-    IonHeader,
     IonInput,
     IonItem,
     IonSelect,
     IonSelectOption,
     IonSpinner,
-    IonTitle,
     IonTextarea,
-    IonToolbar,
   ],
 })
 export class AnimalDetailPage {
