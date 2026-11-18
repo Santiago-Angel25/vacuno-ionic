@@ -95,6 +95,14 @@ export class AuthService {
       .pipe(switchMap(({ email }) => this.login(email, password)));
   }
 
+  requestPasswordReset(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/auth/recuperar-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/auth/restablecer-password`, { token, password });
+  }
+
   getProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.apiUrl}/auth/me`).pipe(tap((profile) => (this.currentUser = profile)));
   }

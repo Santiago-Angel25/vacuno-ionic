@@ -21,8 +21,19 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/registro/registro.page').then((m) => m.RegistroPage),
   },
   {
+    path: 'recuperar-password',
+    loadComponent: () =>
+      import('./pages/recuperar-password/recuperar-password.page').then((m) => m.RecuperarPasswordPage),
+  },
+  {
+    path: 'restablecer-password',
+    loadComponent: () =>
+      import('./pages/restablecer-password/restablecer-password.page').then((m) => m.RestablecerPasswordPage),
+  },
+  {
     path: 'activar-trabajador',
-    loadComponent: () => import('./pages/activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
+    loadComponent: () =>
+      import('./pages/activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
   },
   {
     path: 'animal/nuevo',
