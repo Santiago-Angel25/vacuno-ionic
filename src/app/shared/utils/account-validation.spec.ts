@@ -1,3 +1,5 @@
+import { FincaService } from '../../service/finca/finca.service';
+import { TrabajadoresService } from '../../service/trabajadores/trabajadores.service';
 import { FormControl } from '@angular/forms';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -8,9 +10,7 @@ import { birthDateValidator, passwordPattern, phoneDigits, phonePattern } from '
 import { localDate } from './task-due-date';
 import { RegistroPage } from '../../pages/registro/registro.page';
 import { TrabajadoresPage } from '../../pages/trabajadores/trabajadores.page';
-import { AuthService } from '../../service/auth.service';
-import { FarmService } from '../../service/farm.service';
-
+import { AuthService } from '../../service/auth/auth.service';
 describe('Account validation', () => {
   it('accepts exactly ten ASCII digits and preserves leading zeroes', () => {
     expect(phonePattern.test('0123456789')).toBe(true);
@@ -45,7 +45,8 @@ describe('Registration and worker forms', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: auth },
-        { provide: FarmService, useValue: farms },
+        { provide: FincaService, useValue: farms },
+        { provide: TrabajadoresService, useValue: farms },
         { provide: ToastController, useValue: {} },
       ],
     });

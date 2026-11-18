@@ -1,3 +1,5 @@
+import { FincaService } from '../../service/finca/finca.service';
+import { InventarioService } from '../../service/inventario/inventario.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -14,8 +16,6 @@ import {
   IonSelectOption,
 } from '@ionic/angular';
 import { finalize } from 'rxjs';
-
-import { FarmService } from '../../service/farm.service';
 
 @Component({
   selector: 'app-product-form',
@@ -37,7 +37,8 @@ import { FarmService } from '../../service/farm.service';
 })
 export class ProductFormPage {
   private readonly fb = inject(FormBuilder);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly inventarioService = inject(InventarioService);
   private readonly router = inject(Router);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly form = this.fb.nonNullable.group({
@@ -55,7 +56,7 @@ export class ProductFormPage {
       this.form.controls.unidad.setValue(category === 'ALIMENTOS' ? 'BULTO' : 'UNIDAD');
       this.changeDetector.markForCheck();
     });
-    this.farms.myFarms().subscribe({
+    this.fincaService.myFarms().subscribe({
       next: (farms) => {
         this.farmId = farms[0]?.id ?? null;
         if (!this.farmId) this.errorMessage = 'Tu cuenta todavía no tiene una finca asociada.';
@@ -80,7 +81,7 @@ export class ProductFormPage {
     }
     this.saving = true;
     this.errorMessage = '';
-    this.farms
+    this.inventarioService
       .createProduct({
         fincaId: this.farmId,
         nombre: value.nombre.trim(),

@@ -1,12 +1,13 @@
+import type { FarmAlert } from '../../service/alertas/alertas.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { AlertasService } from '../../service/alertas/alertas.service';
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonContent } from '@ionic/angular';
 import { finalize, of, switchMap } from 'rxjs';
-import { FarmService } from '../../service/farm.service';
-import { AuthService } from '../../service/auth.service';
-import type { FarmAlert } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 
 @Component({
@@ -16,7 +17,8 @@ import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.
   imports: [DatePipe, RouterLink, IonButton, IonContent, VacunoHeaderComponent],
 })
 export class NotificacionesPage {
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly alertasService = inject(AlertasService);
   private readonly auth = inject(AuthService);
   private readonly destroyRef = inject(DestroyRef);
   readonly alerts = signal<FarmAlert[]>([]);
@@ -31,15 +33,20 @@ export class NotificacionesPage {
     if (this.loading()) return;
     this.loading.set(true);
     this.failed.set(false);
-    this.farms.myFarms().pipe(
-      switchMap(([farm]) => farm
-        ? this.farms.alertsWithPendingTasks(farm.id, this.auth.currentUser?.rol === 'PROPIETARIO')
-        : of([] as FarmAlert[])),
-      takeUntilDestroyed(this.destroyRef),
-      finalize(() => this.loading.set(false)),
-    ).subscribe({
-      next: alerts => this.alerts.set(alerts),
-      error: () => this.failed.set(true),
-    });
+    this.fincaService
+      .myFarms()
+      .pipe(
+        switchMap(([farm]) =>
+          farm
+            ? this.alertasService.alertsWithPendingTasks(farm.id, this.auth.currentUser?.rol === 'PROPIETARIO')
+            : of([] as FarmAlert[]),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.loading.set(false)),
+      )
+      .subscribe({
+        next: (alerts) => this.alerts.set(alerts),
+        error: () => this.failed.set(true),
+      });
   }
 }

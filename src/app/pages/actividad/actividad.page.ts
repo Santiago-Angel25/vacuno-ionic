@@ -1,3 +1,6 @@
+import type { FarmActivity, FarmTask } from '../../service/actividades/actividades.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { ActividadesService } from '../../service/actividades/actividades.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -12,12 +15,22 @@ import {
   IonSpinner,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { add, calendarOutline, checkmarkOutline, createOutline, documentTextOutline, medkitOutline, nutritionOutline, pawOutline, personAddOutline, personOutline, timeOutline } from 'ionicons/icons';
+import {
+  add,
+  calendarOutline,
+  checkmarkOutline,
+  createOutline,
+  documentTextOutline,
+  medkitOutline,
+  nutritionOutline,
+  pawOutline,
+  personAddOutline,
+  personOutline,
+  timeOutline,
+} from 'ionicons/icons';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import { FarmService } from '../../service/farm.service';
-import type { FarmActivity, FarmTask } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { isTaskOverdue, taskOverdueMessage } from '../../shared/utils/task-due-date';
 
@@ -43,7 +56,8 @@ export class ActividadPage {
   private readonly router = inject(Router);
   readonly taskOverdueMessage = taskOverdueMessage;
   readonly isTaskOverdue = isTaskOverdue;
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly actividadesService = inject(ActividadesService);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   farmId: number | null = null;
@@ -56,12 +70,24 @@ export class ActividadPage {
   deleteError = '';
 
   constructor() {
-    addIcons({ add, calendarOutline, checkmarkOutline, createOutline, documentTextOutline, medkitOutline, nutritionOutline, pawOutline, personAddOutline, personOutline, timeOutline });
+    addIcons({
+      add,
+      calendarOutline,
+      checkmarkOutline,
+      createOutline,
+      documentTextOutline,
+      medkitOutline,
+      nutritionOutline,
+      pawOutline,
+      personAddOutline,
+      personOutline,
+      timeOutline,
+    });
   }
 
   ionViewWillEnter(): void {
     this.loading = true;
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
@@ -69,11 +95,11 @@ export class ActividadPage {
           if (!this.farmId)
             return of({ activities: [], tasks: [] } as { activities: FarmActivity[]; tasks: FarmTask[] });
           return forkJoin({
-            activities: this.farms.activities(this.farmId),
+            activities: this.actividadesService.activities(this.farmId),
             tasks:
               this.auth.currentUser?.rol === 'PROPIETARIO'
-                ? this.farms.tasks(this.farmId)
-                : this.farms.myTasks(this.farmId),
+                ? this.actividadesService.tasks(this.farmId)
+                : this.actividadesService.myTasks(this.farmId),
           });
         }),
         finalize(() => {
@@ -125,20 +151,23 @@ export class ActividadPage {
         this.cdr.markForCheck();
         return;
       }
-      this.farms.deleteOverdueTask(farmId, task.id).pipe(
-        finalize(() => {
-          this.deletingTask = false;
-          this.cdr.markForCheck();
-        }),
-      ).subscribe({
-        next: () => {
-          this.tasks = this.tasks.filter((item) => item.id !== task.id);
-          if (this.selected?.kind === 'task' && this.selected.data.id === task.id) void modal.dismiss();
-        },
-        error: (error: { error?: { detail?: string } }) => {
-          this.deleteError = error.error?.detail ?? 'No fue posible eliminar la actividad vencida.';
-        },
-      });
+      this.actividadesService
+        .deleteOverdueTask(farmId, task.id)
+        .pipe(
+          finalize(() => {
+            this.deletingTask = false;
+            this.cdr.markForCheck();
+          }),
+        )
+        .subscribe({
+          next: () => {
+            this.tasks = this.tasks.filter((item) => item.id !== task.id);
+            if (this.selected?.kind === 'task' && this.selected.data.id === task.id) void modal.dismiss();
+          },
+          error: (error: { error?: { detail?: string } }) => {
+            this.deleteError = error.error?.detail ?? 'No fue posible eliminar la actividad vencida.';
+          },
+        });
     } catch {
       this.deletingTask = false;
       this.deleteError = 'No fue posible confirmar la eliminación.';
@@ -163,7 +192,11 @@ export class ActividadPage {
   }
 
   activityIcon(type: string): string {
-    const category = type.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+    const category = type
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toUpperCase();
     if (category === 'ALIMENTACION') return 'nutrition-outline';
     if (category === 'VACUNACION') return 'medkit-outline';
     return 'paw-outline';

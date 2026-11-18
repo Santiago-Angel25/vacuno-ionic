@@ -1,11 +1,12 @@
+import type { FarmActivity } from '../../service/actividades/actividades.models';
+import type { WorkerSummary } from '../../service/trabajadores/trabajadores.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { TrabajadoresService } from '../../service/trabajadores/trabajadores.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
-
-import { FarmService } from '../../service/farm.service';
-import type { FarmActivity, WorkerSummary } from '../../service/farm.service';
 
 @Component({
   selector: 'app-trabajador-detalle',
@@ -15,7 +16,8 @@ import type { FarmActivity, WorkerSummary } from '../../service/farm.service';
 })
 export class TrabajadorDetallePage {
   private readonly route = inject(ActivatedRoute);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly trabajadoresService = inject(TrabajadoresService);
   private readonly cdr = inject(ChangeDetectorRef);
   workerId = Number(this.route.snapshot.paramMap.get('id'));
   worker: WorkerSummary | null = null;
@@ -24,15 +26,15 @@ export class TrabajadorDetallePage {
   errorMessage = '';
 
   ionViewWillEnter(): void {
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           const farmId = farms[0]?.id;
           if (!farmId) return of(null);
           return forkJoin({
-            workerList: this.farms.workers(farmId),
-            activities: this.farms.workerActivities(farmId, this.workerId),
+            workerList: this.trabajadoresService.workers(farmId),
+            activities: this.trabajadoresService.workerActivities(farmId, this.workerId),
           });
         }),
         finalize(() => {

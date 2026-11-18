@@ -7,7 +7,7 @@ import { ToastController } from '@ionic/angular';
 import { of, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { RecuperarPasswordPage } from './recuperar-password.page';
 import { RestablecerPasswordPage } from '../restablecer-password/restablecer-password.page';
 

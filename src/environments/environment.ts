@@ -2,6 +2,6 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://communities-concerts-phoenix-apps.trycloudflare.com/api/v1',
+  apiUrl: 'https://commonly-pics-especially-vampire.trycloudflare.com/api/v1',
 };
 

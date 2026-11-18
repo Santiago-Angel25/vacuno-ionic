@@ -1,3 +1,6 @@
+import type { Animal, AnimalHistoryItem } from '../../service/animales/animales.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { AnimalesService } from '../../service/animales/animales.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,9 +19,6 @@ import {
   IonTextarea,
 } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
-
-import { FarmService } from '../../service/farm.service';
-import type { Animal, AnimalHistoryItem } from '../../service/farm.service';
 
 @Component({
   selector: 'app-animal-detail',
@@ -42,7 +42,8 @@ import type { Animal, AnimalHistoryItem } from '../../service/farm.service';
 })
 export class AnimalDetailPage {
   private readonly route = inject(ActivatedRoute);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly animalesService = inject(AnimalesService);
   private readonly fb = inject(FormBuilder);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly form = this.fb.nonNullable.group({
@@ -65,15 +66,15 @@ export class AnimalDetailPage {
   load(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
           return this.farmId
             ? forkJoin({
-                animal: this.farms.animal(this.farmId, this.animalId),
-                history: this.farms.animalHistory(this.farmId, this.animalId),
+                animal: this.animalesService.animal(this.farmId, this.animalId),
+                history: this.animalesService.animalHistory(this.farmId, this.animalId),
               })
             : of(null);
         }),
@@ -111,7 +112,7 @@ export class AnimalDetailPage {
       return;
     }
     this.saving = true;
-    this.farms
+    this.animalesService
       .updateAnimalFollowUp(
         this.farmId,
         this.animalId,

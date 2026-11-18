@@ -1,3 +1,8 @@
+import type { InventoryProduct } from '../../service/inventario/inventario.models';
+import type { Purchase } from '../../service/compras/compras.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { InventarioService } from '../../service/inventario/inventario.service';
+import { ComprasService } from '../../service/compras/compras.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,10 +20,7 @@ import {
 } from '@ionic/angular';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
-import { FarmService } from '../../service/farm.service';
 import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.component';
-import type { InventoryProduct, Purchase } from '../../service/farm.service';
-
 @Component({
   selector: 'app-compra-form',
   templateUrl: './compra-form.page.html',
@@ -40,7 +42,9 @@ import type { InventoryProduct, Purchase } from '../../service/farm.service';
 })
 export class CompraFormPage {
   private readonly fb = inject(FormBuilder);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly inventarioService = inject(InventarioService);
+  private readonly comprasService = inject(ComprasService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly form = this.fb.nonNullable.group({
@@ -76,15 +80,15 @@ export class CompraFormPage {
     this.form.controls.productoId.valueChanges.subscribe((productId) => {
       this.applyProductDefaults(productId);
     });
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
           return this.farmId
             ? forkJoin({
-                products: this.farms.inventory(this.farmId),
-                purchases: this.farms.purchases(this.farmId),
+                products: this.inventarioService.inventory(this.farmId),
+                purchases: this.comprasService.purchases(this.farmId),
               })
             : of({ products: [] as InventoryProduct[], purchases: [] as Purchase[] });
         }),
@@ -230,7 +234,7 @@ export class CompraFormPage {
     }
     this.saving = true;
     this.errorMessage = '';
-    this.farms
+    this.comprasService
       .createPurchase({
         fincaId: this.farmId,
         proveedor: value.proveedor.trim(),

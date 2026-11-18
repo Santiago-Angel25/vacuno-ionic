@@ -1,3 +1,6 @@
+import type { Purchase } from '../../service/compras/compras.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { ComprasService } from '../../service/compras/compras.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
@@ -21,10 +24,7 @@ import { addIcons } from 'ionicons';
 import { add, checkmarkCircleOutline, receiptOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import { FarmService } from '../../service/farm.service';
-import type { Purchase } from '../../service/farm.service';
-
+import { AuthService } from '../../service/auth/auth.service';
 @Component({
   selector: 'app-compras',
   templateUrl: './compras.page.html',
@@ -49,7 +49,8 @@ import type { Purchase } from '../../service/farm.service';
   ],
 })
 export class ComprasPage {
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly comprasService = inject(ComprasService);
   private readonly route = inject(ActivatedRoute);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
@@ -73,12 +74,12 @@ export class ComprasPage {
   ionViewWillEnter(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId ? this.farms.purchases(this.farmId) : of([] as Purchase[]);
+          return this.farmId ? this.comprasService.purchases(this.farmId) : of([] as Purchase[]);
         }),
         finalize(() => {
           this.loading = false;
@@ -101,7 +102,7 @@ export class ComprasPage {
     if (!this.farmId || this.busyId) return;
     this.busyId = item.id;
     this.errorMessage = '';
-    this.farms
+    this.comprasService
       .reviewPurchase(this.farmId, item.id, approve)
       .pipe(
         finalize(() => {
@@ -130,7 +131,7 @@ export class ComprasPage {
     this.evidenceLoadingId = item.id;
     this.evidenceError = '';
     this.evidenceErrorId = item.id;
-    this.farms
+    this.comprasService
       .purchase(this.farmId, item.id)
       .pipe(
         finalize(() => {

@@ -1,3 +1,6 @@
+import type { InventoryProduct } from '../../service/inventario/inventario.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { InventarioService } from '../../service/inventario/inventario.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonGrid, IonRow, IonCol, IonButton, IonContent, IonIcon, IonInput, IonItem, IonSpinner } from '@ionic/angular';
@@ -5,9 +8,7 @@ import { addIcons } from 'ionicons';
 import { leafOutline, searchOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import type { InventoryProduct } from '../../service/farm.service';
-import { FarmService } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 
@@ -33,7 +34,8 @@ type InventoryFilter = 'TODOS' | 'MEDICAMENTOS' | 'ALIMENTOS' | 'INSUMOS';
   ],
 })
 export class Tab3Page {
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly inventarioService = inject(InventarioService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   farmId: number | null = null;
@@ -55,12 +57,12 @@ export class Tab3Page {
     }
     this.loading = true;
     this.errorMessage = '';
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId ? this.farms.inventory(this.farmId) : of([] as InventoryProduct[]);
+          return this.farmId ? this.inventarioService.inventory(this.farmId) : of([] as InventoryProduct[]);
         }),
         finalize(() => {
           this.loading = false;
@@ -83,7 +85,7 @@ export class Tab3Page {
     if (!this.farmId) return;
     this.loading = true;
     this.errorMessage = '';
-    this.farms
+    this.inventarioService
       .inventory(this.farmId)
       .pipe(
         finalize(() => {

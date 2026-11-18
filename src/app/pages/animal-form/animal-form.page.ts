@@ -1,3 +1,5 @@
+import { FincaService } from '../../service/finca/finca.service';
+import { AnimalesService } from '../../service/animales/animales.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,7 +17,6 @@ import {
 } from '@ionic/angular';
 import { finalize } from 'rxjs';
 
-import { FarmService } from '../../service/farm.service';
 import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.component';
 
 @Component({
@@ -39,7 +40,8 @@ import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.
 })
 export class AnimalFormPage {
   private readonly fb = inject(FormBuilder);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly animalesService = inject(AnimalesService);
   private readonly router = inject(Router);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly form = this.fb.nonNullable.group({
@@ -57,7 +59,7 @@ export class AnimalFormPage {
   errorMessage = '';
 
   constructor() {
-    this.farms.myFarms().subscribe({
+    this.fincaService.myFarms().subscribe({
       next: (farms) => {
         this.farmId = farms[0]?.id ?? null;
         if (!this.farmId) this.errorMessage = 'Tu cuenta todavía no tiene una finca asociada.';
@@ -97,7 +99,7 @@ export class AnimalFormPage {
     const value = this.form.getRawValue();
     this.saving = true;
     this.errorMessage = '';
-    this.farms
+    this.animalesService
       .createAnimal({
         fincaId: this.farmId,
         nombre: value.nombre.trim(),

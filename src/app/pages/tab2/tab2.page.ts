@@ -1,3 +1,6 @@
+import type { Animal } from '../../service/animales/animales.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { AnimalesService } from '../../service/animales/animales.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
@@ -27,9 +30,7 @@ import {
 } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import type { Animal } from '../../service/farm.service';
-import { FarmService } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 
 type AnimalFilter = 'TODOS' | 'HEMBRA' | 'MACHO' | 'JOVEN';
@@ -55,7 +56,8 @@ type AnimalFilter = 'TODOS' | 'HEMBRA' | 'MACHO' | 'JOVEN';
   ],
 })
 export class Tab2Page {
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly animalesService = inject(AnimalesService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   animals: Animal[] = [];
@@ -87,12 +89,14 @@ export class Tab2Page {
     }
     this.loading = true;
     this.errorMessage = '';
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId ? this.farms.animals(this.farmId, this.selectedSex, this.search) : of<Animal[]>([]);
+          return this.farmId
+            ? this.animalesService.animals(this.farmId, this.selectedSex, this.search)
+            : of<Animal[]>([]);
         }),
         finalize(() => {
           this.loading = false;
@@ -139,7 +143,7 @@ export class Tab2Page {
     this.loading = true;
     this.errorMessage = '';
     this.changeDetector.markForCheck();
-    this.farms
+    this.animalesService
       .animals(this.farmId, this.selectedSex, this.search)
       .pipe(
         finalize(() => {

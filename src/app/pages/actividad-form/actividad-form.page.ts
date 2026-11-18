@@ -1,3 +1,12 @@
+import type { Animal } from '../../service/animales/animales.models';
+import type { FarmTask } from '../../service/actividades/actividades.models';
+import type { InventoryProduct } from '../../service/inventario/inventario.models';
+import type { WorkerSummary } from '../../service/trabajadores/trabajadores.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { ActividadesService } from '../../service/actividades/actividades.service';
+import { InventarioService } from '../../service/inventario/inventario.service';
+import { TrabajadoresService } from '../../service/trabajadores/trabajadores.service';
+import { AnimalesService } from '../../service/animales/animales.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { isTaskOverdue, localDate, taskOverdueMessage } from '../../shared/utils/task-due-date';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
@@ -18,11 +27,8 @@ import {
 } from '@ionic/angular';
 import { EMPTY, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import { FarmService } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.component';
-import type { Animal, FarmTask, InventoryProduct, WorkerSummary } from '../../service/farm.service';
-
 @Component({
   selector: 'app-actividad-form',
   templateUrl: './actividad-form.page.html',
@@ -53,7 +59,11 @@ export class ActividadFormPage {
   }
   private readonly alerts = inject(AlertController);
   private readonly fb = inject(FormBuilder);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly actividadesService = inject(ActividadesService);
+  private readonly inventarioService = inject(InventarioService);
+  private readonly trabajadoresService = inject(TrabajadoresService);
+  private readonly animalesService = inject(AnimalesService);
   readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -128,7 +138,7 @@ export class ActividadFormPage {
       this.errorMessage = '';
       this.cdr.markForCheck();
     });
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
@@ -141,12 +151,12 @@ export class ActividadFormPage {
               task: FarmTask | null;
             });
           if (this.taskMode && !this.ownerMode) {
-            return this.farms.myTasks(this.farmId).pipe(
+            return this.actividadesService.myTasks(this.farmId).pipe(
               switchMap((tasks) => {
                 const task = tasks.find((item) => item.id === this.taskId && item.estado === 'PENDIENTE') ?? null;
                 const products =
                   task && this.typeConsumesInventory(this.activityType(task.titulo))
-                    ? this.farms.inventory(this.farmId!)
+                    ? this.inventarioService.inventory(this.farmId!)
                     : of([] as InventoryProduct[]);
                 return products.pipe(
                   map((inventory) => ({
@@ -160,16 +170,17 @@ export class ActividadFormPage {
             );
           }
           return this.ownerMode
-            ? this.farms
+            ? this.trabajadoresService
                 .workers(this.farmId)
                 .pipe(
                   switchMap((workers) =>
                     of({ animals: [] as Animal[], products: [] as InventoryProduct[], workers, task: null }),
                   ),
                 )
-            : forkJoin({ animals: this.farms.animals(this.farmId), products: this.farms.inventory(this.farmId) }).pipe(
-                switchMap((data) => of({ ...data, workers: [] as WorkerSummary[], task: null })),
-              );
+            : forkJoin({
+                animals: this.animalesService.animals(this.farmId),
+                products: this.inventarioService.inventory(this.farmId),
+              }).pipe(switchMap((data) => of({ ...data, workers: [] as WorkerSummary[], task: null })));
         }),
       )
       .subscribe({
@@ -340,7 +351,7 @@ export class ActividadFormPage {
     const animalId = Number(value.animalId);
     this.saving = true;
     this.errorMessage = '';
-    this.farms
+    this.actividadesService
       .createActivity({
         fincaId: this.farmId,
         ...(animalId > 0 ? { animalId } : {}),
@@ -435,7 +446,7 @@ export class ActividadFormPage {
     const category = this.productCategory;
     const title = this.activityTitle;
     const availability: Observable<InventoryProduct[] | null> = this.consumesInventory
-      ? this.farms.inventory(farmId)
+      ? this.inventarioService.inventory(farmId)
       : of(null);
     availability
       .pipe(
@@ -447,7 +458,7 @@ export class ActividadFormPage {
             void this.showRestockAlert(category);
             return EMPTY;
           }
-          return this.farms.createTask({
+          return this.actividadesService.createTask({
             fincaId: farmId,
             titulo: title,
             descripcion: value.descripcion.trim(),
@@ -494,7 +505,7 @@ export class ActividadFormPage {
       : undefined;
     this.saving = true;
     this.errorMessage = '';
-    this.farms
+    this.actividadesService
       .registerTaskActivity(this.farmId, this.task.id, this.photoUrl, consumption)
       .pipe(
         finalize(() => {

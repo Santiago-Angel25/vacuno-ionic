@@ -1,3 +1,6 @@
+import type { WorkerInvite, WorkerSummary } from '../../service/trabajadores/trabajadores.models';
+import { FincaService } from '../../service/finca/finca.service';
+import { TrabajadoresService } from '../../service/trabajadores/trabajadores.service';
 import { localDate } from '../../shared/utils/task-due-date';
 import { phoneDigits, phonePattern, birthDateValidator } from '../../shared/utils/account-validation';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
@@ -10,11 +13,8 @@ import { addIcons } from 'ionicons';
 import { personAddOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import { FarmService } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.component';
-import type { WorkerInvite, WorkerSummary } from '../../service/farm.service';
-
 @Component({
   selector: 'app-trabajadores',
   templateUrl: './trabajadores.page.html',
@@ -38,7 +38,8 @@ import type { WorkerInvite, WorkerSummary } from '../../service/farm.service';
 })
 export class TrabajadoresPage {
   private readonly fb = inject(FormBuilder);
-  private readonly farms = inject(FarmService);
+  private readonly fincaService = inject(FincaService);
+  private readonly trabajadoresService = inject(TrabajadoresService);
   private readonly cdr = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
   readonly form = this.fb.nonNullable.group({
@@ -73,12 +74,12 @@ export class TrabajadoresPage {
   }
 
   loadWorkers(): void {
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
           this.farmId = farms[0]?.id ?? null;
-          return this.farmId ? this.farms.workers(this.farmId) : of([] as WorkerSummary[]);
+          return this.farmId ? this.trabajadoresService.workers(this.farmId) : of([] as WorkerSummary[]);
         }),
         finalize(() => {
           this.loading = false;
@@ -140,7 +141,7 @@ export class TrabajadoresPage {
     this.saving = true;
     this.errorMessage = '';
     this.invite = null;
-    this.farms
+    this.trabajadoresService
       .inviteWorker({
         fincaId: this.farmId,
         nombres: value.nombres.trim(),

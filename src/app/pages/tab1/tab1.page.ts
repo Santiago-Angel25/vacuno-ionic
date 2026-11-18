@@ -1,3 +1,9 @@
+import type { DashboardResponse } from '../../service/finca/finca.models';
+import type { FarmAlert } from '../../service/alertas/alertas.models';
+import type { FarmTask } from '../../service/actividades/actividades.models';
+import { AlertasService } from '../../service/alertas/alertas.service';
+import { FincaService } from '../../service/finca/finca.service';
+import { ActividadesService } from '../../service/actividades/actividades.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -13,9 +19,7 @@ import {
 } from 'ionicons/icons';
 import { finalize, map, of, switchMap, tap } from 'rxjs';
 
-import { AuthService } from '../../service/auth.service';
-import type { DashboardResponse, FarmAlert, FarmTask } from '../../service/farm.service';
-import { FarmService } from '../../service/farm.service';
+import { AuthService } from '../../service/auth/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 import { isTaskOverdue, taskOverdueMessage } from '../../shared/utils/task-due-date';
@@ -41,7 +45,9 @@ export class Tab1Page {
   readonly isTaskOverdue = isTaskOverdue;
   readonly taskOverdueMessage = taskOverdueMessage;
   private readonly router = inject(Router);
-  private readonly farms = inject(FarmService);
+  private readonly alertasService = inject(AlertasService);
+  private readonly fincaService = inject(FincaService);
+  private readonly actividadesService = inject(ActividadesService);
   private readonly changeDetector = inject(ChangeDetectorRef);
   readonly auth = inject(AuthService);
 
@@ -151,7 +157,7 @@ export class Tab1Page {
     if (this.farmId === null || this.alertsLoading) return;
     this.alertsLoading = true;
     this.alertsError = false;
-    this.farms
+    this.alertasService
       .alertsWithPendingTasks(this.farmId, this.auth.currentUser?.rol === 'PROPIETARIO')
       .pipe(
         finalize(() => {
@@ -172,7 +178,7 @@ export class Tab1Page {
   loadDashboard(): void {
     this.loading = true;
     this.errorMessage = '';
-    this.farms
+    this.fincaService
       .myFarms()
       .pipe(
         switchMap((farms) => {
@@ -188,14 +194,14 @@ export class Tab1Page {
           this.hasFarm = true;
           this.farmName = farm.nombre;
           if (this.auth.currentUser?.rol === 'TRABAJADOR') {
-            return this.farms.myTasks(farm.id).pipe(
+            return this.actividadesService.myTasks(farm.id).pipe(
               tap((tasks) => {
                 this.workerTasks = tasks;
               }),
               map(() => null),
             );
           }
-          return this.farms.dashboard(farm.id);
+          return this.fincaService.dashboard(farm.id);
         }),
         finalize(() => {
           this.loading = false;
