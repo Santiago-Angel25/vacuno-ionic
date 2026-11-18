@@ -1,3 +1,4 @@
+import { passwordPattern } from '../../shared/utils/account-validation';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -20,7 +21,10 @@ export class ActivarTrabajadorPage {
   private readonly toastController = inject(ToastController);
   readonly form = this.fb.nonNullable.group({
     codigo: ['', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(8), Validators.maxLength(72), Validators.pattern(passwordPattern)],
+    ],
     confirmar: ['', Validators.required],
   });
   saving = false;

@@ -82,7 +82,7 @@ describe('Password recovery forms', () => {
     page.form.setValue({ token: 'code', password: 'short', confirmar: 'short' });
     page.submit();
     expect(auth.resetPassword).not.toHaveBeenCalled();
-    page.form.setValue({ token: 'code', password: 'password123', confirmar: 'different123' });
+    page.form.setValue({ token: 'code', password: 'password123!', confirmar: 'different123!' });
     page.submit();
     expect(page.errorMessage).toContain('no coinciden');
     expect(auth.resetPassword).not.toHaveBeenCalled();
@@ -93,7 +93,7 @@ describe('Password recovery forms', () => {
       throwError(() => new HttpErrorResponse({ status: 400, error: { detail: 'El token no es válido o venció.' } })),
     );
     const page = TestBed.createComponent(RestablecerPasswordPage).componentInstance;
-    page.form.setValue({ token: 'old-code', password: 'password123', confirmar: 'password123' });
+    page.form.setValue({ token: 'old-code', password: 'password123!', confirmar: 'password123!' });
     page.submit();
     expect(page.done).toBe(false);
     expect(page.loading).toBe(false);
@@ -102,9 +102,9 @@ describe('Password recovery forms', () => {
 
   it('clears the code and password after a successful reset', async () => {
     const page = TestBed.createComponent(RestablecerPasswordPage).componentInstance;
-    page.form.setValue({ token: ' code ', password: 'password123', confirmar: 'password123' });
+    page.form.setValue({ token: ' code ', password: 'password123!', confirmar: 'password123!' });
     page.submit();
-    expect(auth.resetPassword).toHaveBeenCalledWith('code', 'password123');
+    expect(auth.resetPassword).toHaveBeenCalledWith('code', 'password123!');
     expect(page.done).toBe(true);
     expect(page.form.getRawValue()).toEqual({ token: '', password: '', confirmar: '' });
     await Promise.resolve();

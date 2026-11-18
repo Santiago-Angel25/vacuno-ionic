@@ -1,3 +1,5 @@
+import { localDate } from '../../shared/utils/task-due-date';
+import { phoneDigits, phonePattern, birthDateValidator } from '../../shared/utils/account-validation';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
@@ -43,9 +45,12 @@ export class TrabajadoresPage {
     nombres: ['', Validators.required],
     apellidos: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    telefono: [''],
-    fechaNacimiento: [''],
+    telefono: ['', [Validators.required, Validators.pattern(phonePattern)]],
+    fechaNacimiento: ['', birthDateValidator],
   });
+  get maxBirthDate(): string {
+    return localDate();
+  }
   farmId: number | null = null;
   workers: WorkerSummary[] = [];
   invite: WorkerInvite | null = null;
@@ -120,6 +125,12 @@ export class TrabajadoresPage {
     this.cdr.markForCheck();
   }
 
+  onPhoneInput(event: CustomEvent<{ value?: string | null }>): void {
+    const value = phoneDigits(event.detail.value);
+    this.form.controls.telefono.setValue(value);
+    if (event.target) (event.target as HTMLInputElement).value = value;
+  }
+
   submit(): void {
     if (!this.farmId || this.form.invalid || this.saving) {
       this.form.markAllAsTouched();
@@ -153,7 +164,11 @@ export class TrabajadoresPage {
           this.loadWorkers();
           this.cdr.markForCheck();
         },
-        error: (error: { error?: { detail?: string } }) => {
+        error: (error: { status?: number; error?: { detail?: string } }) => {
+          if (error.status === 409) {
+            this.form.controls.email.setErrors({ ...this.form.controls.email.errors, exists: true });
+            this.form.controls.email.markAsTouched();
+          }
           this.errorMessage = error.error?.detail ?? 'No fue posible crear el trabajador.';
           this.cdr.markForCheck();
         },

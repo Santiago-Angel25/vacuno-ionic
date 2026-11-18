@@ -1,3 +1,4 @@
+import { phoneDigits, phonePattern, passwordPattern } from '../../shared/utils/account-validation';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -64,8 +65,11 @@ export class RegistroPage {
     nombres: ['', [Validators.required, Validators.maxLength(100)]],
     apellidos: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
-    telefono: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(30)]],
-    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
+    telefono: ['', [Validators.required, Validators.pattern(phonePattern)]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(8), Validators.maxLength(72), Validators.pattern(passwordPattern)],
+    ],
     finca: ['', [Validators.required, Validators.maxLength(150)]],
     direccion: [''],
     aceptaTerminos: [false, Validators.requiredTrue],
@@ -164,6 +168,12 @@ export class RegistroPage {
     this.locationError = '';
   }
 
+  onPhoneInput(event: CustomEvent<{ value?: string | null }>): void {
+    const value = phoneDigits(event.detail.value);
+    this.form.controls.telefono.setValue(value);
+    if (event.target) (event.target as HTMLInputElement).value = value;
+  }
+
   submit(): void {
     if (this.form.invalid || this.loading || this.locating || this.searching) {
       this.form.markAllAsTouched();
@@ -196,7 +206,11 @@ export class RegistroPage {
       )
       .subscribe({
         next: () => void this.finishRegistration(),
-        error: (error: { error?: { detail?: string; message?: string } }) => {
+        error: (error: { status?: number; error?: { detail?: string; message?: string } }) => {
+          if (error.status === 409) {
+            this.form.controls.email.setErrors({ ...this.form.controls.email.errors, exists: true });
+            this.form.controls.email.markAsTouched();
+          }
           this.errorMessage = error.error?.detail || 'No se pudo crear la cuenta.';
           this.changeDetector.markForCheck();
         },

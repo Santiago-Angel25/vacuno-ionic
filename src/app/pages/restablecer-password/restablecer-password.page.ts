@@ -1,3 +1,4 @@
+import { passwordPattern } from '../../shared/utils/account-validation';
 import type { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,7 +21,10 @@ export class RestablecerPasswordPage {
   private readonly toasts = inject(ToastController);
   readonly form = this.fb.nonNullable.group({
     token: ['', [Validators.required, Validators.pattern(/\S/)]],
-    password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(72)]],
+    password: [
+      '',
+      [Validators.required, Validators.minLength(8), Validators.maxLength(72), Validators.pattern(passwordPattern)],
+    ],
     confirmar: ['', Validators.required],
   });
   loading = false;

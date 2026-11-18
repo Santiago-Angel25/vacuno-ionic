@@ -59,7 +59,10 @@
                 ></ion-input
               ></ion-item>
               @if (form.controls.email.touched && form.controls.email.invalid) {
-              <p class="field-error">Ingresa un correo válido.</p>
+              <p class="field-error">
+                {{ form.controls.email.hasError('exists') ? 'El correo ya está registrado.' : 'Ingresa un correo
+                válido.' }}
+              </p>
               }
             </ion-col>
             <ion-col size="12" size-md="6">
@@ -69,12 +72,16 @@
                   id="telefono"
                   formControlName="telefono"
                   type="tel"
+                  inputmode="numeric"
+                  maxlength="10"
+                  pattern="[0-9]{10}"
+                  (ionInput)="onPhoneInput($event)"
                   placeholder="Tu teléfono"
                   autocomplete="tel"
                 ></ion-input
               ></ion-item>
               @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
-              <p class="field-error">Ingresa tu teléfono (máximo 30 caracteres).</p>
+              <p class="field-error">El teléfono debe tener exactamente 10 dígitos.</p>
               }
             </ion-col>
             <ion-col size="12" size-md="6">
@@ -89,7 +96,9 @@
                 ></ion-input
               ></ion-item>
               @if (form.controls.password.touched && form.controls.password.invalid) {
-              <p class="field-error">Usa entre 8 y 72 caracteres.</p>
+              <p class="field-error">
+                Usa entre 8 y 72 caracteres, al menos un número y un carácter especial (por ejemplo, @ o #).
+              </p>
               }
             </ion-col>
             <ion-col size="12" size-md="6">

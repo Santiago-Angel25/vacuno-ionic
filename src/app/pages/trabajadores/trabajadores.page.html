@@ -31,23 +31,44 @@
                 placeholder="persona@correo.com"
               ></ion-input
             ></ion-item>
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+            <p class="request-error">
+              {{ form.controls.email.hasError('exists') ? 'El correo ya está registrado.' : 'Ingresa un correo válido.'
+              }}
+            </p>
+            }
           </ion-col>
           <ion-col size="12" size-md="6">
-            <label for="worker-phone">Teléfono</label
+            <label for="worker-phone">Teléfono *</label
             ><ion-item lines="none"
               ><ion-input
                 id="worker-phone"
                 type="tel"
+                inputmode="numeric"
+                maxlength="10"
+                pattern="[0-9]{10}"
+                (ionInput)="onPhoneInput($event)"
                 formControlName="telefono"
                 placeholder="Número de contacto"
               ></ion-input
             ></ion-item>
+            @if (form.controls.telefono.touched && form.controls.telefono.invalid) {
+            <p class="request-error">El teléfono debe tener exactamente 10 dígitos.</p>
+            }
           </ion-col>
           <ion-col size="12" size-md="6">
             <label for="worker-birthdate">Fecha de nacimiento</label
             ><ion-item lines="none"
-              ><ion-input id="worker-birthdate" type="date" formControlName="fechaNacimiento"></ion-input
+              ><ion-input
+                id="worker-birthdate"
+                type="date"
+                [max]="maxBirthDate"
+                formControlName="fechaNacimiento"
+              ></ion-input
             ></ion-item>
+            @if (form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.invalid) {
+            <p class="request-error">La fecha de nacimiento no puede ser futura.</p>
+            }
           </ion-col>
           <ion-col size="12">
             <app-camera-picker #workerCamera subject="perfil" (selected)="onPhoto($event)" />
