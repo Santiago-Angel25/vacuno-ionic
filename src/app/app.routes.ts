@@ -10,29 +10,29 @@ export const routes: Routes = [
   },
   {
     path: 'splash',
-    loadComponent: () => import('./home/splash/splash.page').then((m) => m.SplashPage),
+    loadComponent: () => import('./pages/splash/splash.page').then((m) => m.SplashPage),
   },
   {
     path: 'login',
-    loadComponent: () => import('./home/login/login.page').then((m) => m.LoginPage),
+    loadComponent: () => import('./pages/login/login.page').then((m) => m.LoginPage),
   },
   {
     path: 'registro',
-    loadComponent: () => import('./home/registro/registro.page').then((m) => m.RegistroPage),
+    loadComponent: () => import('./pages/registro/registro.page').then((m) => m.RegistroPage),
   },
   {
     path: 'activar-trabajador',
-    loadComponent: () => import('./home/activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
+    loadComponent: () => import('./pages/activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
   },
   {
     path: 'animal/nuevo',
     canActivate: [authGuard],
-    loadComponent: () => import('./home/animal-form/animal-form.page').then((m) => m.AnimalFormPage),
+    loadComponent: () => import('./pages/animal-form/animal-form.page').then((m) => m.AnimalFormPage),
   },
   {
     path: 'producto/nuevo',
     canActivate: [authGuard],
-    loadComponent: () => import('./home/product-form/product-form.page').then((m) => m.ProductFormPage),
+    loadComponent: () => import('./pages/product-form/product-form.page').then((m) => m.ProductFormPage),
   },
   {
     path: 'compras/nueva',
@@ -52,11 +52,11 @@ export const routes: Routes = [
   {
     path: 'notificaciones',
     canActivate: [authGuard],
-    loadComponent: () => import('./home/notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
+    loadComponent: () => import('./pages/notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
   },
   {
     path: 'tabs',
-    loadChildren: () => import('./home/tabs/tabs.routes').then((m) => m.routes),
+    loadChildren: () => import('./pages/tabs/tabs.routes').then((m) => m.routes),
   },
   { path: '**', redirectTo: 'splash' },
 ];
