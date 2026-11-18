@@ -1,12 +1,12 @@
-import type { Animal } from '../../service/animales/animales.models';
-import type { FarmTask } from '../../service/actividades/actividades.models';
-import type { InventoryProduct } from '../../service/inventario/inventario.models';
-import type { WorkerSummary } from '../../service/trabajadores/trabajadores.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { ActividadesService } from '../../service/actividades/actividades.service';
-import { InventarioService } from '../../service/inventario/inventario.service';
-import { TrabajadoresService } from '../../service/trabajadores/trabajadores.service';
-import { AnimalesService } from '../../service/animales/animales.service';
+import type { Animal } from '../../interfaces/animales.interfaces';
+import type { FarmTask } from '../../interfaces/actividades.interfaces';
+import type { InventoryProduct } from '../../interfaces/inventario.interfaces';
+import type { WorkerSummary } from '../../interfaces/trabajadores.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { ActividadesService } from '../../service/actividades.service';
+import { InventarioService } from '../../service/inventario.service';
+import { TrabajadoresService } from '../../service/trabajadores.service';
+import { AnimalesService } from '../../service/animales.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { isTaskOverdue, localDate, taskOverdueMessage } from '../../shared/utils/task-due-date';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
@@ -27,7 +27,7 @@ import {
 } from '@ionic/angular';
 import { EMPTY, finalize, forkJoin, map, Observable, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.component';
 @Component({
   selector: 'app-actividad-form',

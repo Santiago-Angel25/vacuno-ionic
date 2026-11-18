@@ -21,6 +21,13 @@
         >{{ animal.estado === 'EN_ATENCION' ? 'En atención' : 'Saludable' }}</span
       >
     </div>
+    @if (canDelete) {
+    <ion-button color="danger" fill="outline" expand="block" [disabled]="deleting || saving" (click)="confirmDelete()">
+      {{ deleting ? 'Eliminando…' : 'Eliminar animal' }}
+    </ion-button>
+    } @if (errorMessage) {
+    <p class="form-error" role="alert">{{ errorMessage }}</p>
+    }
     <section class="info-card">
       <h2>Información</h2>
       <p><span>Peso actual</span><strong>{{ animal.pesoActual || animal.pesoInicial || '—' }} kg</strong></p>
@@ -75,7 +82,7 @@
               }
             </ion-col>
             <ion-col size="12">
-              <ion-button expand="block" type="submit" [disabled]="saving"
+              <ion-button expand="block" type="submit" [disabled]="saving || deleting"
                 >{{ saving ? 'Guardando…' : 'Guardar seguimiento' }}</ion-button
               >
             </ion-col>

@@ -1,5 +1,5 @@
-import { FincaService } from '../../service/finca/finca.service';
-import { InventarioService } from '../../service/inventario/inventario.service';
+import { FincaService } from '../../service/finca.service';
+import { InventarioService } from '../../service/inventario.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';

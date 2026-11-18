@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { IonGrid, IonRow, IonCol, IonButton, IonContent, IonInput, IonItem, ToastController } from '@ionic/angular';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-activar-trabajador',

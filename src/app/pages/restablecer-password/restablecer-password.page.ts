@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 import { IonButton, IonCol, IonContent, IonGrid, IonInput, IonItem, IonRow, ToastController } from '@ionic/angular';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-restablecer-password',

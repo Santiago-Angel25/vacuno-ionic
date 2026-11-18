@@ -1,6 +1,6 @@
-import type { Purchase } from '../../service/compras/compras.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { ComprasService } from '../../service/compras/compras.service';
+import type { Purchase } from '../../interfaces/compras.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { ComprasService } from '../../service/compras.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
@@ -24,7 +24,7 @@ import { addIcons } from 'ionicons';
 import { add, checkmarkCircleOutline, receiptOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 @Component({
   selector: 'app-compras',
   templateUrl: './compras.page.html',

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import type { PurchaseRequest, Purchase } from './compras.models';
+import { environment } from '../../environments/environment';
+import type { PurchaseRequest, Purchase } from '../interfaces/compras.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class ComprasService {

@@ -21,7 +21,7 @@ import { addIcons } from 'ionicons';
 import { locationOutline, searchOutline } from 'ionicons/icons';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { ProfilePhotoComponent } from '../../shared/profile-photo/profile-photo.component';
 import { FincaMapComponent } from './finca-map.component';
 import type { FarmPoint } from './finca-map.component';

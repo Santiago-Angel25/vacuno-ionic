@@ -1,10 +1,13 @@
-import type { Animal, AnimalHistoryItem } from '../../service/animales/animales.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { AnimalesService } from '../../service/animales/animales.service';
+import { AuthService } from '../../service/auth.service';
+import { AlertController, ToastController } from '@ionic/angular';
+import { firstValueFrom } from 'rxjs';
+import type { Animal, AnimalHistoryItem } from '../../interfaces/animales.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { AnimalesService } from '../../service/animales.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonGrid,
   IonRow,
@@ -42,6 +45,11 @@ import { finalize, forkJoin, of, switchMap } from 'rxjs';
 })
 export class AnimalDetailPage {
   private readonly route = inject(ActivatedRoute);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly alerts = inject(AlertController);
+  private readonly toasts = inject(ToastController);
+  deleting = false;
   private readonly fincaService = inject(FincaService);
   private readonly animalesService = inject(AnimalesService);
   private readonly fb = inject(FormBuilder);
@@ -102,7 +110,7 @@ export class AnimalDetailPage {
   }
 
   saveFollowUp(): void {
-    if (!this.farmId || this.form.invalid || this.saving) {
+    if (!this.farmId || this.form.invalid || this.saving || this.deleting) {
       this.form.markAllAsTouched();
       return;
     }
@@ -137,6 +145,44 @@ export class AnimalDetailPage {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  get canDelete(): boolean {
+    return this.auth.currentUser?.rol === 'PROPIETARIO' && !!this.farmId && !!this.animal;
+  }
+
+  async confirmDelete(): Promise<void> {
+    if (!this.canDelete || this.deleting || this.saving) return;
+    this.deleting = true;
+    this.errorMessage = '';
+    try {
+      const alert = await this.alerts.create({
+        header: '¿Eliminar animal?',
+        message: 'Se eliminará el animal del listado. Su historial se conservará.',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          { text: 'Eliminar', role: 'confirm', cssClass: 'alert-button-danger' },
+        ],
+      });
+      await alert.present();
+      const { role } = await alert.onDidDismiss();
+      if (role !== 'confirm' || !this.canDelete) return;
+      await firstValueFrom(this.animalesService.deleteAnimal(this.farmId!, this.animalId));
+      const toast = await this.toasts.create({
+        message: 'Animal eliminado correctamente.',
+        duration: 2000,
+        position: 'bottom',
+        color: 'success',
+      });
+      await toast.present();
+      await this.router.navigateByUrl('/tabs/ganado', { replaceUrl: true });
+    } catch (error) {
+      const response = error as { error?: { detail?: string } };
+      this.errorMessage = response.error?.detail ?? 'No fue posible eliminar el animal. Intenta de nuevo.';
+    } finally {
+      this.deleting = false;
+      this.cdr.markForCheck();
+    }
   }
 
   date(value: string): string {

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://commonly-pics-especially-vampire.trycloudflare.com/api/v1',
+  apiUrl: 'https://maximum-dispatched-remix-outsourcing.trycloudflare.com/api/v1',
 };

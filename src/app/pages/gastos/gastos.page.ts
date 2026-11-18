@@ -1,12 +1,12 @@
-import type { FarmExpense } from '../../service/gastos/gastos.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { GastosService } from '../../service/gastos/gastos.service';
+import type { FarmExpense } from '../../interfaces/gastos.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { GastosService } from '../../service/gastos.service';
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { IonContent } from '@ionic/angular';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 
 const COLORS = ['#2c7b3e', '#3989a4', '#e67852', '#e6b544', '#8c9f48', '#8976bd'];

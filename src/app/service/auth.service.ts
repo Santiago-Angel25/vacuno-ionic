@@ -3,14 +3,15 @@ import { Injectable, inject } from '@angular/core';
 import { switchMap, tap } from 'rxjs';
 import type { Observable } from 'rxjs';
 
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
+
 import type {
   LoginResponse,
   UserProfile,
   RegisterRequest,
   WorkerActivationResponse,
   ProfileUpdate,
-} from './auth.models';
+} from '../interfaces/auth.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

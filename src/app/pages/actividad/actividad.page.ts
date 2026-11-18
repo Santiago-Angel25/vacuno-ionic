@@ -1,6 +1,6 @@
-import type { FarmActivity, FarmTask } from '../../service/actividades/actividades.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { ActividadesService } from '../../service/actividades/actividades.service';
+import type { FarmActivity, FarmTask } from '../../interfaces/actividades.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { ActividadesService } from '../../service/actividades.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -30,7 +30,7 @@ import {
 } from 'ionicons/icons';
 import { finalize, forkJoin, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { isTaskOverdue, taskOverdueMessage } from '../../shared/utils/task-due-date';
 

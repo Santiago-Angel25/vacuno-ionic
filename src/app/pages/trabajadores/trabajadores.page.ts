@@ -1,6 +1,6 @@
-import type { WorkerInvite, WorkerSummary } from '../../service/trabajadores/trabajadores.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { TrabajadoresService } from '../../service/trabajadores/trabajadores.service';
+import type { WorkerInvite, WorkerSummary } from '../../interfaces/trabajadores.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { TrabajadoresService } from '../../service/trabajadores.service';
 import { localDate } from '../../shared/utils/task-due-date';
 import { phoneDigits, phonePattern, birthDateValidator } from '../../shared/utils/account-validation';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
@@ -13,7 +13,7 @@ import { addIcons } from 'ionicons';
 import { personAddOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { CameraPickerComponent } from '../../shared/camera-picker/camera-picker.component';
 @Component({
   selector: 'app-trabajadores',

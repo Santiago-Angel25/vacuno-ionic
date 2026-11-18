@@ -1,13 +1,13 @@
-import type { FarmAlert } from '../../service/alertas/alertas.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { AlertasService } from '../../service/alertas/alertas.service';
+import type { FarmAlert } from '../../interfaces/alertas.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { AlertasService } from '../../service/alertas.service';
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { IonButton, IonContent } from '@ionic/angular';
 import { finalize, of, switchMap } from 'rxjs';
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 
 @Component({

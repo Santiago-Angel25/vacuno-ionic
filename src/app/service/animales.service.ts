@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import type { Animal, AnimalRequest, AnimalHistoryItem } from './animales.models';
+import { environment } from '../../environments/environment';
+import type { Animal, AnimalRequest, AnimalHistoryItem } from '../interfaces/animales.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AnimalesService {
@@ -17,6 +17,10 @@ export class AnimalesService {
 
   createAnimal(animal: AnimalRequest): Observable<Animal> {
     return this.http.post<Animal>(`${this.apiUrl}/animales`, animal);
+  }
+
+  deleteAnimal(farmId: number, animalId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/animales/${animalId}`, { params: { fincaId: farmId } });
   }
 
   animal(farmId: number, animalId: number): Observable<Animal> {

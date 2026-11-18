@@ -1,9 +1,9 @@
-import type { DashboardResponse } from '../../service/finca/finca.models';
-import type { FarmAlert } from '../../service/alertas/alertas.models';
-import type { FarmTask } from '../../service/actividades/actividades.models';
-import { AlertasService } from '../../service/alertas/alertas.service';
-import { FincaService } from '../../service/finca/finca.service';
-import { ActividadesService } from '../../service/actividades/actividades.service';
+import type { DashboardResponse } from '../../interfaces/finca.interfaces';
+import type { FarmAlert } from '../../interfaces/alertas.interfaces';
+import type { FarmTask } from '../../interfaces/actividades.interfaces';
+import { AlertasService } from '../../service/alertas.service';
+import { FincaService } from '../../service/finca.service';
+import { ActividadesService } from '../../service/actividades.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -19,7 +19,7 @@ import {
 } from 'ionicons/icons';
 import { finalize, map, of, switchMap, tap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 import { isTaskOverdue, taskOverdueMessage } from '../../shared/utils/task-due-date';

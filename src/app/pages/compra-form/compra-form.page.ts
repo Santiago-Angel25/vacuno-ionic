@@ -1,8 +1,8 @@
-import type { InventoryProduct } from '../../service/inventario/inventario.models';
-import type { Purchase } from '../../service/compras/compras.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { InventarioService } from '../../service/inventario/inventario.service';
-import { ComprasService } from '../../service/compras/compras.service';
+import type { InventoryProduct } from '../../interfaces/inventario.interfaces';
+import type { Purchase } from '../../interfaces/compras.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { InventarioService } from '../../service/inventario.service';
+import { ComprasService } from '../../service/compras.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';

@@ -2,11 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { catchError, forkJoin, map, of } from 'rxjs';
-import { isTaskOverdue } from '../../shared/utils/task-due-date';
-import { ActividadesService } from '../actividades/actividades.service';
-import { environment } from '../../../environments/environment';
-import type { FarmAlert } from './alertas.models';
-import type { FarmTask } from '../actividades/actividades.models';
+import { isTaskOverdue } from '../shared/utils/task-due-date';
+import { ActividadesService } from './actividades.service';
+import { environment } from '../../environments/environment';
+import type { FarmAlert } from '../interfaces/alertas.interfaces';
+import type { FarmTask } from '../interfaces/actividades.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AlertasService {

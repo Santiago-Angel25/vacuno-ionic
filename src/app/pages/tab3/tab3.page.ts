@@ -1,6 +1,6 @@
-import type { InventoryProduct } from '../../service/inventario/inventario.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { InventarioService } from '../../service/inventario/inventario.service';
+import type { InventoryProduct } from '../../interfaces/inventario.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { InventarioService } from '../../service/inventario.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonGrid, IonRow, IonCol, IonButton, IonContent, IonIcon, IonInput, IonItem, IonSpinner } from '@ionic/angular';
@@ -8,7 +8,7 @@ import { addIcons } from 'ionicons';
 import { leafOutline, searchOutline } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 

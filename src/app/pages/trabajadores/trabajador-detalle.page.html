@@ -15,6 +15,11 @@
         <span class="active-badge">{{ worker.activo ? 'Activo' : 'Inactivo' }}</span>
       </div>
     </section>
+    @if (canDelete) {
+    <ion-button color="danger" fill="outline" expand="block" [disabled]="deleting" (click)="confirmDelete()">
+      {{ deleting ? 'Eliminando…' : 'Eliminar trabajador' }}
+    </ion-button>
+    }
     <p class="eyebrow">{{ worker.actividadesMes }} ACTIVIDADES ESTE MES</p>
     <h2 class="section-title">Actividad reciente</h2>
     @if (!activities.length) {

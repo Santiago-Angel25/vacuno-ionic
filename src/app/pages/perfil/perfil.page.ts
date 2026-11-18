@@ -6,7 +6,7 @@ import { addIcons } from 'ionicons';
 import { callOutline, cardOutline, logOutOutline, mailOutline, pencilOutline, personOutline } from 'ionicons/icons';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { DetailModalComponent } from '../../shared/detail-modal/detail-modal.component';
 import { ProfilePhotoComponent } from '../../shared/profile-photo/profile-photo.component';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';

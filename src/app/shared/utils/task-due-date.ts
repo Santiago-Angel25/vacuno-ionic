@@ -1,4 +1,4 @@
-import type { FarmTask } from '../../service/actividades/actividades.models';
+import type { FarmTask } from '../../interfaces/actividades.interfaces';
 export const taskOverdueMessage = 'Esta actividad ya venció. No se registró dentro del plazo establecido.';
 const farmDate = new Intl.DateTimeFormat('fr-CA', {
   timeZone: 'America/Bogota',

@@ -1,6 +1,6 @@
 import type { Routes } from '@angular/router';
 
-import { authGuard } from '../../service/auth/auth.guard';
+import { authGuard } from '../../guards/auth.guard';
 
 import { TabsPage } from './tabs.page';
 

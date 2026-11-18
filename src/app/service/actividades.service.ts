@@ -1,8 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import type { FarmActivity, ActivityRequest, FarmTask, TaskRequest } from './actividades.models';
+import { environment } from '../../environments/environment';
+import type {
+  FarmActivity,
+  ActivityRequest,
+  FarmTask,
+  TaskRequest,
+} from '../interfaces/actividades.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class ActividadesService {

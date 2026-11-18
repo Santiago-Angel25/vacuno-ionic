@@ -1,6 +1,6 @@
-import type { Animal } from '../../service/animales/animales.models';
-import { FincaService } from '../../service/finca/finca.service';
-import { AnimalesService } from '../../service/animales/animales.service';
+import type { Animal } from '../../interfaces/animales.interfaces';
+import { FincaService } from '../../service/finca.service';
+import { AnimalesService } from '../../service/animales.service';
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
@@ -30,7 +30,7 @@ import {
 } from 'ionicons/icons';
 import { finalize, of, switchMap } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { VacunoHeaderComponent } from '../../shared/vacuno-header/vacuno-header.component';
 
 type AnimalFilter = 'TODOS' | 'HEMBRA' | 'MACHO' | 'JOVEN';

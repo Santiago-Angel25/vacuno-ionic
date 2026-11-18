@@ -19,7 +19,7 @@ import { addIcons } from 'ionicons';
 import { eyeOffOutline, eyeOutline, lockClosedOutline, mailOutline } from 'ionicons/icons';
 import { finalize } from 'rxjs';
 
-import { AuthService } from '../../service/auth/auth.service';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-login',
