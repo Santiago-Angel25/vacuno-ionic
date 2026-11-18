@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://dinner-advert-biblical-nurse.trycloudflare.com/api/v1',
+  apiUrl: 'https://communities-concerts-phoenix-apps.trycloudflare.com/api/v1',
 };

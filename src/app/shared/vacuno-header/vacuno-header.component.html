@@ -1,0 +1,33 @@
+<ion-header class="vacuno-hero-header">
+  <svg class="header-mountain" viewBox="0 0 390 76" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path d="M0 48 C34 35 55 16 91 24 C121 31 138 51 164 48 C197 44 210 16 244 19 C277 21 292 50 323 45 C348 40 365 24 390 17 V76 H0Z" />
+    <path class="mountain-front" d="M0 59 C45 50 71 39 111 46 C156 54 175 69 219 59 C259 50 279 37 317 42 C349 47 369 58 390 54 V76 H0Z" />
+  </svg>
+  <ion-toolbar>
+    <div class="header-row">
+      @if (showBack() && backHref()) {
+        <ion-buttons><ion-back-button [defaultHref]="backHref()" text=""></ion-back-button></ion-buttons>
+      } @else if (showBack()) {
+        <ion-buttons><ion-button routerLink="/tabs/inicio" aria-label="Volver"><ion-icon name="arrow-back-outline"></ion-icon></ion-button></ion-buttons>
+      }
+      @if (brand()) {
+        <div class="brand"><img src="/assets/vacuno-cow-mark.png" alt="" /><span>VACUNO</span></div>
+      } @else {
+        <div class="header-title">{{ title() }}</div>
+      }
+      <ng-content></ng-content>
+      @if (actions()) {
+        <ion-buttons class="header-actions">
+          <ion-button class="notification-button" aria-label="Notificaciones" routerLink="/notificaciones"><ion-icon slot="icon-only" name="notifications-outline"></ion-icon><span class="notification-dot" aria-hidden="true"></span></ion-button>
+          <ion-avatar routerLink="/tabs/perfil" aria-label="Abrir perfil">
+            @if (photoUrl(); as photo) {
+              <img [src]="photo" alt="" />
+            } @else {
+              {{ initial() }}
+            }
+          </ion-avatar>
+        </ion-buttons>
+      }
+    </div>
+  </ion-toolbar>
+</ion-header>

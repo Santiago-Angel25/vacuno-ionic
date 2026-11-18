@@ -1,0 +1,13 @@
+<ion-modal #modal class="vacuno-detail-modal" [isOpen]="open()" [attr.aria-label]="title()"
+  (didDismiss)="closed.emit()">
+  <ng-template>
+    <section class="vacuno-detail-body" [attr.data-tone]="tone()">
+      <button class="vacuno-detail-close" type="button" aria-label="Cerrar detalle" (click)="modal.dismiss()">×</button>
+      <header class="vacuno-detail-heading">
+        <span>{{ category() }}</span>
+        <h2>{{ title() }}</h2>
+      </header>
+      <ng-content></ng-content>
+    </section>
+  </ng-template>
+</ion-modal>

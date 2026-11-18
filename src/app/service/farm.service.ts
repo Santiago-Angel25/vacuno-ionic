@@ -4,7 +4,7 @@ import type { Observable } from 'rxjs';
 import { catchError, forkJoin, map, of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { isTaskOverdue } from '../shared/task-due-date';
+import { isTaskOverdue } from '../shared/utils/task-due-date';
 
 export interface FarmSummary {
   id: number;

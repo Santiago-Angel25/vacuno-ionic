@@ -1,0 +1,190 @@
+<app-vacuno-header title="Registrar actividad" [showBack]="true" backHref="/tabs/actividad"></app-vacuno-header>
+<ion-content class="activity-form-content"
+  ><main class="activity-form-page">
+    <p class="eyebrow">JORNADA DE LA FINCA</p>
+    <h1>
+      {{ taskMode ? 'Registrar actividad' : ownerMode ? 'Asignar actividad pendiente' : '¿Qué actividad realizaste?' }}
+    </h1>
+    @if (ownerMode) {
+    <p class="form-hint">La tarea aparecerá en las actividades pendientes del trabajador.</p>
+    }
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <ion-grid class="ion-no-padding">
+        <ion-row>
+          <ion-col size="12">
+            @if (taskMode) { @if (task) {
+            <section class="task-summary">
+              <p class="eyebrow">ACTIVIDAD ASIGNADA</p>
+              <h2>{{ task.titulo }}</h2>
+              <p>{{ task.descripcion }}</p>
+            </section>
+            } } @else {
+            <label class="form-label" for="activity-type">Tipo de actividad *</label
+            ><ion-item class="form-input" lines="none"
+              ><ion-select id="activity-type" formControlName="tipo" interface="popover"
+                ><ion-select-option value="VACUNACION">Vacunación</ion-select-option
+                ><ion-select-option value="ALIMENTACION">Alimentación</ion-select-option
+                ><ion-select-option value="MEDICAMENTO">Medicamento</ion-select-option
+                ><ion-select-option value="PESAJE">Pesaje</ion-select-option
+                ><ion-select-option value="REVISION">Revisión</ion-select-option
+                ><ion-select-option value="REPRODUCCION">Reproducción</ion-select-option
+                ><ion-select-option value="INSUMO">Insumo</ion-select-option
+                ><ion-select-option value="OTRO">Otro</ion-select-option></ion-select
+              ></ion-item
+            >
+            @if (!ownerMode) {
+            <label class="form-label" for="animal">Animal relacionado {{ requiresAnimal ? '*' : '(opcional)' }}</label
+            ><ion-item class="form-input" lines="none"
+              ><ion-select
+                id="animal"
+                formControlName="animalId"
+                placeholder="Sin animal específico"
+                interface="popover"
+                >@if (!requiresAnimal) { <ion-select-option value="">Ninguno</ion-select-option> }@for (animal of
+                animals; track animal.id) {
+                <ion-select-option [value]="'' + animal.id"
+                  >{{ animal.identificador }} · {{ animal.nombre || 'Sin nombre' }}</ion-select-option
+                >
+                }</ion-select
+              ></ion-item
+            >
+            @if (requiresAnimal && !form.controls.animalId.value) {
+            <p class="field-error">Selecciona el animal vacunado.</p>
+            } } @else {
+            <label class="form-label" for="assigned-worker">Asignar a trabajador *</label>
+            <ion-item class="form-input" lines="none">
+              <ion-select
+                id="assigned-worker"
+                formControlName="asignadaA"
+                placeholder="Seleccionar trabajador"
+                interface="popover"
+              >
+                @for (worker of workers; track worker.id) {
+                <ion-select-option [value]="'' + worker.id"
+                  >{{ worker.nombres }} {{ worker.apellidos }}</ion-select-option
+                >
+                }
+              </ion-select>
+            </ion-item>
+            @if (!workers.length) {
+            <p class="field-error">No hay trabajadores activos para asignar tareas.</p>
+            }
+            <label class="form-label" for="due-date">Fecha límite (opcional)</label>
+            <ion-item class="form-input" lines="none"
+              ><ion-input id="due-date" formControlName="fechaLimite" type="date" [min]="minDueDate"></ion-input
+            ></ion-item>
+            } }
+          </ion-col>
+          <ion-col size="12">
+            @if (!ownerMode && (!taskMode || task) && consumesInventory) {
+            <section class="inventory-use">
+              <p class="form-label">Consumo de inventario</p>
+              <label class="form-label" for="activity-product">Producto · {{ productCategory.toLowerCase() }} *</label>
+              <ion-item class="form-input" lines="none">
+                <ion-select
+                  id="activity-product"
+                  formControlName="productoId"
+                  placeholder="Seleccionar producto"
+                  interface="popover"
+                >
+                  @for (product of availableProducts; track product.id) {
+                  <ion-select-option [value]="'' + product.id"
+                    >{{ product.nombre }} · {{ displayStock(product) }} {{ product.unidad }}</ion-select-option
+                  >
+                  }
+                </ion-select>
+              </ion-item>
+              @if (!availableProducts.length) {
+              <p class="field-error">
+                No hay productos de esta categoría en inventario. Registra una compra antes de esta actividad.
+              </p>
+              }
+              <ion-grid class="dose-fields ion-no-padding" style="display: block"
+                ><ion-row
+                  ><ion-col size="12" size-sm="6">
+                    <label class="form-label" for="dose-quantity">{{ quantityLabel }} *</label>
+                    <ion-item class="form-input" lines="none"
+                      ><ion-input
+                        id="dose-quantity"
+                        formControlName="cantidadPorDosis"
+                        type="number"
+                        min="1"
+                        [max]="form.controls.tipo.value === 'ALIMENTACION' ? wholeUnitsAvailable : selectedProduct?.stockActual"
+                        step="1"
+                        inputmode="numeric"
+                        (ionInput)="onIntegerInput($event)"
+                        placeholder="Ej. 1"
+                      ></ion-input
+                    ></ion-item> </ion-col></ion-row
+              ></ion-grid>
+              @if (selectedProduct) {
+              <p class="field-hint">
+                Disponibles: {{ displayStock(selectedProduct) }} {{ selectedProduct.unidad }}. Se descontará la cantidad
+                registrada.
+              </p>
+              } @else {
+              <p class="field-hint">Selecciona un producto para consultar las existencias.</p>
+              }
+            </section>
+            }
+          </ion-col>
+          <ion-col size="12">
+            @if (!taskMode) {
+            <label class="form-label" for="activity-description">Descripción *</label
+            ><ion-item class="form-input description-input" lines="none"
+              ><ion-input
+                id="activity-description"
+                formControlName="descripcion"
+                placeholder="Describe el trabajo realizado"
+              ></ion-input
+            ></ion-item>
+            @if (form.controls.descripcion.touched && form.controls.descripcion.invalid) {
+            <p class="field-error">Escribe una descripción.</p>
+            } }
+          </ion-col>
+          <ion-col size="12">
+            @if (errorMessage) {
+            <p class="request-error" role="alert">{{ errorMessage }}</p>
+            }
+          </ion-col>
+          <ion-col size="12">
+            @if (!ownerMode || taskMode) {
+            <p class="form-label">Foto de la actividad *</p>
+            <app-camera-picker #activityCamera subject="actividad" (selected)="onPhoto($event)" />
+            @if (!activityCamera.native || photoUrl) {
+            <label class="photo-picker" [attr.for]="activityCamera.native ? null : 'activity-photo'">
+              @if (photoUrl) { <img [src]="photoUrl" alt="Foto de la actividad" /> } @if (!activityCamera.native) {
+              <span>{{ photoUrl ? 'Cambiar foto' : 'Seleccionar foto' }}</span>
+              <input
+                #activityPhoto
+                id="activity-photo"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                (change)="onPhoto(activityPhoto.files?.[0])"
+              />
+              }
+            </label>
+            } @if (photoError) {
+            <p class="field-error" role="alert">{{ photoError }}</p>
+            } }
+          </ion-col>
+          <ion-col size="12">
+            @if (taskExpired) {
+            <p class="request-error" role="alert">{{ taskOverdueMessage }}</p>
+            }
+          </ion-col>
+          <ion-col size="12">
+            <ion-button
+              class="submit-activity"
+              expand="block"
+              type="submit"
+              [disabled]="saving || !farmId || (taskMode && (!task || taskExpired))"
+              >{{ saving ? 'Guardando…' : taskMode ? 'Guardar actividad' : ownerMode ? 'Crear actividad pendiente' :
+              'Registrar actividad' }}</ion-button
+            >
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+  </main></ion-content
+>

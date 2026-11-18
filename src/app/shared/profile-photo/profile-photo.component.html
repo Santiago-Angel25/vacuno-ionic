@@ -1,0 +1,19 @@
+<p>Foto de perfil (opcional)</p>
+<app-camera-picker #camera subject="perfil" [showActions]="false" (selected)="read($event)" />
+<input #file hidden type="file" accept="image/jpeg,image/png,image/webp"
+  (change)="read(file.files?.[0]); file.value = ''" />
+<button class="photo-picker" type="button" [disabled]="disabled() || reading() || camera.busy()"
+  (click)="camera.native ? chooseSource(camera) : file.click()">
+  @if (photo()) {
+    <img [src]="photo()" alt="Vista previa de la foto de perfil" />
+  } @else {
+    <span class="camera-icon" aria-hidden="true">📷</span>
+  }
+  <strong>{{ photo() ? 'Cambiar fotografía' : 'Agregar fotografía' }}</strong>
+</button>
+@if (photo()) {
+  <ion-button type="button" fill="clear" size="small" [disabled]="disabled() || reading()" (click)="remove()">
+    Quitar foto
+  </ion-button>
+}
+@if (error()) { <p role="alert">{{ error() }}</p> }

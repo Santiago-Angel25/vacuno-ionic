@@ -10,29 +10,29 @@ export const routes: Routes = [
   },
   {
     path: 'splash',
-    loadComponent: () => import('./splash/splash.page').then((m) => m.SplashPage),
+    loadComponent: () => import('./home/splash/splash.page').then((m) => m.SplashPage),
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login.page').then((m) => m.LoginPage),
+    loadComponent: () => import('./home/login/login.page').then((m) => m.LoginPage),
   },
   {
     path: 'registro',
-    loadComponent: () => import('./registro/registro.page').then((m) => m.RegistroPage),
+    loadComponent: () => import('./home/registro/registro.page').then((m) => m.RegistroPage),
   },
   {
     path: 'activar-trabajador',
-    loadComponent: () => import('./activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
+    loadComponent: () => import('./home/activar-trabajador/activar-trabajador.page').then((m) => m.ActivarTrabajadorPage),
   },
   {
     path: 'animal/nuevo',
     canActivate: [authGuard],
-    loadComponent: () => import('./animal-form/animal-form.page').then((m) => m.AnimalFormPage),
+    loadComponent: () => import('./home/animal-form/animal-form.page').then((m) => m.AnimalFormPage),
   },
   {
     path: 'producto/nuevo',
     canActivate: [authGuard],
-    loadComponent: () => import('./product-form/product-form.page').then((m) => m.ProductFormPage),
+    loadComponent: () => import('./home/product-form/product-form.page').then((m) => m.ProductFormPage),
   },
   {
     path: 'compras/nueva',
@@ -52,11 +52,11 @@ export const routes: Routes = [
   {
     path: 'notificaciones',
     canActivate: [authGuard],
-    loadComponent: () => import('./notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
+    loadComponent: () => import('./home/notificaciones/notificaciones.page').then((m) => m.NotificacionesPage),
   },
   {
     path: 'tabs',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+    loadChildren: () => import('./home/tabs/tabs.routes').then((m) => m.routes),
   },
   { path: '**', redirectTo: 'splash' },
 ];

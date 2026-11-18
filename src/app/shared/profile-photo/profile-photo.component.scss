@@ -1,0 +1,22 @@
+:host { display: block; margin-block: 12px; }
+img { display: block; width: 72px; height: 72px; object-fit: cover; border-radius: 50%; }
+.photo-picker {
+  display: flex;
+  width: 100%;
+  min-height: 110px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border: 1px dashed #b5c8af;
+  border-radius: 15px;
+  background: #eef5ea;
+  color: #347647;
+  font-size: 12px;
+  cursor: pointer;
+}
+.camera-icon { font-size: 24px; }
+.photo-picker:disabled { opacity: .6; cursor: default; }
+p { margin-block: 8px; }
+[role="alert"] { color: #a52c24; }

@@ -1,0 +1,111 @@
+@let pageTitle = auth.currentUser?.rol === 'TRABAJADOR' ? 'Ganado' : 'Mi ganado';
+<app-vacuno-header [title]="pageTitle" [showBack]="true"></app-vacuno-header>
+<ion-content class="module-content list-content" [scrollY]="false">
+  <main class="livestock-page">
+    <p class="eyebrow">GESTIÓN DE LA FINCA</p>
+    <h1>{{ pageTitle }}</h1>
+    <ion-item class="search-field" lines="none">
+      <ion-icon name="paw-outline" slot="start" aria-hidden="true"></ion-icon>
+      <ion-input
+        aria-label="Buscar animal por nombre o identificador"
+        placeholder="Buscar por nombre o ID..."
+        [value]="search"
+        (ionInput)="onSearch($event)"
+      ></ion-input>
+      <ion-icon name="search-outline" slot="end" aria-hidden="true"></ion-icon>
+    </ion-item>
+    <div class="filter-row" role="group" aria-label="Filtrar ganado">
+      <ion-button size="small" [fill]="filter === 'TODOS' ? 'solid' : 'outline'" (click)="setFilter('TODOS')"
+        >Todos</ion-button
+      >
+      <ion-button size="small" [fill]="filter === 'HEMBRA' ? 'solid' : 'outline'" (click)="setFilter('HEMBRA')"
+        >Hembras</ion-button
+      >
+      <ion-button size="small" [fill]="filter === 'MACHO' ? 'solid' : 'outline'" (click)="setFilter('MACHO')"
+        >Machos</ion-button
+      >
+      <ion-button size="small" [fill]="filter === 'JOVEN' ? 'solid' : 'outline'" (click)="setFilter('JOVEN')"
+        >Jóvenes</ion-button
+      >
+    </div>
+
+    @if (loading) {
+    <div class="state-card"><ion-spinner name="crescent"></ion-spinner><span>Cargando ganado...</span></div>
+    } @else if (errorMessage) {
+    <div class="state-card error-state" role="alert">
+      <p>{{ errorMessage }}</p>
+      <ion-button size="small" fill="outline" (click)="loadAnimals()">Reintentar</ion-button>
+    </div>
+    } @else if (!farmId) {
+    <div class="state-card">
+      <h2>No tienes una finca</h2>
+      <p>Crea una finca para empezar a registrar animales.</p>
+    </div>
+    } @else if (!visibleAnimals.length) {
+    <div class="state-card">
+      <div class="empty-cow" aria-hidden="true">🐄</div>
+      <h2>{{ search ? 'No encontramos resultados' : 'Aún no hay animales' }}</h2>
+      <p>{{ search ? 'Prueba con otro nombre o identificador.' : 'Usa el botón + para registrar el primero.' }}</p>
+    </div>
+    } @else {
+    <section class="animal-list" aria-label="Animales de la finca" tabindex="0">
+      <ion-grid class="ion-no-padding" style="width: 100%; min-width: 0">
+        <ion-row>
+          @for (animal of visibleAnimals; track animal.id) {
+          <ion-col size="12" size-lg="6">
+            <a class="animal-card" [routerLink]="['/tabs/ganado', animal.id]">
+              @if (animal.fotoUrl) {
+              <img
+                class="animal-photo"
+                [src]="animal.fotoUrl"
+                [alt]="'Foto de ' + (animal.nombre || animal.identificador)"
+              />
+              } @else {
+              <div class="animal-photo placeholder-photo" aria-hidden="true">🐄</div>
+              }
+              <div class="animal-info">
+                <span class="animal-id">#{{ displayId(animal.id) }}</span>
+                <h2>{{ animal.nombre || 'Sin nombre' }}</h2>
+                <p class="animal-meta">
+                  @if (animal.sexo === 'HEMBRA' || animal.sexo === 'MACHO') {
+                  <ion-icon
+                    [name]="animal.sexo === 'HEMBRA' ? 'female-outline' : 'male-outline'"
+                    aria-hidden="true"
+                  ></ion-icon>
+                  } {{ animal.sexo === 'HEMBRA' ? 'Hembra' : animal.sexo === 'MACHO' ? 'Macho' : (animal.sexo || 'Sin
+                  especificar') }} @if (animal.raza) { <span aria-hidden="true">·</span> {{ animal.raza }} }
+                </p>
+                @if (animal.pesoActual || animal.pesoInicial) {
+                <p class="animal-weight">
+                  <ion-icon name="scale-outline" aria-hidden="true"></ion-icon>{{ animal.pesoActual ||
+                  animal.pesoInicial }} kg
+                </p>
+                }
+              </div>
+              <span
+                class="health-badge"
+                [class.attention-badge]="animal.estado === 'EN_ATENCION'"
+                [class.healthy-badge]="animal.estado === 'SALUDABLE'"
+              >
+                <ion-icon
+                  [name]="animal.estado === 'EN_ATENCION' ? 'alert-circle-outline' : animal.estado === 'SALUDABLE' ? 'heart-outline' : 'information-circle-outline'"
+                  aria-hidden="true"
+                ></ion-icon>
+                {{ (animal.estado || 'REGISTRADO').replaceAll('_', ' ') }}
+              </span>
+            </a>
+          </ion-col>
+          }
+        </ion-row>
+      </ion-grid>
+    </section>
+    }
+  </main>
+  @if (farmId && auth.currentUser?.rol === 'PROPIETARIO') {
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="add-animal-fab">
+    <ion-fab-button routerLink="/animal/nuevo" aria-label="Agregar animal"
+      ><ion-icon name="add"></ion-icon
+    ></ion-fab-button>
+  </ion-fab>
+  }
+</ion-content>
